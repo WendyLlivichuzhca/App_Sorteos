@@ -1,14 +1,9 @@
-import { useState } from "react";
+import React, { useState, useEffect } from "react";
 import AdminLayout from "../../components/admin/AdminLayout.jsx";
+import Icon from "../../icons/Icon.jsx";
+import { getAdminCompras, updateEstadoCompra } from "../../services/api.js";
 import { formatMoney } from "../../utils/format.js";
 import styles from "./AdminSorteos.module.css";
-
-const comprasMock = [
-  { id: "ORD-9281", comprador: "Carlos Mendoza", sorteo: "Toyota Fortuner 4x4", boletos: 10, total: 15.0, metodo: "Tarjeta de crédito", estado: "aprobado", fecha: "2026-08-06 14:10" },
-  { id: "ORD-9280", comprador: "María Fernanda Ríos", sorteo: "iPhone 15 Pro Max", boletos: 5, total: 6.0, metodo: "DeUna!", estado: "aprobado", fecha: "2026-08-06 13:45" },
-  { id: "ORD-9279", comprador: "Juan Pablo Torres", sorteo: "Yamaha MT-09", boletos: 20, total: 42.0, metodo: "Transferencia bancaria", estado: "pendiente", fecha: "2026-08-06 13:20" },
-  { id: "ORD-9278", comprador: "Lucía Gómez", sorteo: "Toyota Fortuner 4x4", boletos: 1, total: 2.0, metodo: "PayPhone", estado: "aprobado", fecha: "2026-08-06 12:15" },
-];
 
 export default function AdminCompras() {
   const [list, setList] = useState(comprasMock);

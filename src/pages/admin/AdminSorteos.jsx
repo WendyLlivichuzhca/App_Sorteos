@@ -1,12 +1,13 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import AdminLayout from "../../components/admin/AdminLayout.jsx";
 import Icon from "../../icons/Icon.jsx";
-import { sorteos as initialSorteos } from "../../data/sorteos.js";
+import { getSorteos, createSorteo, updateSorteo, deleteSorteo } from "../../services/api.js";
 import { formatMoney } from "../../utils/format.js";
 import styles from "./AdminSorteos.module.css";
 
 export default function AdminSorteos() {
-  const [list, setList] = useState(initialSorteos);
+  const [list, setList] = useState([]);
+  const [loading, setLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
   const [editingItem, setEditingItem] = useState(null);
   const [formData, setFormData] = useState({

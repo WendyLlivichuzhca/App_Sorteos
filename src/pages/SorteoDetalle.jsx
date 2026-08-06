@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import Navbar from "../components/Navbar.jsx";
 import Badge from "../components/Badge.jsx";
@@ -6,15 +6,38 @@ import StarRating from "../components/StarRating.jsx";
 import PremioImage from "../components/PremioImage.jsx";
 import CountdownTimer from "../components/CountdownTimer.jsx";
 import Icon from "../icons/Icon.jsx";
-import { getSorteoById } from "../data/sorteos.js";
+import { getSorteoById } from "../services/api.js";
 import { formatMoney } from "../utils/format.js";
 import styles from "./SorteoDetalle.module.css";
 
 export default function SorteoDetalle() {
   const { id } = useParams();
   const navigate = useNavigate();
-  const sorteo = getSorteoById(id);
+  const [sorteo, setSorteo] = useState(null);
+  const [loading, setLoading] = useState(true);
   const [activeImg, setActiveImg] = useState(0);
+
+  useEffect(() => {
+    setLoading(true);
+    getSorteoById(id)
+      .then((data) => {
+        setSorteo(data);
+        setLoading(false);
+      })
+      .catch((err) => {
+        console.error("Error al obtener sorteo:", err);
+        setLoading(false);
+      });
+  }, [id]);
+
+  if (loading) {
+    return (
+      <div className="page">
+        <Navbar variant="nav" />
+        <div className="container">Cargando...</div>
+      </div>
+    );
+  }
 
   if (!sorteo) {
     return (

@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import Navbar from "../components/Navbar.jsx";
 import Footer from "../components/Footer.jsx";
@@ -6,21 +6,35 @@ import Badge from "../components/Badge.jsx";
 import ProgressBar from "../components/ProgressBar.jsx";
 import PremioImage from "../components/PremioImage.jsx";
 import Icon from "../icons/Icon.jsx";
-import { categorias, sorteos } from "../data/sorteos.js";
+import { getSorteos } from "../services/api.js";
+import { categorias } from "../data/sorteos.js";
 import { formatMoney } from "../utils/format.js";
 import styles from "./Sorteos.module.css";
 
 export default function Sorteos() {
   const [query, setQuery] = useState("");
   const [categoria, setCategoria] = useState("todos");
+  const [sorteos, setSorteos] = useState([]);
+  const [loading, setLoading] = useState(true);
 
-  const filtrados = useMemo(() => {
-    return sorteos.filter((s) => {
-      const matchCategoria = categoria === "todos" || s.categoria === categoria;
-      const matchQuery = s.nombre.toLowerCase().includes(query.toLowerCase());
-      return matchCategoria && matchQuery;
-    });
-  }, [query, categoria]);
+  useEffect(() => {
+    setLoading(true);
+    getSorteos()
+      .then((data) => {
+        setSorteos(data);
+        setLoading(false);
+      })
+      .catch((err) => {
+        console.error("Error cargando sorteos:", err);
+        setLoading(false);
+      });
+  }, []);
+
+  const filtrados = sorteos.filter((s) => {
+    const matchCategoria = categoria === "todos" || s.categoria === categoria;
+    const matchQuery = s.nombre.toLowerCase().includes(query.toLowerCase());
+    return matchCategoria && matchQuery;
+  });
 
   return (
     <div className="page">

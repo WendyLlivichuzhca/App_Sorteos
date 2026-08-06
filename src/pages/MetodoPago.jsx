@@ -1,10 +1,8 @@
-import { useEffect, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import React, { useState } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
 import Navbar from "../components/Navbar.jsx";
 import Icon from "../icons/Icon.jsx";
-import PremioImage from "../components/PremioImage.jsx";
-import { useApp } from "../context/AppContext.jsx";
-import { metodosPago } from "../data/sorteos.js";
+import { realizarCheckout, subirComprobante } from "../services/api.js";
 import { formatMoney } from "../utils/format.js";
 import styles from "./MetodoPago.module.css";
 
@@ -84,9 +82,21 @@ export default function MetodoPago() {
               ))}
             </div>
 
-            <a href="/#" className={styles.masMetodos} onClick={(e) => e.preventDefault()}>
-              Ver más métodos de pago <Icon name="chevronRight" size={15} />
-            </a>
+            <div className={styles.fileInputBox}>
+              <label>Subir foto del comprobante (opcional):</label>
+              <input
+                type="file"
+                accept="image/*"
+                onChange={(e) => setComprobanteFile(e.target.files[0])}
+                style={{ marginTop: "6px", fontSize: "13px" }}
+              />
+            </div>
+
+            {error && <div style={{ color: "#ef4444", fontSize: "13px", marginTop: "10px" }}>⚠️ {error}</div>}
+
+            <button className="btn btn-primary btn-full" onClick={handleConfirmar} disabled={procesando} style={{ marginTop: "20px" }}>
+              {procesando ? "Procesando compra..." : "Confirmar y Pagar"} <Icon name="arrowRight" size={18} />
+            </button>
           </div>
 
           <div className={styles.resumen}>

@@ -1,42 +1,33 @@
-import { useState } from "react";
+import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import Navbar from "../components/Navbar.jsx";
 import Badge from "../components/Badge.jsx";
 import PremioImage from "../components/PremioImage.jsx";
 import Icon from "../icons/Icon.jsx";
-import { useApp } from "../context/AppContext.jsx";
-import { formatDate } from "../utils/format.js";
+import { buscarBoletosPorCedula } from "../services/api.js";
+import { formatDate, formatMoney } from "../utils/format.js";
 import styles from "./ConsultarBoletos.module.css";
 
-const TABS = [
-  { id: "correo", label: "Por correo" },
-  { id: "compra", label: "Por número de compra" },
-  { id: "cedula", label: "Por cédula" },
-];
-
 export default function ConsultarBoletos() {
-  const { orders } = useApp();
-  const [tab, setTab] = useState("correo");
-  const [valor, setValor] = useState("");
+  const [cedula, setCedula] = useState("");
+  const [compras, setCompras] = useState([]);
   const [buscado, setBuscado] = useState(false);
-  const [resultados, setResultados] = useState([]);
+  const [cargando, setCargando] = useState(false);
 
-  const placeholders = {
-    correo: "Ej. juanperez@gmail.com",
-    compra: "Ej. TCK-12345678",
-    cedula: "Ej. 1712345678",
-  };
-
-  const buscar = (e) => {
+  const handleBuscar = async (e) => {
     e.preventDefault();
-    const v = valor.trim().toLowerCase();
-    const encontrados = orders.filter((o) => {
-      if (tab === "correo") return o.comprador.correo.toLowerCase() === v;
-      if (tab === "compra") return o.numeroCompra.toLowerCase() === v;
-      return o.comprador.cedula.toLowerCase() === v;
-    });
-    setResultados(encontrados);
-    setBuscado(true);
+    if (!cedula.trim()) return;
+
+    try {
+      setCargando(true);
+      const data = await buscarBoletosPorCedula(cedula.trim());
+      setCompras(data);
+      setBuscado(true);
+      setCargando(false);
+    } catch (err) {
+      console.error("Error al buscar boletos:", err);
+      setCargando(false);
+    }
   };
 
   return (
@@ -46,80 +37,55 @@ export default function ConsultarBoletos() {
       <div className={`container ${styles.wrap}`}>
         <div className={styles.card}>
           <h1>Consultar mis boletos</h1>
-          <p className={styles.subtitle}>Ingresa uno de los siguientes datos para ver tus boletos</p>
+          <p className={styles.subtitle}>Ingresa tu número de cédula para consultar tus boletos asignados</p>
 
-          <div className={styles.tabs}>
-            {TABS.map((t) => (
-              <button
-                key={t.id}
-                type="button"
-                className={`${styles.tab} ${tab === t.id ? styles.tabActivo : ""}`}
-                onClick={() => {
-                  setTab(t.id);
-                  setBuscado(false);
-                  setValor("");
-                }}
-              >
-                {t.label}
-              </button>
-            ))}
-          </div>
-
-          <form onSubmit={buscar}>
-            <label className={styles.field}>
-              <span>{TABS.find((t) => t.id === tab)?.label}</span>
+          <form onSubmit={handleBuscar} className={styles.form}>
+            <div className={styles.inputWrap}>
+              <Icon name="search" size={18} className={styles.searchIcon} />
               <input
                 type="text"
-                placeholder={placeholders[tab]}
-                value={valor}
-                onChange={(e) => setValor(e.target.value)}
+                placeholder="Ej. 1712345678"
+                value={cedula}
+                onChange={(e) => setCedula(e.target.value)}
+                className={styles.input}
               />
-            </label>
-
-            <button type="submit" className={`btn btn-primary btn-block ${styles.buscarBtn}`}>
-              <Icon name="search" size={17} /> Buscar
+            </div>
+            <button type="submit" className="btn btn-primary" disabled={cargando}>
+              {cargando ? "Buscando..." : "Buscar boletos"}
             </button>
           </form>
 
           {buscado && (
             <div className={styles.resultados}>
-              <h4>Resultado de la búsqueda</h4>
-
-              {resultados.length === 0 ? (
-                <p className={styles.sinResultados}>
-                  No encontramos boletos con ese dato. Verifica la información e intenta nuevamente.
-                </p>
+              {compras.length === 0 ? (
+                <div className={styles.sinResultados}>
+                  <Icon name="search" size={40} />
+                  <h3>No encontramos boletos</h3>
+                  <p>No existen compras registradas asociadas al número de cédula <strong>{cedula}</strong>.</p>
+                </div>
               ) : (
-                <div className={styles.lista}>
-                  {resultados.map((o) => (
-                    <div key={o.numeroCompra} className={styles.resultado}>
-                      <div className={styles.resultadoTop}>
-                        <Badge estado={o.sorteo.estado} />
+                <div className={styles.listaCompras}>
+                  {compras.map((c) => (
+                    <div key={c.id} className={styles.compraCard} style={{ background: "#fff", padding: "16px", borderRadius: "12px", border: "1px solid #e0e0e0", marginBottom: "12px" }}>
+                      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "8px" }}>
+                        <span style={{ fontWeight: "700", color: "#6d3cf5" }}>{c.codigo}</span>
+                        <Badge variant={c.estado === "aprobado" ? "activo" : c.estado === "pendiente" ? "proximamente" : "agotado"}>
+                          {c.estado === "aprobado" ? "Aprobado / Boletos Activos" : c.estado === "pendiente" ? "Pendiente de Verificación" : "Rechazado"}
+                        </Badge>
                       </div>
-                      <div className={styles.resultadoBody}>
-                        <div className={styles.resultadoImg}>
-                          <PremioImage categoria={o.sorteo.categoria} iconSize={26} />
-                        </div>
-                        <div className={styles.resultadoInfo}>
-                          <strong>{o.sorteo.nombre}</strong>
-                          <span>Sorteo: {formatDate(o.sorteo.fechaSorteo)}</span>
-                        </div>
-                        <div className={styles.resultadoDatos}>
-                          <span>Paquete</span>
-                          <strong>{o.paquete.nombre} ({o.paquete.boletos})</strong>
-                        </div>
-                        <div className={styles.resultadoDatos}>
-                          <span>Estado</span>
-                          <strong className={styles.estadoActivo}>Activo</strong>
-                        </div>
-                        <div className={styles.resultadoDatos}>
-                          <span>Tus boletos</span>
-                          <strong className={styles.numeroBoleto}>{o.numeroBoleto}</strong>
+                      <h4 style={{ margin: "4px 0", fontSize: "16px" }}>{c.sorteoNombre}</h4>
+                      <p style={{ fontSize: "13px", color: "#666" }}>Total pagado: {formatMoney(c.totalPagado)} ({c.cantidadBoletos} boletos)</p>
+                      
+                      <div style={{ marginTop: "10px", background: "#f8f7fc", padding: "10px", borderRadius: "8px" }}>
+                        <span style={{ fontSize: "12px", fontWeight: "600", display: "block", marginBottom: "6px" }}>Números de Boletos Asignados:</span>
+                        <div style={{ display: "flex", flexWrap: "wrap", gap: "6px" }}>
+                          {(c.boletosAsignados || []).map((num, idx) => (
+                            <span key={idx} style={{ background: "#6d3cf5", color: "#fff", padding: "4px 10px", borderRadius: "6px", fontSize: "13px", fontWeight: "700" }}>
+                              #{num}
+                            </span>
+                          ))}
                         </div>
                       </div>
-                      <Link to={`/sorteos/${o.sorteo.id}`} className={styles.verDetalle}>
-                        Ver detalle del sorteo <Icon name="arrowRight" size={15} />
-                      </Link>
                     </div>
                   ))}
                 </div>

@@ -1,16 +1,10 @@
-import { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import AdminLayout from "../../components/admin/AdminLayout.jsx";
 import Icon from "../../icons/Icon.jsx";
+import { getAdminDashboard } from "../../services/api.js";
 import { formatMoney } from "../../utils/format.js";
 import styles from "./AdminDashboard.module.css";
-
-const kpis = [
-  { label: "Ventas Totales", value: "3,350", subtitle: "Boletos vendidos", trend: "+14.2%", isUp: true, icon: "ticket" },
-  { label: "Ingresos Totales", value: "$6,850.00", subtitle: "Recaudación neta", trend: "+18.4%", isUp: true, icon: "card" },
-  { label: "Sorteos Activos", value: "3 Sorteos", subtitle: "En curso ahora", trend: "3 Activos", isUp: true, icon: "award" },
-  { label: "Ventas Hoy", value: "142", subtitle: "Compras del día", trend: "+8.5%", isUp: true, icon: "chart" },
-];
 
 const ventasMensuales = [
   { mes: "Ene", ventas: 240, ingresos: 480 },
