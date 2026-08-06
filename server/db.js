@@ -2,11 +2,11 @@ import mysql from 'mysql2/promise';
 import dotenv from 'dotenv';
 dotenv.config();
 
-// MySQL Connection Configuration
+// MySQL Connection Configuration (Isolated Sorteos User)
 const dbConfig = {
   host: process.env.DB_HOST || 'localhost',
-  user: process.env.DB_USER || 'root',
-  password: process.env.DB_PASSWORD || '',
+  user: process.env.DB_USER || 'sorteos_user',
+  password: process.env.DB_PASSWORD || 'Sorteos2026',
   database: process.env.DB_NAME || 'sorteos_db',
   port: process.env.DB_PORT || 3306,
 };
@@ -15,18 +15,7 @@ let pool;
 
 export async function initDB() {
   try {
-    // 1. Connect without database to ensure database exists
-    const tempConn = await mysql.createConnection({
-      host: dbConfig.host,
-      user: dbConfig.user,
-      password: dbConfig.password,
-      port: dbConfig.port,
-    });
-
-    await tempConn.query(`CREATE DATABASE IF NOT EXISTS \`${dbConfig.database}\` CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;`);
-    await tempConn.end();
-
-    // 2. Connect pool to sorteos_db
+    // Connect pool to sorteos_db
     pool = mysql.createPool({
       ...dbConfig,
       waitForConnections: true,
@@ -34,7 +23,7 @@ export async function initDB() {
       queueLimit: 0,
     });
 
-    // 3. Create Tables for HeidiSQL / MySQL
+    // Create Tables for HeidiSQL / MySQL
     await pool.query(`
       CREATE TABLE IF NOT EXISTS categorias (
         id INT AUTO_INCREMENT PRIMARY KEY,
@@ -150,9 +139,9 @@ export async function initDB() {
       await generarBoletosMySQL(resS2.insertId, 500, 320);
     }
 
-    console.log('✅ Base de datos MySQL / MariaDB inicializada correctamente en "sorteos_db" para HeidiSQL');
+    console.log('✅ Base de datos MySQL inicializada correctamente con usuario sorteos_user en sorteos_db');
   } catch (err) {
-    console.error('⚠️ Error al conectar a MySQL / MariaDB:', err.message);
+    console.error('⚠️ Error al conectar a MySQL con sorteos_user:', err.message);
   }
 }
 
