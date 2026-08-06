@@ -1,56 +1,62 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import AdminLayout from "../../components/admin/AdminLayout.jsx";
+import { getSorteos, getBoletosAdmin } from "../../services/api.js";
 import styles from "./AdminSorteos.module.css";
 
-const boletosMock = [
-  { id: "#0421", sorteo: "PlayStation 5 Slim 1TB", cliente: "Carlos Mendoza", cedula: "1726384910", estado: "ganador" },
-  { id: "#1894", sorteo: "Toyota Fortuner 4x4", cliente: "María Fernanda Ríos", cedula: "0918273645", estado: "vendido" },
-  { id: "#0752", sorteo: "Yamaha MT-09", cliente: "Juan Pablo Torres", cedula: "0102938475", estado: "vendido" },
-  { id: "#0012", sorteo: "iPhone 15 Pro Max", cliente: "Lucía Gómez", cedula: "1720394857", estado: "vendido" },
-  { id: "#0013", sorteo: "iPhone 15 Pro Max", cliente: "Disponible", cedula: "-", estado: "disponible" },
-];
-
 export default function AdminBoletos() {
-  const [list, setList] = useState(boletosMock);
+  const [sorteos, setSorteos] = useState([]);
+  const [sorteoId, setSorteoId] = useState("");
+  const [boletos, setBoletos] = useState([]);
+  const [loading, setLoading] = useState(false);
   const [filter, setFilter] = useState("");
 
-  const handleGenerarBoletos = () => {
-    const nuevoCodigo = `#${Math.floor(1000 + Math.random() * 9000)}`;
-    const nuevoBoleto = {
-      id: nuevoCodigo,
-      sorteo: "Toyota Fortuner 4x4",
-      cliente: "Disponible (Generado)",
-      cedula: "-",
-      estado: "disponible",
-    };
-    setList([nuevoBoleto, ...list]);
-    alert(`¡Se ha generado con éxito el boleto ${nuevoCodigo}!`);
-  };
+  useEffect(() => {
+    getSorteos()
+      .then((data) => {
+        setSorteos(data);
+        if (data.length > 0) setSorteoId(String(data[0].id));
+      })
+      .catch((err) => console.error("Error cargando sorteos:", err));
+  }, []);
 
-  const filtered = list.filter(
+  useEffect(() => {
+    if (!sorteoId) return;
+    setLoading(true);
+    getBoletosAdmin(sorteoId)
+      .then(setBoletos)
+      .catch((err) => console.error("Error cargando boletos:", err))
+      .finally(() => setLoading(false));
+  }, [sorteoId]);
+
+  const filtered = boletos.filter(
     (b) =>
-      b.id.toLowerCase().includes(filter.toLowerCase()) ||
-      b.cliente.toLowerCase().includes(filter.toLowerCase()) ||
-      b.sorteo.toLowerCase().includes(filter.toLowerCase())
+      b.numero.toLowerCase().includes(filter.toLowerCase()) ||
+      (b.cliente_nombre || "").toLowerCase().includes(filter.toLowerCase())
   );
 
   return (
     <AdminLayout title="Gestión de Boletos">
       <div className={styles.topRow}>
         <div>
-          <h2>Monitoreo y Generación de Boletos</h2>
-          <p>Genera boletos aleatorios, consulta asignaciones, vendidos y disponibles</p>
+          <h2>Monitoreo de Boletos</h2>
+          <p>Consulta el estado y asignación de boletos por sorteo</p>
         </div>
-        <button type="button" className={styles.createBtn} onClick={handleGenerarBoletos}>
-          🎫 Generar Boleto Nuevo
-        </button>
+        <select
+          value={sorteoId}
+          onChange={(e) => setSorteoId(e.target.value)}
+          style={{ padding: "10px 14px", borderRadius: "10px", border: "1.5px solid #ecebf3" }}
+        >
+          {sorteos.map((s) => (
+            <option key={s.id} value={s.id}>{s.nombre}</option>
+          ))}
+        </select>
       </div>
 
       <div className={styles.tableCard}>
         <div style={{ padding: "16px 18px", borderBottom: "1px solid #ecebf3" }}>
           <input
             type="text"
-            placeholder="🔍 Buscar por # boleto, cliente o sorteo..."
+            placeholder="🔍 Buscar por # boleto o cliente..."
             value={filter}
             onChange={(e) => setFilter(e.target.value)}
             style={{ width: "100%", maxWidth: "400px", padding: "10px 14px", borderRadius: "10px", border: "1.5px solid #ecebf3" }}
@@ -61,21 +67,21 @@ export default function AdminBoletos() {
           <thead>
             <tr>
               <th># Número Boleto</th>
-              <th>Sorteo</th>
               <th>Cliente Asignado</th>
               <th>Cédula</th>
               <th>Estado</th>
             </tr>
           </thead>
           <tbody>
+            {loading && <tr><td colSpan={4}>Cargando boletos...</td></tr>}
+            {!loading && filtered.length === 0 && <tr><td colSpan={4}>No hay boletos para mostrar.</td></tr>}
             {filtered.map((b) => (
               <tr key={b.id}>
-                <td><strong style={{ color: "#6d3cf5" }}>{b.id}</strong></td>
-                <td>{b.sorteo}</td>
-                <td><strong>{b.cliente}</strong></td>
-                <td>{b.cedula}</td>
+                <td><strong style={{ color: "#6d3cf5" }}>#{b.numero}</strong></td>
+                <td><strong>{b.cliente_nombre || "Disponible"}</strong></td>
+                <td>{b.cliente_cedula || "-"}</td>
                 <td>
-                  <span className={`${styles.statusPill} ${b.estado === "ganador" ? styles.proximamente : b.estado === "vendido" ? styles.activo : styles.agotado}`}>
+                  <span className={`${styles.statusPill} ${b.estado === "vendido" ? styles.activo : b.estado === "reservado" ? styles.proximamente : styles.agotado}`}>
                     {b.estado.toUpperCase()}
                   </span>
                 </td>

@@ -1,8 +1,10 @@
-import React, { useState } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import Navbar from "../components/Navbar.jsx";
 import Icon from "../icons/Icon.jsx";
-import { realizarCheckout, subirComprobante } from "../services/api.js";
+import PremioImage from "../components/PremioImage.jsx";
+import { useApp } from "../context/AppContext.jsx";
+import { metodosPago } from "../data/sorteos.js";
 import { formatMoney } from "../utils/format.js";
 import styles from "./MetodoPago.module.css";
 
@@ -31,7 +33,9 @@ const brandChip = (icon) => {
 export default function MetodoPago() {
   const navigate = useNavigate();
   const { seleccion, comprador, metodoPago, setMetodoPago, confirmarCompra } = useApp();
+  const [comprobanteFile, setComprobanteFile] = useState(null);
   const [procesando, setProcesando] = useState(false);
+  const [error, setError] = useState("");
 
   useEffect(() => {
     if (!seleccion || !comprador) navigate("/sorteos", { replace: true });
@@ -41,12 +45,17 @@ export default function MetodoPago() {
 
   const { sorteo, paquete } = seleccion;
 
-  const pagar = () => {
+  const handleConfirmar = async () => {
+    setError("");
     setProcesando(true);
-    setTimeout(() => {
-      confirmarCompra();
+    try {
+      await confirmarCompra(comprobanteFile);
       navigate("/checkout/exito");
-    }, 900);
+    } catch (err) {
+      setError(err.message || "No se pudo procesar tu compra, intenta de nuevo");
+    } finally {
+      setProcesando(false);
+    }
   };
 
   return (
@@ -86,7 +95,7 @@ export default function MetodoPago() {
               <label>Subir foto del comprobante (opcional):</label>
               <input
                 type="file"
-                accept="image/*"
+                accept="image/*,application/pdf"
                 onChange={(e) => setComprobanteFile(e.target.files[0])}
                 style={{ marginTop: "6px", fontSize: "13px" }}
               />
@@ -137,7 +146,7 @@ export default function MetodoPago() {
             <button
               type="button"
               className={`btn btn-primary btn-block ${styles.pagarBtn}`}
-              onClick={pagar}
+              onClick={handleConfirmar}
               disabled={procesando}
             >
               {procesando ? "Procesando..." : (

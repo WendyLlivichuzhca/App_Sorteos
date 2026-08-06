@@ -1,6 +1,8 @@
 import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
 import { useEffect } from "react";
 import { AppProvider } from "./context/AppContext.jsx";
+import { AuthProvider } from "./context/AuthContext.jsx";
+import ProtectedRoute from "./components/ProtectedRoute.jsx";
 
 // Cliente Pages
 import Landing from "./pages/Landing.jsx";
@@ -15,6 +17,7 @@ import Resultados from "./pages/Resultados.jsx";
 import Ayuda from "./pages/Ayuda.jsx";
 
 // Admin Pages (Separated Folders)
+import AdminLogin from "./pages/admin/AdminLogin.jsx";
 import AdminDashboard from "./pages/admin/AdminDashboard.jsx";
 import AdminSorteos from "./pages/admin/AdminSorteos.jsx";
 import AdminCategorias from "./pages/admin/AdminCategorias.jsx";
@@ -38,35 +41,40 @@ function ScrollToTop() {
 export default function App() {
   return (
     <BrowserRouter>
-      <AppProvider>
-        <ScrollToTop />
-        <Routes>
-          {/* Rutas Cliente */}
-          <Route path="/" element={<Landing />} />
-          <Route path="/sorteos" element={<Sorteos />} />
-          <Route path="/sorteos/:id" element={<SorteoDetalle />} />
-          <Route path="/sorteos/:id/paquetes" element={<Paquetes />} />
-          <Route path="/checkout/datos" element={<DatosComprador />} />
-          <Route path="/checkout/pago" element={<MetodoPago />} />
-          <Route path="/checkout/exito" element={<CompraExitosa />} />
-          <Route path="/consultar-boletos" element={<ConsultarBoletos />} />
-          <Route path="/resultados" element={<Resultados />} />
-          <Route path="/ayuda" element={<Ayuda />} />
+      <AuthProvider>
+        <AppProvider>
+          <ScrollToTop />
+          <Routes>
+            {/* Rutas Cliente */}
+            <Route path="/" element={<Landing />} />
+            <Route path="/sorteos" element={<Sorteos />} />
+            <Route path="/sorteos/:id" element={<SorteoDetalle />} />
+            <Route path="/sorteos/:id/paquetes" element={<Paquetes />} />
+            <Route path="/checkout/datos" element={<DatosComprador />} />
+            <Route path="/checkout/pago" element={<MetodoPago />} />
+            <Route path="/checkout/exito" element={<CompraExitosa />} />
+            <Route path="/consultar-boletos" element={<ConsultarBoletos />} />
+            <Route path="/resultados" element={<Resultados />} />
+            <Route path="/ayuda" element={<Ayuda />} />
 
-          {/* Rutas Administrador */}
-          <Route path="/admin" element={<AdminDashboard />} />
-          <Route path="/admin/sorteos" element={<AdminSorteos />} />
-          <Route path="/admin/categorias" element={<AdminCategorias />} />
-          <Route path="/admin/paquetes" element={<AdminPaquetes />} />
-          <Route path="/admin/boletos" element={<AdminBoletos />} />
-          <Route path="/admin/compras" element={<AdminCompras />} />
-          <Route path="/admin/clientes" element={<AdminClientes />} />
-          <Route path="/admin/ganadores" element={<AdminGanadores />} />
-          <Route path="/admin/reportes" element={<AdminReportes />} />
-          <Route path="/admin/configuracion" element={<AdminConfiguracion />} />
-          <Route path="/admin/administradores" element={<AdminUsuarios />} />
-        </Routes>
-      </AppProvider>
+            {/* Login Administrador */}
+            <Route path="/admin/login" element={<AdminLogin />} />
+
+            {/* Rutas Administrador (protegidas) */}
+            <Route path="/admin" element={<ProtectedRoute><AdminDashboard /></ProtectedRoute>} />
+            <Route path="/admin/sorteos" element={<ProtectedRoute><AdminSorteos /></ProtectedRoute>} />
+            <Route path="/admin/categorias" element={<ProtectedRoute><AdminCategorias /></ProtectedRoute>} />
+            <Route path="/admin/paquetes" element={<ProtectedRoute><AdminPaquetes /></ProtectedRoute>} />
+            <Route path="/admin/boletos" element={<ProtectedRoute><AdminBoletos /></ProtectedRoute>} />
+            <Route path="/admin/compras" element={<ProtectedRoute><AdminCompras /></ProtectedRoute>} />
+            <Route path="/admin/clientes" element={<ProtectedRoute><AdminClientes /></ProtectedRoute>} />
+            <Route path="/admin/ganadores" element={<ProtectedRoute><AdminGanadores /></ProtectedRoute>} />
+            <Route path="/admin/reportes" element={<ProtectedRoute><AdminReportes /></ProtectedRoute>} />
+            <Route path="/admin/configuracion" element={<ProtectedRoute><AdminConfiguracion /></ProtectedRoute>} />
+            <Route path="/admin/administradores" element={<ProtectedRoute><AdminUsuarios /></ProtectedRoute>} />
+          </Routes>
+        </AppProvider>
+      </AuthProvider>
     </BrowserRouter>
   );
 }

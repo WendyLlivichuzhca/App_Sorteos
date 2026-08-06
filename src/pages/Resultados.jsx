@@ -1,11 +1,21 @@
-import { Link } from "react-router-dom";
+import { useEffect, useState } from "react";
 import Navbar from "../components/Navbar.jsx";
 import Icon from "../icons/Icon.jsx";
-import { ganadores } from "../data/sorteos.js";
+import { getGanadores } from "../services/api.js";
 import PremioImage from "../components/PremioImage.jsx";
 import styles from "./Resultados.module.css";
 
 export default function Resultados() {
+  const [ganadores, setGanadores] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    getGanadores()
+      .then((data) => setGanadores(data))
+      .catch((err) => console.error("Error cargando ganadores:", err))
+      .finally(() => setLoading(false));
+  }, []);
+
   return (
     <div className="page">
       <Navbar variant="full" />
@@ -18,55 +28,48 @@ export default function Resultados() {
           </p>
         </div>
 
-        <div className={styles.statsStrip}>
-          <div className={styles.stat}>
-            <strong>100%</strong>
-            <span>Verificados</span>
-          </div>
-          <div className={styles.stat}>
-            <strong>$45,000+</strong>
-            <span>En premios entregados</span>
-          </div>
-          <div className={styles.stat}>
-            <strong>1,200+</strong>
-            <span>Ganadores felices</span>
-          </div>
-        </div>
-
         <h2 className={styles.sectionTitle}>Últimos ganadores</h2>
+
+        {loading && <p>Cargando ganadores...</p>}
+
+        {!loading && ganadores.length === 0 && (
+          <p>Todavía no se ha sorteado ningún ganador. ¡Vuelve pronto!</p>
+        )}
 
         <div className={styles.grid}>
           {ganadores.map((g) => (
             <div key={g.id} className={styles.card}>
               <div className={styles.imgWrap}>
                 <PremioImage categoria={g.categoria} className={styles.img} />
-                <span className={styles.deliveredBadge}>
-                  <Icon name="check" size={14} strokeWidth={3} /> Premio entregado
-                </span>
+                {Boolean(g.premio_entregado) && (
+                  <span className={styles.deliveredBadge}>
+                    <Icon name="check" size={14} strokeWidth={3} /> Premio entregado
+                  </span>
+                )}
               </div>
 
               <div className={styles.body}>
-                <span className={styles.category}>{g.categoria.toUpperCase()}</span>
-                <h3>{g.sorteo}</h3>
+                {g.categoria && <span className={styles.category}>{g.categoria.toUpperCase()}</span>}
+                <h3>{g.sorteo_nombre}</h3>
 
                 <div className={styles.winnerInfo}>
                   <div className={styles.winnerAvatar}>
                     <Icon name="users" size={18} />
                   </div>
                   <div>
-                    <strong className={styles.winnerName}>{g.ganador}</strong>
-                    <span className={styles.winnnerCity}>{g.ciudad}</span>
+                    <strong className={styles.winnerName}>{g.cliente_nombre}</strong>
+                    {g.ciudad && <span className={styles.winnnerCity}>{g.ciudad}</span>}
                   </div>
                 </div>
 
                 <div className={styles.ticketBox}>
                   <span className={styles.ticketLabel}>Boleto ganador</span>
-                  <span className={styles.ticketBadge}>{g.boleto}</span>
+                  <span className={styles.ticketBadge}>#{g.boleto_numero}</span>
                 </div>
 
                 <div className={styles.dateRow}>
                   <Icon name="clock" size={14} />
-                  <span>Sorteado el {g.fecha}</span>
+                  <span>Sorteado el {new Date(g.fecha_sorteo).toLocaleDateString("es-ES", { day: "2-digit", month: "long", year: "numeric" })}</span>
                 </div>
               </div>
             </div>

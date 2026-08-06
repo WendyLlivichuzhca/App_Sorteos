@@ -1,8 +1,11 @@
+import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import Navbar from "../components/Navbar.jsx";
 import Icon from "../icons/Icon.jsx";
-import { categorias, sorteos } from "../data/sorteos.js";
+import { categorias } from "../data/sorteos.js";
+import { getSorteos } from "../services/api.js";
 import PremioImage from "../components/PremioImage.jsx";
+import { formatMoney } from "../utils/format.js";
 import styles from "./Landing.module.css";
 
 const features = [
@@ -13,7 +16,13 @@ const features = [
 
 export default function Landing() {
   const navigate = useNavigate();
-  const destacados = sorteos.slice(0, 3);
+  const [destacados, setDestacados] = useState([]);
+
+  useEffect(() => {
+    getSorteos("todos", "activo")
+      .then((data) => setDestacados(data.slice(0, 3)))
+      .catch((err) => console.error("Error cargando sorteos destacados:", err));
+  }, []);
 
   return (
     <div className="page">
@@ -102,6 +111,29 @@ export default function Landing() {
           ))}
         </div>
       </section>
+
+      {/* ── SORTEOS DESTACADOS ── */}
+      {destacados.length > 0 && (
+        <section className={`container ${styles.destacadosSection}`}>
+          <div className={styles.destacadosHeader}>
+            <h2>Sorteos destacados</h2>
+            <Link to="/sorteos" className={styles.verTodos}>Ver todos →</Link>
+          </div>
+          <div className={styles.destacadosGrid}>
+            {destacados.map((s) => (
+              <Link key={s.id} to={`/sorteos/${s.id}`} className={styles.destacadoCard}>
+                <div className={styles.destacadoImg}>
+                  <PremioImage categoria={s.categoria} />
+                </div>
+                <div className={styles.destacadoBody}>
+                  <h4>{s.nombre}</h4>
+                  <span>{formatMoney(s.precio)} por boleto</span>
+                </div>
+              </Link>
+            ))}
+          </div>
+        </section>
+      )}
     </div>
   );
 }

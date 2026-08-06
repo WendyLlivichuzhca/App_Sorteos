@@ -1,46 +1,47 @@
-import { createContext, useContext, useEffect, useState } from "react";
-import { generarNumeroBoleto, generarNumeroCompra } from "../utils/format.js";
+import { createContext, useContext, useState } from "react";
+import { realizarCheckout, subirComprobante } from "../services/api.js";
 
 const AppContext = createContext(null);
-
-const ORDERS_KEY = "tickets3d_orders";
-
-const loadOrders = () => {
-  try {
-    const raw = localStorage.getItem(ORDERS_KEY);
-    return raw ? JSON.parse(raw) : [];
-  } catch {
-    return [];
-  }
-};
 
 export function AppProvider({ children }) {
   const [seleccion, setSeleccion] = useState(null); // { sorteo, paquete }
   const [comprador, setComprador] = useState(null);
   const [metodoPago, setMetodoPago] = useState("tarjeta");
   const [ultimaCompra, setUltimaCompra] = useState(null);
-  const [orders, setOrders] = useState(loadOrders);
-
-  useEffect(() => {
-    localStorage.setItem(ORDERS_KEY, JSON.stringify(orders));
-  }, [orders]);
 
   const elegirPaquete = (sorteo, paquete) => setSeleccion({ sorteo, paquete });
 
-  const confirmarCompra = () => {
+  const confirmarCompra = async (comprobanteFile) => {
     if (!seleccion || !comprador) return null;
+
+    const data = await realizarCheckout({
+      sorteoId: seleccion.sorteo.id,
+      cantidad: seleccion.paquete.boletos,
+      comprador,
+      metodoPago,
+    });
+
+    if (comprobanteFile) {
+      try {
+        await subirComprobante(data.compraId, comprobanteFile);
+      } catch (err) {
+        console.error("Error al subir comprobante:", err);
+      }
+    }
+
     const compra = {
-      numeroCompra: generarNumeroCompra(),
-      numeroBoleto: generarNumeroBoleto(),
+      compraId: data.compraId,
+      codigo: data.codigo,
+      boletos: data.boletos,
+      sorteoNombre: data.sorteoNombre,
+      total: data.total,
       fecha: new Date().toISOString(),
       sorteo: seleccion.sorteo,
       paquete: seleccion.paquete,
       comprador,
       metodoPago,
-      total: seleccion.paquete.precio,
     };
     setUltimaCompra(compra);
-    setOrders((prev) => [compra, ...prev]);
     return compra;
   };
 
@@ -59,7 +60,6 @@ export function AppProvider({ children }) {
     setMetodoPago,
     ultimaCompra,
     confirmarCompra,
-    orders,
     reiniciarFlujo,
   };
 

@@ -23,10 +23,10 @@ export default function CompraExitosa() {
 
   const descargarComprobante = () => {
     const contenido = `SORTEOS EN LÍNEA - Comprobante de compra
-Número de compra: ${ultimaCompra.numeroCompra}
-Boleto: ${ultimaCompra.numeroBoleto}
-Sorteo: ${ultimaCompra.sorteo.nombre}
-Paquete: ${ultimaCompra.paquete.nombre} (${ultimaCompra.paquete.boletos} boletos)
+Código de orden: ${ultimaCompra.codigo}
+Boletos: ${ultimaCompra.boletos.join(", ")}
+Sorteo: ${ultimaCompra.sorteoNombre}
+Cantidad: ${ultimaCompra.paquete.boletos} boletos
 Total pagado: ${formatMoney(ultimaCompra.total)}
 Fecha: ${formatDate(ultimaCompra.fecha)}
 Método de pago: ${metodo?.nombre || ""}
@@ -36,13 +36,13 @@ Comprador: ${ultimaCompra.comprador.nombre}
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
-    a.download = `comprobante-${ultimaCompra.numeroCompra}.txt`;
+    a.download = `comprobante-${ultimaCompra.codigo}.txt`;
     a.click();
     URL.revokeObjectURL(url);
   };
 
   const compartir = async () => {
-    const texto = `¡Ya estoy participando en el sorteo de ${ultimaCompra.sorteo.nombre} en SORTEOS EN LÍNEA! Mi boleto: ${ultimaCompra.numeroBoleto}`;
+    const texto = `¡Ya estoy participando en el sorteo de ${ultimaCompra.sorteoNombre} en SORTEOS EN LÍNEA! Mis boletos: ${ultimaCompra.boletos.join(", ")}`;
     if (navigator.share) {
       try {
         await navigator.share({ text: texto, title: "SORTEOS EN LÍNEA" });
@@ -89,14 +89,18 @@ Comprador: ${ultimaCompra.comprador.nombre}
           <p className={styles.subtitle}>Gracias por tu compra, ya estás participando.</p>
 
           <div className={styles.boletosBox}>
-            <span>Tus boletos (número aleatorio)</span>
-            <strong>{ultimaCompra.numeroBoleto}</strong>
+            <span>Tus boletos (números aleatorios)</span>
+            <strong>{ultimaCompra.boletos.map((n) => `#${n}`).join(", ")}</strong>
           </div>
 
           <div className={styles.detalle}>
             <div className={styles.detalleRow}>
               <span>Sorteo</span>
-              <strong>{ultimaCompra.sorteo.nombre}</strong>
+              <strong>{ultimaCompra.sorteoNombre}</strong>
+            </div>
+            <div className={styles.detalleRow}>
+              <span>Código de orden</span>
+              <strong>{ultimaCompra.codigo}</strong>
             </div>
             <div className={styles.detalleRow}>
               <span>Paquete</span>

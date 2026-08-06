@@ -1,10 +1,17 @@
 const API_BASE_URL = import.meta.env.VITE_API_URL || '/api';
+const TOKEN_KEY = 'sorteos_admin_token';
+
+export const getToken = () => localStorage.getItem(TOKEN_KEY);
+export const setToken = (token) => localStorage.setItem(TOKEN_KEY, token);
+export const clearToken = () => localStorage.removeItem(TOKEN_KEY);
 
 export async function fetchApi(endpoint, options = {}) {
   try {
+    const token = getToken();
     const res = await fetch(`${API_BASE_URL}${endpoint}`, {
       headers: {
         'Content-Type': 'application/json',
+        ...(token ? { Authorization: `Bearer ${token}` } : {}),
         ...options.headers,
       },
       ...options,
@@ -73,3 +80,24 @@ export const updateEstadoCompra = (id, estado) =>
   });
 
 export const getAdminDashboard = () => fetchApi('/admin/dashboard');
+
+export const getBoletosAdmin = (sorteoId) => fetchApi(`/admin/sorteos/${sorteoId}/boletos`);
+
+// Auth API
+export const login = (usuario, password) =>
+  fetchApi('/auth/login', {
+    method: 'POST',
+    body: JSON.stringify({ usuario, password }),
+  });
+
+// Ganadores API
+export const getGanadores = () => fetchApi('/ganadores');
+
+export const sortearGanador = (sorteoId) =>
+  fetchApi(`/admin/sorteos/${sorteoId}/sortear`, { method: 'POST' });
+
+export const actualizarGanador = (id, data) =>
+  fetchApi(`/admin/ganadores/${id}`, {
+    method: 'PUT',
+    body: JSON.stringify(data),
+  });

@@ -3,8 +3,12 @@ import cors from 'cors';
 import multer from 'multer';
 import path from 'path';
 import fs from 'fs';
+import jwt from 'jsonwebtoken';
+import bcrypt from 'bcryptjs';
 import { fileURLToPath } from 'url';
 import { initDB, getPool, generarBoletosMySQL } from './db.js';
+import { requireAuth } from './middleware/auth.js';
+import { calcularTotal } from './pricing.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -16,7 +20,7 @@ const PORT = process.env.PORT || 5000;
 await initDB();
 
 // Middleware
-app.use(cors());
+app.use(cors({ origin: process.env.FRONTEND_URL || 'http://localhost:5173' }));
 app.use(express.json({ limit: '50mb' }));
 app.use(express.urlencoded({ extended: true, limit: '50mb' }));
 
@@ -35,7 +39,44 @@ const storage = multer.diskStorage({
     cb(null, `comp_${Date.now()}_${Math.round(Math.random() * 1e9)}${ext}`);
   },
 });
-const upload = multer({ storage });
+const upload = multer({
+  storage,
+  limits: { fileSize: 5 * 1024 * 1024 },
+  fileFilter: (req, file, cb) => {
+    const permitidos = ['image/jpeg', 'image/png', 'image/webp', 'image/gif', 'application/pdf'];
+    if (permitidos.includes(file.mimetype)) cb(null, true);
+    else cb(new Error('Tipo de archivo no permitido. Solo se aceptan imágenes o PDF.'));
+  },
+});
+
+// ==========================================
+// 0. AUTH
+// ==========================================
+app.post('/api/auth/login', async (req, res) => {
+  try {
+    const pool = getPool();
+    const { usuario, password } = req.body;
+    if (!usuario || !password) {
+      return res.status(400).json({ error: 'Usuario y contraseña son obligatorios' });
+    }
+
+    const [admins] = await pool.query('SELECT * FROM admins WHERE usuario = ?', [usuario]);
+    if (admins.length === 0) {
+      return res.status(401).json({ error: 'Usuario o contraseña incorrectos' });
+    }
+
+    const admin = admins[0];
+    const valido = await bcrypt.compare(password, admin.password_hash);
+    if (!valido) {
+      return res.status(401).json({ error: 'Usuario o contraseña incorrectos' });
+    }
+
+    const token = jwt.sign({ id: admin.id, usuario: admin.usuario }, process.env.JWT_SECRET, { expiresIn: '8h' });
+    res.json({ token, admin: { id: admin.id, usuario: admin.usuario } });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
 
 // ==========================================
 // 1. SORTEOS ENDPOINTS (MySQL)
@@ -90,7 +131,7 @@ app.get('/api/sorteos/:id', async (req, res) => {
   }
 });
 
-app.post('/api/sorteos', async (req, res) => {
+app.post('/api/sorteos', requireAuth, async (req, res) => {
   try {
     const pool = getPool();
     const { nombre, categoria, precio, total, estado, fechaSorteo, galeria } = req.body;
@@ -118,7 +159,7 @@ app.post('/api/sorteos', async (req, res) => {
   }
 });
 
-app.put('/api/sorteos/:id', async (req, res) => {
+app.put('/api/sorteos/:id', requireAuth, async (req, res) => {
   try {
     const pool = getPool();
     const { nombre, categoria, precio, total, estado, fechaSorteo, galeria } = req.body;
@@ -145,7 +186,7 @@ app.put('/api/sorteos/:id', async (req, res) => {
   }
 });
 
-app.delete('/api/sorteos/:id', async (req, res) => {
+app.delete('/api/sorteos/:id', requireAuth, async (req, res) => {
   try {
     const pool = getPool();
     await pool.query('DELETE FROM sorteos WHERE id = ?', [req.params.id]);
@@ -159,25 +200,31 @@ app.delete('/api/sorteos/:id', async (req, res) => {
 // 2. CHECKOUT & TICKET ENGINE (MySQL)
 // ==========================================
 app.post('/api/compras/checkout', async (req, res) => {
+  const pool = getPool();
+  const { sorteoId, cantidad, comprador, metodoPago } = req.body;
+  const sId = parseInt(sorteoId);
+  const cant = parseInt(cantidad);
+
+  if (!sId || !cant || cant < 1 || !comprador || !comprador.cedula) {
+    return res.status(400).json({ error: 'Faltan datos obligatorios para la compra' });
+  }
+
+  const conn = await pool.getConnection();
   try {
-    const pool = getPool();
-    const { sorteoId, cantidad, comprador, metodoPago } = req.body;
-    const sId = parseInt(sorteoId);
-    const cant = parseInt(cantidad);
+    await conn.beginTransaction();
 
-    if (!sId || !cant || !comprador || !comprador.cedula) {
-      return res.status(400).json({ error: 'Faltan datos obligatorios para la compra' });
+    const [sorteos] = await conn.query('SELECT * FROM sorteos WHERE id = ?', [sId]);
+    if (sorteos.length === 0) {
+      await conn.rollback();
+      return res.status(404).json({ error: 'Sorteo no encontrado' });
     }
-
-    const [sorteos] = await pool.query('SELECT * FROM sorteos WHERE id = ?', [sId]);
-    if (sorteos.length === 0) return res.status(404).json({ error: 'Sorteo no encontrado' });
     const sorteo = sorteos[0];
 
     // 1. Get or create Customer
-    let [clientes] = await pool.query('SELECT * FROM clientes WHERE cedula = ?', [comprador.cedula]);
+    let [clientes] = await conn.query('SELECT * FROM clientes WHERE cedula = ?', [comprador.cedula]);
     let clienteId;
     if (clientes.length === 0) {
-      const [insC] = await pool.query(
+      const [insC] = await conn.query(
         'INSERT INTO clientes (nombre, cedula, correo, celular) VALUES (?, ?, ?, ?)',
         [comprador.nombre, comprador.cedula, comprador.correo, comprador.celular]
       );
@@ -186,24 +233,25 @@ app.post('/api/compras/checkout', async (req, res) => {
       clienteId = clientes[0].id;
     }
 
-    // 2. Random Ticket Allocation (Pick random available tickets in MySQL)
-    const [disponibles] = await pool.query(
-      "SELECT id, numero FROM boletos WHERE sorteo_id = ? AND estado = 'disponible' ORDER BY RAND() LIMIT ?",
+    // 2. Lock and pick random available tickets inside the transaction
+    const [disponibles] = await conn.query(
+      "SELECT id, numero FROM boletos WHERE sorteo_id = ? AND estado = 'disponible' ORDER BY RAND() LIMIT ? FOR UPDATE",
       [sId, cant]
     );
 
     if (disponibles.length < cant) {
-      return res.status(400).json({ error: 'No hay suficientes boletos disponibles para este sorteo' });
+      await conn.rollback();
+      return res.status(409).json({ error: 'No hay suficientes boletos disponibles para este sorteo' });
     }
 
     const numerosAsignados = disponibles.map((b) => b.numero);
     const boletosIds = disponibles.map((b) => b.id);
-    const totalPagado = parseFloat(sorteo.precio) * cant;
+    const totalPagado = calcularTotal(parseFloat(sorteo.precio), cant);
     const codigoOrden = `ORD-${Math.floor(100000 + Math.random() * 900000)}`;
 
     // 3. Create purchase record
-    const [insCompra] = await pool.query(
-      `INSERT INTO compras 
+    const [insCompra] = await conn.query(
+      `INSERT INTO compras
        (codigo, sorteo_id, sorteo_nombre, cliente_id, cliente_nombre, cliente_cedula, cliente_correo, cliente_celular, cantidad_boletos, total_pagado, metodo_pago, estado, boletos_asignados)
        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'pendiente', ?)`,
       [
@@ -224,11 +272,18 @@ app.post('/api/compras/checkout', async (req, res) => {
 
     const compraId = insCompra.insertId;
 
-    // Update tickets status to reserved
-    await pool.query(
-      "UPDATE boletos SET estado = 'reservado', compra_id = ?, cliente_id = ? WHERE id IN (?)",
+    // 4. Claim the tickets atomically — re-checks estado='disponible' to guard against races
+    const [updateResult] = await conn.query(
+      "UPDATE boletos SET estado = 'reservado', compra_id = ?, cliente_id = ? WHERE id IN (?) AND estado = 'disponible'",
       [compraId, clienteId, boletosIds]
     );
+
+    if (updateResult.affectedRows !== cant) {
+      await conn.rollback();
+      return res.status(409).json({ error: 'Algunos boletos ya no están disponibles, intenta de nuevo' });
+    }
+
+    await conn.commit();
 
     res.json({
       success: true,
@@ -239,7 +294,10 @@ app.post('/api/compras/checkout', async (req, res) => {
       sorteoNombre: sorteo.nombre,
     });
   } catch (err) {
+    await conn.rollback();
     res.status(500).json({ error: err.message });
+  } finally {
+    conn.release();
   }
 });
 
@@ -282,7 +340,7 @@ app.get('/api/compras/buscar', async (req, res) => {
 // ==========================================
 // 3. ADMIN PANEL ENDPOINTS (MySQL)
 // ==========================================
-app.get('/api/admin/compras', async (req, res) => {
+app.get('/api/admin/compras', requireAuth, async (req, res) => {
   try {
     const pool = getPool();
     const [compras] = await pool.query('SELECT * FROM compras ORDER BY id DESC');
@@ -303,7 +361,7 @@ app.get('/api/admin/compras', async (req, res) => {
   }
 });
 
-app.put('/api/admin/compras/:id/estado', async (req, res) => {
+app.put('/api/admin/compras/:id/estado', requireAuth, async (req, res) => {
   try {
     const pool = getPool();
     const { estado } = req.body;
@@ -326,7 +384,7 @@ app.put('/api/admin/compras/:id/estado', async (req, res) => {
   }
 });
 
-app.get('/api/admin/dashboard', async (req, res) => {
+app.get('/api/admin/dashboard', requireAuth, async (req, res) => {
   try {
     const pool = getPool();
     const [ventas] = await pool.query("SELECT COALESCE(SUM(total_pagado), 0) as total FROM compras WHERE estado = 'aprobado'");
@@ -350,6 +408,118 @@ app.get('/api/admin/dashboard', async (req, res) => {
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
+});
+
+// Boletos of a given sorteo, for the admin ticket viewer
+app.get('/api/admin/sorteos/:id/boletos', requireAuth, async (req, res) => {
+  try {
+    const pool = getPool();
+    const [boletos] = await pool.query(
+      `SELECT b.id, b.numero, b.estado, c.nombre AS cliente_nombre, c.cedula AS cliente_cedula
+       FROM boletos b
+       LEFT JOIN clientes c ON c.id = b.cliente_id
+       WHERE b.sorteo_id = ?
+       ORDER BY b.numero ASC`,
+      [req.params.id]
+    );
+    res.json(boletos);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// ==========================================
+// 4. GANADORES / SORTEO DE PREMIO (MySQL)
+// ==========================================
+app.get('/api/ganadores', async (req, res) => {
+  try {
+    const pool = getPool();
+    const [rows] = await pool.query(
+      `SELECT g.*, s.categoria
+       FROM ganadores g
+       LEFT JOIN sorteos s ON s.id = g.sorteo_id
+       ORDER BY g.fecha_sorteo DESC`
+    );
+    res.json(rows);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+app.post('/api/admin/sorteos/:id/sortear', requireAuth, async (req, res) => {
+  try {
+    const pool = getPool();
+    const sId = req.params.id;
+
+    const [sorteos] = await pool.query('SELECT * FROM sorteos WHERE id = ?', [sId]);
+    if (sorteos.length === 0) return res.status(404).json({ error: 'Sorteo no encontrado' });
+    const sorteo = sorteos[0];
+
+    const [candidatos] = await pool.query(
+      `SELECT b.numero, b.cliente_id, c.nombre AS cliente_nombre
+       FROM boletos b
+       LEFT JOIN clientes c ON c.id = b.cliente_id
+       WHERE b.sorteo_id = ? AND b.estado = 'vendido'
+       ORDER BY RAND() LIMIT 1`,
+      [sId]
+    );
+
+    if (candidatos.length === 0) {
+      return res.status(400).json({ error: 'No hay boletos vendidos para sortear en este sorteo' });
+    }
+
+    const ganador = candidatos[0];
+    const [insG] = await pool.query(
+      `INSERT INTO ganadores (sorteo_id, sorteo_nombre, boleto_numero, cliente_id, cliente_nombre)
+       VALUES (?, ?, ?, ?, ?)`,
+      [sId, sorteo.nombre, ganador.numero, ganador.cliente_id, ganador.cliente_nombre || 'Cliente']
+    );
+
+    await pool.query("UPDATE sorteos SET estado = 'finalizado' WHERE id = ?", [sId]);
+
+    res.status(201).json({
+      id: insG.insertId,
+      sorteoId: sId,
+      sorteoNombre: sorteo.nombre,
+      boletoNumero: ganador.numero,
+      clienteNombre: ganador.cliente_nombre || 'Cliente',
+    });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+app.put('/api/admin/ganadores/:id', requireAuth, async (req, res) => {
+  try {
+    const pool = getPool();
+    const { ciudad, premioEntregado } = req.body;
+
+    const campos = [];
+    const valores = [];
+    if (ciudad !== undefined) {
+      campos.push('ciudad = ?');
+      valores.push(ciudad);
+    }
+    if (premioEntregado !== undefined) {
+      campos.push('premio_entregado = ?');
+      valores.push(premioEntregado ? 1 : 0);
+    }
+    if (campos.length === 0) return res.status(400).json({ error: 'Nada que actualizar' });
+
+    valores.push(req.params.id);
+    await pool.query(`UPDATE ganadores SET ${campos.join(', ')} WHERE id = ?`, valores);
+    res.json({ message: 'Ganador actualizado' });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// Multer error handler (file type/size rejected)
+app.use((err, req, res, next) => {
+  if (err instanceof multer.MulterError || err.message?.includes('no permitido')) {
+    return res.status(400).json({ error: err.message });
+  }
+  next(err);
 });
 
 // Start Server

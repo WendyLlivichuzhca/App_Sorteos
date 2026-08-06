@@ -18,11 +18,24 @@ export default function AdminSorteos() {
     estado: "activo",
     fechaSorteo: "2026-08-30",
     galeria: [],
+    imagenUrl: "",
   });
+
+  const cargarSorteos = () => {
+    setLoading(true);
+    getSorteos()
+      .then((data) => setList(data))
+      .catch((err) => console.error("Error cargando sorteos:", err))
+      .finally(() => setLoading(false));
+  };
+
+  useEffect(() => {
+    cargarSorteos();
+  }, []);
 
   const handleOpenCreate = () => {
     setEditingItem(null);
-    setFormData({ nombre: "", categoria: "autos", precio: 2.0, total: 1000, estado: "activo", fechaSorteo: "2026-08-30", galeria: [] });
+    setFormData({ nombre: "", categoria: "autos", precio: 2.0, total: 1000, estado: "activo", fechaSorteo: "2026-08-30", galeria: [], imagenUrl: "" });
     setShowModal(true);
   };
 
@@ -36,34 +49,33 @@ export default function AdminSorteos() {
       estado: item.estado,
       fechaSorteo: item.fechaSorteo || "2026-08-30",
       galeria: item.galeria || [],
+      imagenUrl: "",
     });
     setShowModal(true);
   };
 
-  const handleSave = (e) => {
+  const handleSave = async (e) => {
     e.preventDefault();
-    if (editingItem) {
-      setList((prev) =>
-        prev.map((s) => (s.id === editingItem.id ? { ...s, ...formData } : s))
-      );
-    } else {
-      const newItem = {
-        id: `sorteo-${Date.now()}`,
-        ...formData,
-        vendidos: 0,
-        disponibles: formData.total,
-        rating: 5,
-        reviews: 0,
-        paquetes: [],
-      };
-      setList((prev) => [newItem, ...prev]);
+    try {
+      if (editingItem) {
+        await updateSorteo(editingItem.id, formData);
+      } else {
+        await createSorteo(formData);
+      }
+      setShowModal(false);
+      cargarSorteos();
+    } catch (err) {
+      alert(err.message || "No se pudo guardar el sorteo");
     }
-    setShowModal(false);
   };
 
-  const handleDelete = (id) => {
-    if (window.confirm("¿Seguro que deseas eliminar este sorteo?")) {
-      setList((prev) => prev.filter((s) => s.id !== id));
+  const handleDelete = async (id) => {
+    if (!window.confirm("¿Seguro que deseas eliminar este sorteo?")) return;
+    try {
+      await deleteSorteo(id);
+      cargarSorteos();
+    } catch (err) {
+      alert(err.message || "No se pudo eliminar el sorteo");
     }
   };
 
@@ -92,6 +104,12 @@ export default function AdminSorteos() {
             </tr>
           </thead>
           <tbody>
+            {loading && (
+              <tr><td colSpan={6}>Cargando sorteos...</td></tr>
+            )}
+            {!loading && list.length === 0 && (
+              <tr><td colSpan={6}>No hay sorteos creados todavía.</td></tr>
+            )}
             {list.map((s) => (
               <tr key={s.id}>
                 <td>

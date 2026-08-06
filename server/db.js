@@ -1,5 +1,6 @@
 import mysql from 'mysql2/promise';
 import dotenv from 'dotenv';
+import bcrypt from 'bcryptjs';
 dotenv.config();
 
 // MySQL Connection Configuration (Isolated Sorteos User)
@@ -97,6 +98,31 @@ export async function initDB() {
     `);
 
     await pool.query(`
+      CREATE TABLE IF NOT EXISTS admins (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        usuario VARCHAR(100) UNIQUE NOT NULL,
+        password_hash VARCHAR(255) NOT NULL,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+    `);
+
+    await pool.query(`
+      CREATE TABLE IF NOT EXISTS ganadores (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        sorteo_id INT NOT NULL,
+        sorteo_nombre VARCHAR(255) NOT NULL,
+        boleto_numero VARCHAR(50) NOT NULL,
+        cliente_id INT NULL,
+        cliente_nombre VARCHAR(255) NOT NULL,
+        ciudad VARCHAR(255) NULL,
+        premio_entregado TINYINT(1) DEFAULT 0,
+        fecha_sorteo TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        FOREIGN KEY (sorteo_id) REFERENCES sorteos(id) ON DELETE CASCADE,
+        FOREIGN KEY (cliente_id) REFERENCES clientes(id) ON DELETE SET NULL
+      ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+    `);
+
+    await pool.query(`
       CREATE TABLE IF NOT EXISTS boletos (
         id INT AUTO_INCREMENT PRIMARY KEY,
         sorteo_id INT NOT NULL,
@@ -137,6 +163,19 @@ export async function initDB() {
 
       await generarBoletosMySQL(resS1.insertId, 1000, 480);
       await generarBoletosMySQL(resS2.insertId, 500, 320);
+    }
+
+    const [adminsCount] = await pool.query('SELECT COUNT(*) as count FROM admins');
+    if (adminsCount[0].count === 0) {
+      const usuario = process.env.ADMIN_USER || 'admin';
+      const password = process.env.ADMIN_PASSWORD || 'admin123';
+      const hash = await bcrypt.hash(password, 10);
+      await pool.query('INSERT INTO admins (usuario, password_hash) VALUES (?, ?)', [usuario, hash]);
+      if (!process.env.ADMIN_USER || !process.env.ADMIN_PASSWORD) {
+        console.warn('⚠️ ADMIN_USER/ADMIN_PASSWORD no definidos en .env — se creó el admin con credenciales por defecto (admin/admin123). Cámbialas.');
+      } else {
+        console.log(`✅ Administrador "${usuario}" creado a partir de .env`);
+      }
     }
 
     console.log('✅ Base de datos MySQL inicializada correctamente con usuario sorteos_user en sorteos_db');

@@ -35,6 +35,7 @@ const paths = {
   chart: "M3 3v18h18M18 17V9M13 17V5M8 17v-3",
   plus: "M12 5v14M5 12h14",
   externalLink: "M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6M15 3h6v6M10 14L21 3",
+  logOut: "M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9",
 };
 
 export default function Icon({ name, size = 20, strokeWidth = 1.8, className = "" }) {
