@@ -4,7 +4,7 @@ import multer from 'multer';
 import path from 'path';
 import fs from 'fs';
 import { fileURLToPath } from 'url';
-import { initDB, getDB, generarBoletos } from './db.js';
+import { initDB, getPool, generarBoletosMySQL } from './db.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -12,7 +12,7 @@ const __dirname = path.dirname(__filename);
 const app = express();
 const PORT = process.env.PORT || 5000;
 
-// Initialize DB before routing
+// Initialize MySQL / MariaDB Database
 await initDB();
 
 // Middleware
@@ -38,22 +38,33 @@ const storage = multer.diskStorage({
 const upload = multer({ storage });
 
 // ==========================================
-// 1. SORTEOS ENDPOINTS
+// 1. SORTEOS ENDPOINTS (MySQL)
 // ==========================================
 app.get('/api/sorteos', async (req, res) => {
   try {
-    const db = getDB();
+    const pool = getPool();
     const { categoria, estado } = req.query;
-    let list = [...db.data.sorteos];
+    let query = 'SELECT * FROM sorteos WHERE 1=1';
+    const params = [];
 
     if (categoria && categoria !== 'todos') {
-      list = list.filter((s) => s.categoria === categoria);
+      query += ' AND categoria = ?';
+      params.push(categoria);
     }
     if (estado && estado !== 'todos') {
-      list = list.filter((s) => s.estado === estado);
+      query += ' AND estado = ?';
+      params.push(estado);
     }
+    query += ' ORDER BY id DESC';
 
-    res.json(list.reverse());
+    const [rows] = await pool.query(query, params);
+    const parsed = rows.map((r) => ({
+      ...r,
+      fechaSorteo: r.fecha_sorteo,
+      galeria: typeof r.galeria === 'string' ? JSON.parse(r.galeria || '[]') : r.galeria || [],
+    }));
+
+    res.json(parsed);
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
@@ -61,16 +72,18 @@ app.get('/api/sorteos', async (req, res) => {
 
 app.get('/api/sorteos/:id', async (req, res) => {
   try {
-    const db = getDB();
-    const sorteoId = parseInt(req.params.id);
-    const sorteo = db.data.sorteos.find((s) => s.id === sorteoId);
-    if (!sorteo) return res.status(404).json({ error: 'Sorteo no encontrado' });
+    const pool = getPool();
+    const [rows] = await pool.query('SELECT * FROM sorteos WHERE id = ?', [req.params.id]);
+    if (rows.length === 0) return res.status(404).json({ error: 'Sorteo no encontrado' });
 
-    const disponibles = db.data.boletos.filter((b) => b.sorteoId === sorteoId && b.estado === 'disponible').length;
+    const row = rows[0];
+    const [disp] = await pool.query("SELECT COUNT(*) as count FROM boletos WHERE sorteo_id = ? AND estado = 'disponible'", [req.params.id]);
 
     res.json({
-      ...sorteo,
-      disponibles,
+      ...row,
+      fechaSorteo: row.fecha_sorteo,
+      galeria: typeof row.galeria === 'string' ? JSON.parse(row.galeria || '[]') : row.galeria || [],
+      disponibles: disp[0].count,
     });
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -79,27 +92,27 @@ app.get('/api/sorteos/:id', async (req, res) => {
 
 app.post('/api/sorteos', async (req, res) => {
   try {
-    const db = getDB();
+    const pool = getPool();
     const { nombre, categoria, precio, total, estado, fechaSorteo, galeria } = req.body;
-    const newId = Date.now();
 
-    const newSorteo = {
-      id: newId,
-      nombre,
-      categoria: categoria || 'autos',
-      precio: parseFloat(precio),
-      total: parseInt(total),
-      vendidos: 0,
-      estado: estado || 'activo',
-      fechaSorteo: fechaSorteo || '2026-08-30',
-      galeria: galeria || [],
-    };
+    const [result] = await pool.query(
+      `INSERT INTO sorteos (nombre, categoria, precio, total, vendidos, estado, fecha_sorteo, galeria)
+       VALUES (?, ?, ?, ?, 0, ?, ?, ?)`,
+      [
+        nombre,
+        categoria || 'autos',
+        parseFloat(precio),
+        parseInt(total),
+        estado || 'activo',
+        fechaSorteo || '2026-08-30',
+        JSON.stringify(galeria || []),
+      ]
+    );
 
-    db.data.sorteos.push(newSorteo);
-    generarBoletos(newId, parseInt(total), 0);
-    await db.write();
+    const newId = result.insertId;
+    await generarBoletosMySQL(newId, parseInt(total), 0);
 
-    res.status(201).json({ id: newId, message: 'Sorteo creado exitosamente' });
+    res.status(201).json({ id: newId, message: 'Sorteo creado exitosamente en MySQL' });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
@@ -107,25 +120,26 @@ app.post('/api/sorteos', async (req, res) => {
 
 app.put('/api/sorteos/:id', async (req, res) => {
   try {
-    const db = getDB();
-    const sorteoId = parseInt(req.params.id);
-    const index = db.data.sorteos.findIndex((s) => s.id === sorteoId);
-    if (index === -1) return res.status(404).json({ error: 'Sorteo no encontrado' });
-
+    const pool = getPool();
     const { nombre, categoria, precio, total, estado, fechaSorteo, galeria } = req.body;
-    db.data.sorteos[index] = {
-      ...db.data.sorteos[index],
-      nombre: nombre ?? db.data.sorteos[index].nombre,
-      categoria: categoria ?? db.data.sorteos[index].categoria,
-      precio: precio ? parseFloat(precio) : db.data.sorteos[index].precio,
-      total: total ? parseInt(total) : db.data.sorteos[index].total,
-      estado: estado ?? db.data.sorteos[index].estado,
-      fechaSorteo: fechaSorteo ?? db.data.sorteos[index].fechaSorteo,
-      galeria: galeria ?? db.data.sorteos[index].galeria,
-    };
 
-    await db.write();
-    res.json({ message: 'Sorteo actualizado' });
+    await pool.query(
+      `UPDATE sorteos
+       SET nombre = ?, categoria = ?, precio = ?, total = ?, estado = ?, fecha_sorteo = ?, galeria = ?
+       WHERE id = ?`,
+      [
+        nombre,
+        categoria,
+        parseFloat(precio),
+        parseInt(total),
+        estado,
+        fechaSorteo,
+        JSON.stringify(galeria || []),
+        req.params.id,
+      ]
+    );
+
+    res.json({ message: 'Sorteo actualizado en MySQL' });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
@@ -133,23 +147,20 @@ app.put('/api/sorteos/:id', async (req, res) => {
 
 app.delete('/api/sorteos/:id', async (req, res) => {
   try {
-    const db = getDB();
-    const sorteoId = parseInt(req.params.id);
-    db.data.sorteos = db.data.sorteos.filter((s) => s.id !== sorteoId);
-    db.data.boletos = db.data.boletos.filter((b) => b.sorteoId !== sorteoId);
-    await db.write();
-    res.json({ message: 'Sorteo eliminado' });
+    const pool = getPool();
+    await pool.query('DELETE FROM sorteos WHERE id = ?', [req.params.id]);
+    res.json({ message: 'Sorteo eliminado de MySQL' });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
 });
 
 // ==========================================
-// 2. CHECKOUT & TICKET ENGINE (COMPRAS)
+// 2. CHECKOUT & TICKET ENGINE (MySQL)
 // ==========================================
 app.post('/api/compras/checkout', async (req, res) => {
   try {
-    const db = getDB();
+    const pool = getPool();
     const { sorteoId, cantidad, comprador, metodoPago } = req.body;
     const sId = parseInt(sorteoId);
     const cant = parseInt(cantidad);
@@ -158,68 +169,66 @@ app.post('/api/compras/checkout', async (req, res) => {
       return res.status(400).json({ error: 'Faltan datos obligatorios para la compra' });
     }
 
-    const sorteo = db.data.sorteos.find((s) => s.id === sId);
-    if (!sorteo) return res.status(404).json({ error: 'Sorteo no encontrado' });
+    const [sorteos] = await pool.query('SELECT * FROM sorteos WHERE id = ?', [sId]);
+    if (sorteos.length === 0) return res.status(404).json({ error: 'Sorteo no encontrado' });
+    const sorteo = sorteos[0];
 
-    // 1. Get or create customer by Cédula
-    let cliente = db.data.clientes.find((c) => c.cedula === comprador.cedula);
-    if (!cliente) {
-      cliente = {
-        id: Date.now(),
-        nombre: comprador.nombre,
-        cedula: comprador.cedula,
-        correo: comprador.correo,
-        celular: comprador.celular,
-        fecha: new Date().toISOString(),
-      };
-      db.data.clientes.push(cliente);
+    // 1. Get or create Customer
+    let [clientes] = await pool.query('SELECT * FROM clientes WHERE cedula = ?', [comprador.cedula]);
+    let clienteId;
+    if (clientes.length === 0) {
+      const [insC] = await pool.query(
+        'INSERT INTO clientes (nombre, cedula, correo, celular) VALUES (?, ?, ?, ?)',
+        [comprador.nombre, comprador.cedula, comprador.correo, comprador.celular]
+      );
+      clienteId = insC.insertId;
+    } else {
+      clienteId = clientes[0].id;
     }
 
-    // 2. Random Ticket Allocation Engine (Pick random available tickets)
-    const disponibles = db.data.boletos.filter((b) => b.sorteoId === sId && b.estado === 'disponible');
+    // 2. Random Ticket Allocation (Pick random available tickets in MySQL)
+    const [disponibles] = await pool.query(
+      "SELECT id, numero FROM boletos WHERE sorteo_id = ? AND estado = 'disponible' ORDER BY RAND() LIMIT ?",
+      [sId, cant]
+    );
 
     if (disponibles.length < cant) {
       return res.status(400).json({ error: 'No hay suficientes boletos disponibles para este sorteo' });
     }
 
-    // Shuffle disponibles array to assign truly random tickets
-    const shuffled = [...disponibles].sort(() => 0.5 - Math.random());
-    const seleccionados = shuffled.slice(0, cant);
-    const numerosAsignados = seleccionados.map((b) => b.numero);
+    const numerosAsignados = disponibles.map((b) => b.numero);
+    const boletosIds = disponibles.map((b) => b.id);
     const totalPagado = parseFloat(sorteo.precio) * cant;
     const codigoOrden = `ORD-${Math.floor(100000 + Math.random() * 900000)}`;
-    const compraId = Date.now();
 
-    // 3. Create purchase order & mark tickets as reserved
-    const nuevaCompra = {
-      id: compraId,
-      codigo: codigoOrden,
-      sorteoId: sId,
-      sorteoNombre: sorteo.nombre,
-      clienteId: cliente.id,
-      clienteNombre: comprador.nombre,
-      clienteCedula: comprador.cedula,
-      clienteCorreo: comprador.correo,
-      clienteCelular: comprador.celular,
-      cantidadBoletos: cant,
-      totalPagado,
-      metodoPago: metodoPago || 'transferencia',
-      estado: 'pendiente',
-      boletosAsignados: numerosAsignados,
-      comprobanteUrl: null,
-      fechaCompra: new Date().toISOString(),
-    };
+    // 3. Create purchase record
+    const [insCompra] = await pool.query(
+      `INSERT INTO compras 
+       (codigo, sorteo_id, sorteo_nombre, cliente_id, cliente_nombre, cliente_cedula, cliente_correo, cliente_celular, cantidad_boletos, total_pagado, metodo_pago, estado, boletos_asignados)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'pendiente', ?)`,
+      [
+        codigoOrden,
+        sId,
+        sorteo.nombre,
+        clienteId,
+        comprador.nombre,
+        comprador.cedula,
+        comprador.correo,
+        comprador.celular,
+        cant,
+        totalPagado,
+        metodoPago || 'transferencia',
+        JSON.stringify(numerosAsignados),
+      ]
+    );
 
-    db.data.compras.push(nuevaCompra);
+    const compraId = insCompra.insertId;
 
     // Update tickets status to reserved
-    for (const b of seleccionados) {
-      b.estado = 'reservado';
-      b.compraId = compraId;
-      b.clienteId = cliente.id;
-    }
-
-    await db.write();
+    await pool.query(
+      "UPDATE boletos SET estado = 'reservado', compra_id = ?, cliente_id = ? WHERE id IN (?)",
+      [compraId, clienteId, boletosIds]
+    );
 
     res.json({
       success: true,
@@ -237,44 +246,58 @@ app.post('/api/compras/checkout', async (req, res) => {
 // Upload proof of payment file
 app.post('/api/compras/:id/comprobante', upload.single('comprobante'), async (req, res) => {
   try {
-    const db = getDB();
-    const compraId = parseInt(req.params.id);
-    const compra = db.data.compras.find((c) => c.id === compraId);
-    if (!compra) return res.status(404).json({ error: 'Compra no encontrada' });
-
+    const pool = getPool();
     if (!req.file) return res.status(400).json({ error: 'No se subió ningún archivo' });
     const fileUrl = `/uploads/${req.file.filename}`;
 
-    compra.comprobanteUrl = fileUrl;
-    await db.write();
-
+    await pool.query('UPDATE compras SET comprobante_url = ? WHERE id = ?', [fileUrl, req.params.id]);
     res.json({ success: true, comprobanteUrl: fileUrl });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
 });
 
-// Search tickets by Cédula
+// Search tickets by Cédula (MySQL)
 app.get('/api/compras/buscar', async (req, res) => {
   try {
-    const db = getDB();
+    const pool = getPool();
     const { cedula } = req.query;
     if (!cedula) return res.status(400).json({ error: 'Proporcione un número de cédula' });
 
-    const compras = db.data.compras.filter((c) => c.clienteCedula === cedula);
-    res.json(compras.reverse());
+    const [compras] = await pool.query('SELECT * FROM compras WHERE cliente_cedula = ? ORDER BY id DESC', [cedula]);
+    const parsed = compras.map((c) => ({
+      ...c,
+      sorteoNombre: c.sorteo_nombre,
+      totalPagado: parseFloat(c.total_pagado),
+      cantidadBoletos: c.cantidad_boletos,
+      boletosAsignados: typeof c.boletos_asignados === 'string' ? JSON.parse(c.boletos_asignados || '[]') : c.boletos_asignados || [],
+    }));
+
+    res.json(parsed);
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
 });
 
 // ==========================================
-// 3. ADMIN PANEL ENDPOINTS
+// 3. ADMIN PANEL ENDPOINTS (MySQL)
 // ==========================================
 app.get('/api/admin/compras', async (req, res) => {
   try {
-    const db = getDB();
-    res.json([...db.data.compras].reverse());
+    const pool = getPool();
+    const [compras] = await pool.query('SELECT * FROM compras ORDER BY id DESC');
+    const parsed = compras.map((c) => ({
+      ...c,
+      sorteoNombre: c.sorteo_nombre,
+      comprador: c.cliente_nombre,
+      total: parseFloat(c.total_pagado),
+      boletos: c.cantidad_boletos,
+      metodo: c.metodo_pago,
+      fecha: c.fecha_compra,
+      boletosAsignados: typeof c.boletos_asignados === 'string' ? JSON.parse(c.boletos_asignados || '[]') : c.boletos_asignados || [],
+    }));
+
+    res.json(parsed);
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
@@ -282,37 +305,22 @@ app.get('/api/admin/compras', async (req, res) => {
 
 app.put('/api/admin/compras/:id/estado', async (req, res) => {
   try {
-    const db = getDB();
-    const compraId = parseInt(req.params.id);
-    const { estado } = req.body; // 'aprobado' or 'rechazado'
+    const pool = getPool();
+    const { estado } = req.body;
+    const [compras] = await pool.query('SELECT * FROM compras WHERE id = ?', [req.params.id]);
+    if (compras.length === 0) return res.status(404).json({ error: 'Compra no encontrada' });
+    const compra = compras[0];
 
-    const compra = db.data.compras.find((c) => c.id === compraId);
-    if (!compra) return res.status(404).json({ error: 'Compra no encontrada' });
-
-    compra.estado = estado;
+    await pool.query('UPDATE compras SET estado = ? WHERE id = ?', [estado, req.params.id]);
 
     if (estado === 'aprobado') {
-      // Mark tickets as 'vendido' and increment sorteo.vendidos
-      const boletos = db.data.boletos.filter((b) => b.compraId === compraId);
-      for (const b of boletos) {
-        b.estado = 'vendido';
-      }
-      const sorteo = db.data.sorteos.find((s) => s.id === compra.sorteoId);
-      if (sorteo) {
-        sorteo.vendidos += compra.cantidadBoletos;
-      }
+      await pool.query("UPDATE boletos SET estado = 'vendido' WHERE compra_id = ?", [req.params.id]);
+      await pool.query('UPDATE sorteos SET vendidos = vendidos + ? WHERE id = ?', [compra.cantidad_boletos, compra.sorteo_id]);
     } else if (estado === 'rechazado' || estado === 'cancelado') {
-      // Release tickets back to 'disponible'
-      const boletos = db.data.boletos.filter((b) => b.compraId === compraId);
-      for (const b of boletos) {
-        b.estado = 'disponible';
-        b.compraId = null;
-        b.clienteId = null;
-      }
+      await pool.query("UPDATE boletos SET estado = 'disponible', compra_id = NULL, cliente_id = NULL WHERE compra_id = ?", [req.params.id]);
     }
 
-    await db.write();
-    res.json({ message: `Compra ${estado} exitosamente` });
+    res.json({ message: `Compra ${estado} exitosamente en MySQL` });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
@@ -320,20 +328,24 @@ app.put('/api/admin/compras/:id/estado', async (req, res) => {
 
 app.get('/api/admin/dashboard', async (req, res) => {
   try {
-    const db = getDB();
-    const totalVentas = db.data.compras
-      .filter((c) => c.estado === 'aprobado')
-      .reduce((sum, c) => sum + c.totalPagado, 0);
-
-    const sorteosActivos = db.data.sorteos.filter((s) => s.estado === 'activo').length;
-    const boletosVendidos = db.data.sorteos.reduce((sum, s) => sum + s.vendidos, 0);
-    const ultimasCompras = [...db.data.compras].reverse().slice(0, 5);
+    const pool = getPool();
+    const [ventas] = await pool.query("SELECT COALESCE(SUM(total_pagado), 0) as total FROM compras WHERE estado = 'aprobado'");
+    const [sorteos] = await pool.query("SELECT COUNT(*) as count FROM sorteos WHERE estado = 'activo'");
+    const [boletos] = await pool.query("SELECT COALESCE(SUM(vendidos), 0) as total FROM sorteos");
+    const [ultimas] = await pool.query('SELECT * FROM compras ORDER BY id DESC LIMIT 5');
 
     res.json({
-      totalVentas,
-      sorteosActivos,
-      boletosVendidos,
-      ultimasCompras,
+      totalVentas: parseFloat(ventas[0].total),
+      sorteosActivos: sorteos[0].count,
+      boletosVendidos: parseInt(boletos[0].total),
+      ultimasCompras: ultimas.map((c) => ({
+        ...c,
+        sorteoNombre: c.sorteo_nombre,
+        comprador: c.cliente_nombre,
+        total: parseFloat(c.total_pagado),
+        boletos: c.cantidad_boletos,
+        boletosAsignados: typeof c.boletos_asignados === 'string' ? JSON.parse(c.boletos_asignados || '[]') : c.boletos_asignados || [],
+      })),
     });
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -342,5 +354,5 @@ app.get('/api/admin/dashboard', async (req, res) => {
 
 // Start Server
 app.listen(PORT, () => {
-  console.log(`🚀 Servidor Backend de Sorteos corriendo en puerto ${PORT}`);
+  console.log(`🚀 Servidor Backend MySQL / MariaDB corriendo en puerto ${PORT}`);
 });
