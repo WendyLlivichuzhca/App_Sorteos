@@ -1,0 +1,195 @@
+.header {
+  position: sticky;
+  top: 0;
+  z-index: 40;
+  background: rgba(255, 255, 255, 0.92);
+  backdrop-filter: blur(8px);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.header.dark {
+  position: absolute;
+  width: 100%;
+  background: transparent;
+  border-bottom: none;
+}
+
+.inner {
+  display: flex;
+  align-items: center;
+  gap: 28px;
+  height: 72px;
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 800;
+  font-size: 18px;
+  letter-spacing: 0.2px;
+  color: var(--color-text);
+  white-space: nowrap;
+}
+
+.dark .logo {
+  color: #fff;
+}
+
+.logoIcon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  border-radius: 8px;
+  background: var(--color-accent-red);
+  color: #fff;
+}
+
+.logoAccent {
+  color: var(--color-primary);
+}
+
+.dark .logoAccent {
+  color: #b79cff;
+}
+
+.nav {
+  display: flex;
+  align-items: center;
+  gap: 26px;
+  font-size: 14.5px;
+  font-weight: 500;
+  color: var(--color-text-muted);
+  margin-left: auto;
+}
+
+.dark .nav {
+  color: rgba(255, 255, 255, 0.75);
+}
+
+.nav a:hover {
+  color: var(--color-primary);
+}
+
+.dark .nav a:hover {
+  color: #fff;
+}
+
+.actions {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.consultarBtn {
+  padding: 10px 20px;
+}
+
+.settingsBtn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: 1.5px solid rgba(255, 255, 255, 0.25);
+  background: transparent;
+  color: rgba(255, 255, 255, 0.75);
+  cursor: pointer;
+  transition: background 0.15s ease, border-color 0.15s ease;
+  flex-shrink: 0;
+}
+
+.settingsBtn:hover {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.5);
+  color: #fff;
+}
+
+.cartBtn {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: 1px solid var(--color-border);
+  background: var(--color-surface);
+  color: var(--color-text);
+}
+
+.dark .cartBtn {
+  border-color: rgba(255, 255, 255, 0.2);
+  background: rgba(255, 255, 255, 0.06);
+  color: #fff;
+}
+
+.cartBadge {
+  position: absolute;
+  top: -4px;
+  right: -4px;
+  min-width: 18px;
+  height: 18px;
+  padding: 0 4px;
+  border-radius: 999px;
+  background: #16a34a;
+  color: #fff;
+  font-size: 11px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.stepper {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-left: auto;
+  font-size: 13.5px;
+  font-weight: 600;
+  color: var(--color-text-soft);
+}
+
+.stepper li {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.stepDot {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: var(--color-border);
+  color: var(--color-text-soft);
+  font-size: 11px;
+}
+
+.stepDone {
+  color: var(--color-primary);
+}
+
+.stepDone .stepDot {
+  background: var(--color-primary);
+  color: #fff;
+}
+
+.stepLine {
+  width: 28px;
+  height: 2px;
+  background: var(--color-border);
+  display: inline-block;
+}
+
+@media (max-width: 860px) {
+  .nav {
+    display: none;
+  }
+}

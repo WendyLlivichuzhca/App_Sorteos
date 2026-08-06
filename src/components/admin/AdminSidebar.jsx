@@ -1,0 +1,89 @@
+import { Link, useLocation } from "react-router-dom";
+import Icon from "../../icons/Icon.jsx";
+import styles from "./AdminSidebar.module.css";
+
+const menuGroups = [
+  {
+    title: "PRINCIPAL",
+    items: [
+      { path: "/admin", label: "Dashboard", icon: "home" },
+    ],
+  },
+  {
+    title: "GESTIÓN DE SORTEOS",
+    items: [
+      { path: "/admin/sorteos", label: "Sorteos", icon: "ticket" },
+      { path: "/admin/categorias", label: "Categorías", icon: "dots" },
+      { path: "/admin/paquetes", label: "Paquetes", icon: "box" },
+      { path: "/admin/boletos", label: "Boletos", icon: "ticket" },
+    ],
+  },
+  {
+    title: "VENTAS Y CLIENTES",
+    items: [
+      { path: "/admin/compras", label: "Compras y Pagos", icon: "card" },
+      { path: "/admin/clientes", label: "Clientes", icon: "users" },
+      { path: "/admin/ganadores", label: "Ganadores", icon: "award" },
+    ],
+  },
+  {
+    title: "SISTEMA Y REPORTES",
+    items: [
+      { path: "/admin/reportes", label: "Reportes", icon: "chart" },
+      { path: "/admin/configuracion", label: "Configuración", icon: "settings" },
+      { path: "/admin/administradores", label: "Administradores", icon: "shield" },
+    ],
+  },
+];
+
+export default function AdminSidebar() {
+  const location = useLocation();
+
+  return (
+    <aside className={styles.sidebar}>
+      {/* Logo Header */}
+      <div className={styles.brand}>
+        <div className={styles.logoBadge}>
+          <Icon name="mail" size={20} strokeWidth={2} />
+        </div>
+        <div className={styles.logoInfo}>
+          <span className={styles.brandTitle}>SORTEOS <span className={styles.accent}>EN LÍNEA</span></span>
+          <span className={styles.adminBadge}>PANEL ADMIN</span>
+        </div>
+      </div>
+
+      {/* Menu Navigation */}
+      <nav className={styles.menu}>
+        {menuGroups.map((group) => (
+          <div key={group.title} className={styles.group}>
+            <span className={styles.groupTitle}>{group.title}</span>
+            <div className={styles.groupItems}>
+              {group.items.map((item) => {
+                const isActive = location.pathname === item.path;
+                return (
+                  <Link
+                    key={item.path}
+                    to={item.path}
+                    className={`${styles.item} ${isActive ? styles.itemActive : ""}`}
+                  >
+                    <span className={styles.itemIcon}>
+                      <Icon name={item.icon} size={18} strokeWidth={1.8} />
+                    </span>
+                    <span className={styles.itemLabel}>{item.label}</span>
+                  </Link>
+                );
+              })}
+            </div>
+          </div>
+        ))}
+      </nav>
+
+      {/* Footer link to public site */}
+      <div className={styles.footer}>
+        <Link to="/" className={styles.publicLink} target="_blank">
+          <Icon name="externalLink" size={16} /> Ver sitio del cliente
+        </Link>
+      </div>
+    </aside>
+  );
+}

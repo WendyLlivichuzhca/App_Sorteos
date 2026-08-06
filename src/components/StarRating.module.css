@@ -1,0 +1,21 @@
+.wrap {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+}
+
+.filled {
+  color: #f5a623;
+  fill: #f5a623;
+}
+
+.empty {
+  color: var(--color-border);
+}
+
+.count {
+  margin-left: 4px;
+  font-size: 13px;
+  color: var(--color-text-soft);
+  font-weight: 600;
+}

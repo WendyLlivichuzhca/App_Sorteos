@@ -1,0 +1,168 @@
+.wrap {
+  max-width: 560px;
+  padding: 40px 24px 90px;
+}
+
+.card {
+  position: relative;
+  overflow: hidden;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-card);
+  padding: 44px 40px 36px;
+  text-align: center;
+}
+
+.confetti {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.confetti span {
+  position: absolute;
+  top: -10px;
+  width: 7px;
+  height: 7px;
+  border-radius: 2px;
+  animation: fall 3.2s linear infinite;
+  opacity: 0.85;
+}
+
+@keyframes fall {
+  0% {
+    transform: translateY(0) rotate(0deg);
+    opacity: 0.85;
+  }
+  100% {
+    transform: translateY(240px) rotate(240deg);
+    opacity: 0;
+  }
+}
+
+.checkWrap {
+  position: relative;
+  width: 74px;
+  height: 74px;
+  margin: 0 auto;
+  border-radius: 50%;
+  background: var(--color-success-bg);
+  color: var(--color-success);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.card h1 {
+  position: relative;
+  margin-top: 22px;
+  font-size: 22px;
+  font-weight: 800;
+}
+
+.subtitle {
+  position: relative;
+  margin-top: 8px;
+  color: var(--color-text-muted);
+  font-size: 14px;
+}
+
+.boletosBox {
+  position: relative;
+  margin-top: 26px;
+  background: var(--color-primary-soft);
+  border-radius: var(--radius-md);
+  padding: 16px;
+}
+
+.boletosBox span {
+  display: block;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--color-text-muted);
+}
+
+.boletosBox strong {
+  display: block;
+  margin-top: 6px;
+  font-size: 26px;
+  font-weight: 800;
+  color: var(--color-primary-dark);
+  letter-spacing: 2px;
+}
+
+.detalle {
+  position: relative;
+  margin-top: 22px;
+  text-align: left;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.detalleRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 13.5px;
+  gap: 12px;
+}
+
+.detalleRow span {
+  color: var(--color-text-muted);
+}
+
+.detalleRow strong {
+  text-align: right;
+}
+
+.acciones {
+  position: relative;
+  margin-top: 26px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.accionesFila {
+  display: flex;
+  gap: 10px;
+}
+
+.accionesFila .btn {
+  flex: 1;
+  padding-left: 10px;
+  padding-right: 10px;
+  font-size: 13px;
+}
+
+.cuentaBox {
+  position: relative;
+  margin-top: 22px;
+  background: var(--color-success-bg);
+  border-radius: var(--radius-md);
+  padding: 18px 20px;
+}
+
+.cuentaBox p {
+  font-size: 13.5px;
+  font-weight: 600;
+  color: #146534;
+}
+
+.cuentaAcciones {
+  margin-top: 14px;
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+}
+
+@media (max-width: 560px) {
+  .card {
+    padding: 34px 22px 28px;
+  }
+  .acciones {
+    flex-direction: column;
+  }
+}
