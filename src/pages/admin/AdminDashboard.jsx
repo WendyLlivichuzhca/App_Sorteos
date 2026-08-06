@@ -31,7 +31,33 @@ const comprasRecientes = [
 ];
 
 export default function AdminDashboard() {
+  const [stats, setStats] = useState({
+    totalVentas: 0,
+    sorteosActivos: 0,
+    boletosVendidos: 0,
+    ultimasCompras: [],
+  });
+  const [loading, setLoading] = useState(true);
   const [selectedMonth, setSelectedMonth] = useState(ventasMensuales[ventasMensuales.length - 1]);
+
+  useEffect(() => {
+    getAdminDashboard()
+      .then((data) => {
+        setStats(data);
+        setLoading(false);
+      })
+      .catch((err) => {
+        console.error("Error al cargar dashboard admin:", err);
+        setLoading(false);
+      });
+  }, []);
+
+  const kpis = [
+    { label: "Ventas Totales", value: `${stats.boletosVendidos}`, subtitle: "Boletos vendidos", trend: "+14.2%", isUp: true, icon: "ticket" },
+    { label: "Ingresos Totales", value: formatMoney(stats.totalVentas), subtitle: "Recaudación neta", trend: "+18.4%", isUp: true, icon: "card" },
+    { label: "Sorteos Activos", value: `${stats.sorteosActivos} Activos`, subtitle: "En curso ahora", trend: "En curso", isUp: true, icon: "award" },
+    { label: "Ventas Hoy", value: `${stats.ultimasCompras.length}`, subtitle: "Compras recientes", trend: "+8.5%", isUp: true, icon: "chart" },
+  ];
 
   return (
     <AdminLayout title="Dashboard de Control">
