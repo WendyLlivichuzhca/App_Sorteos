@@ -219,6 +219,10 @@ app.post('/api/compras/checkout', async (req, res) => {
       return res.status(404).json({ error: 'Sorteo no encontrado' });
     }
     const sorteo = sorteos[0];
+    if (sorteo.estado === 'finalizado') {
+      await conn.rollback();
+      return res.status(400).json({ error: 'Este sorteo ya finalizó y tiene un ganador' });
+    }
 
     // 1. Get or create Customer
     let [clientes] = await conn.query('SELECT * FROM clientes WHERE cedula = ?', [comprador.cedula]);
