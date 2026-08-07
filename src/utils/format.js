@@ -1,5 +1,5 @@
 export const formatMoney = (value) =>
-  `$${value.toFixed(2).replace(".", ",")}`;
+  `$${Number(value).toFixed(2).replace(".", ",")}`;
 
 export const formatDate = (isoOrDate) => {
   const d = new Date(isoOrDate);

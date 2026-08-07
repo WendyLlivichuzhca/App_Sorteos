@@ -10,6 +10,7 @@ const dbConfig = {
   password: process.env.DB_PASSWORD || 'Sorteos2026',
   database: process.env.DB_NAME || 'sorteos_db',
   port: process.env.DB_PORT || 3306,
+  decimalNumbers: true, // return DECIMAL columns (precio, total_pagado) as JS numbers, not strings
 };
 
 let pool;
