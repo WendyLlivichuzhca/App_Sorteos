@@ -1,38 +1,78 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import AdminLayout from "../../components/admin/AdminLayout.jsx";
+import { getConfiguracion, updateConfiguracion } from "../../services/api.js";
 import styles from "./AdminSorteos.module.css";
 
+const metodosPagoNombres = [
+  { key: "tarjeta", name: "Tarjeta de crédito / débito (Visa, MC)" },
+  { key: "payphone", name: "PayPhone (Código QR)" },
+  { key: "deuna", name: "DeUna! (Pago móvil)" },
+  { key: "transferencia", name: "Transferencia bancaria" },
+  { key: "paypal", name: "PayPal" },
+];
+
 export default function AdminConfiguracion() {
+  const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
   const [config, setConfig] = useState({
-    nombreEmpresa: "SORTEOS EN LÍNEA",
-    whatsapp: "+593 99 999 9999",
-    correo: "soporte@sorteosenlinea.com",
-    facebook: "https://facebook.com/sorteosenlinea",
-    instagram: "https://instagram.com/sorteosenlinea",
-    tiktok: "https://tiktok.com/@sorteosenlinea",
+    nombreEmpresa: "",
+    whatsapp: "",
+    correo: "",
+    facebook: "",
+    instagram: "",
+    tiktok: "",
     colorTema: "#6d3cf5",
-    politicas: "Todos los sorteos son supervisados y auditados. Los boletos son únicos y no reembolsables una vez realizado el sorteo.",
-    faqTexto: "¿Cómo sé si gané? Te contactaremos por teléfono y WhatsApp oficial inmediatamente después del sorteo.",
+    politicas: "",
+    faqTexto: "",
   });
+  const [metodos, setMetodos] = useState({});
 
-  const [metodos, setMetodos] = useState({
-    tarjeta: true,
-    payphone: true,
-    deuna: true,
-    transferencia: true,
-    paypal: true,
-  });
+  useEffect(() => {
+    getConfiguracion()
+      .then((data) => {
+        setConfig({
+          nombreEmpresa: data.nombre_empresa,
+          whatsapp: data.whatsapp,
+          correo: data.correo,
+          facebook: data.facebook,
+          instagram: data.instagram,
+          tiktok: data.tiktok,
+          colorTema: data.color_tema,
+          politicas: data.politicas || "",
+          faqTexto: data.faq_texto || "",
+        });
+        setMetodos(data.metodosPago || {});
+      })
+      .catch((err) => console.error("Error cargando configuración:", err))
+      .finally(() => setLoading(false));
+  }, []);
 
   const toggleMetodo = (key) => {
     setMetodos({ ...metodos, [key]: !metodos[key] });
   };
 
-  const handleSave = (e) => {
+  const handleSave = async (e) => {
     e.preventDefault();
-    setSaved(true);
-    setTimeout(() => setSaved(false), 3000);
+    setSaving(true);
+    try {
+      await updateConfiguracion({ ...config, metodosPago: metodos });
+      setSaved(true);
+      setTimeout(() => setSaved(false), 3000);
+    } catch (err) {
+      alert(err.message || "No se pudo guardar la configuración");
+    } finally {
+      setSaving(false);
+    }
   };
+
+  if (loading) {
+    return (
+      <AdminLayout title="Configuración General">
+        <p>Cargando configuración...</p>
+      </AdminLayout>
+    );
+  }
 
   return (
     <AdminLayout title="Configuración General">
@@ -120,8 +160,8 @@ export default function AdminConfiguracion() {
               />
             </div>
 
-            <button type="submit" className={styles.createBtn} style={{ marginTop: "10px", width: "100%", justifyContent: "center" }}>
-              Guardar Cambios
+            <button type="submit" className={styles.createBtn} style={{ marginTop: "10px", width: "100%", justifyContent: "center" }} disabled={saving}>
+              {saving ? "Guardando..." : "Guardar Cambios"}
             </button>
           </form>
         </div>
@@ -134,18 +174,12 @@ export default function AdminConfiguracion() {
             <p style={{ fontSize: "13px", color: "#6b6880", marginBottom: "16px" }}>Activa o desactiva las pasarelas visibles para el cliente</p>
 
             <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
-              {[
-                { key: "tarjeta", name: "Tarjeta de crédito / débito (Visa, MC)" },
-                { key: "payphone", name: "PayPhone (Código QR)" },
-                { key: "deuna", name: "DeUna! (Pago móvil)" },
-                { key: "transferencia", name: "Transferencia bancaria" },
-                { key: "paypal", name: "PayPal" },
-              ].map((m) => (
+              {metodosPagoNombres.map((m) => (
                 <label key={m.key} style={{ display: "flex", alignItems: "center", justifyContent: "space-between", background: "#f8f7fc", padding: "12px 16px", borderRadius: "10px", cursor: "pointer" }}>
                   <span style={{ fontSize: "13.5px", fontWeight: "600", color: "#17152b" }}>{m.name}</span>
                   <input
                     type="checkbox"
-                    checked={metodos[m.key]}
+                    checked={Boolean(metodos[m.key])}
                     onChange={() => toggleMetodo(m.key)}
                     style={{ width: "18px", height: "18px", accentColor: "#6d3cf5" }}
                   />
@@ -157,7 +191,7 @@ export default function AdminConfiguracion() {
           {/* Políticas & Términos */}
           <div className={styles.tableCard} style={{ padding: "24px" }}>
             <h3 style={{ fontSize: "16px", fontWeight: "800", marginBottom: "14px" }}>Políticas y Preguntas Frecuentes</h3>
-            
+
             <div className={styles.formGroup} style={{ marginBottom: "14px" }}>
               <label>Políticas de Privacidad y Sorteos</label>
               <textarea

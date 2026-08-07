@@ -1,119 +1,104 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import AdminLayout from "../../components/admin/AdminLayout.jsx";
+import { useAuth } from "../../context/AuthContext.jsx";
+import { updateAccount } from "../../services/api.js";
 import styles from "./AdminSorteos.module.css";
 
-const initialAdmins = [
-  { id: "u1", nombre: "Admin Principal", usuario: "admin.master", rol: "Superadministrador", estado: "activo" },
-  { id: "u2", nombre: "Soporte Ventas", usuario: "soporte.ventas", rol: "Editor de Sorteos", estado: "activo" },
-];
-
 export default function AdminUsuarios() {
-  const [list, setList] = useState(initialAdmins);
-  const [showModal, setShowModal] = useState(false);
-  const [nombre, setNombre] = useState("");
-  const [usuario, setUsuario] = useState("");
+  const { admin, logout } = useAuth();
+  const navigate = useNavigate();
+  const [usuario, setUsuario] = useState(admin?.usuario || "");
+  const [passwordActual, setPasswordActual] = useState("");
+  const [passwordNueva, setPasswordNueva] = useState("");
+  const [confirmarPassword, setConfirmarPassword] = useState("");
+  const [error, setError] = useState("");
+  const [guardando, setGuardando] = useState(false);
 
-  const handleCreate = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!nombre.trim() || !usuario.trim()) return;
-    const newAdmin = {
-      id: `u-${Date.now()}`,
-      nombre,
-      usuario,
-      rol: "Editor de Sorteos",
-      estado: "activo",
-    };
-    setList([...list, newAdmin]);
-    setShowModal(false);
-    setNombre("");
-    setUsuario("");
-  };
+    setError("");
 
-  const handleDelete = (id) => {
-    if (list.length <= 1) {
-      alert("Debe quedar al menos un administrador principal.");
+    if (passwordNueva !== confirmarPassword) {
+      setError("La nueva contraseña y su confirmación no coinciden");
       return;
     }
-    setList(list.filter((u) => u.id !== id));
+    if (passwordNueva.length < 6) {
+      setError("La nueva contraseña debe tener al menos 6 caracteres");
+      return;
+    }
+
+    setGuardando(true);
+    try {
+      await updateAccount({ usuario, passwordActual, passwordNueva });
+      alert("Cuenta actualizada. Vuelve a iniciar sesión con tus nuevas credenciales.");
+      logout();
+      navigate("/admin/login", { replace: true });
+    } catch (err) {
+      setError(err.message || "No se pudo actualizar la cuenta");
+    } finally {
+      setGuardando(false);
+    }
   };
 
   return (
-    <AdminLayout title="Gestión de Administradores">
+    <AdminLayout title="Mi Cuenta">
       <div className={styles.topRow}>
         <div>
-          <h2>Usuarios Administradores</h2>
-          <p>Crea y gestiona permisos de los administradores con acceso al panel</p>
+          <h2>Mi Cuenta de Administrador</h2>
+          <p>Este sistema usa un único administrador. Cambia tu usuario o contraseña aquí.</p>
         </div>
-        <button type="button" className={styles.createBtn} onClick={() => setShowModal(true)}>
-          👤 Nuevo Administrador
-        </button>
       </div>
 
-      <div className={styles.tableCard}>
-        <table className={styles.table}>
-          <thead>
-            <tr>
-              <th>Nombre Completo</th>
-              <th>Usuario / Login</th>
-              <th>Rol / Permisos</th>
-              <th>Estado</th>
-              <th>Acciones</th>
-            </tr>
-          </thead>
-          <tbody>
-            {list.map((u) => (
-              <tr key={u.id}>
-                <td><strong>{u.nombre}</strong></td>
-                <td><code>{u.usuario}</code></td>
-                <td><span className={styles.categoryBadge}>{u.rol}</span></td>
-                <td><span className={`${styles.statusPill} ${styles.activo}`}>ACTIVO</span></td>
-                <td>
-                  <button type="button" className={styles.iconBtn} onClick={() => handleDelete(u.id)}>
-                    🗑️ Eliminar
-                  </button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
-
-      {showModal && (
-        <div className={styles.modalOverlay}>
-          <div className={styles.modal}>
-            <div className={styles.modalHeader}>
-              <h3>Crear Administrador</h3>
-              <button type="button" className={styles.closeBtn} onClick={() => setShowModal(false)}>×</button>
-            </div>
-            <form onSubmit={handleCreate} className={styles.form}>
-              <div className={styles.formGroup}>
-                <label>Nombre Completo</label>
-                <input
-                  type="text"
-                  required
-                  placeholder="Ej: Andrés Morales"
-                  value={nombre}
-                  onChange={(e) => setNombre(e.target.value)}
-                />
-              </div>
-              <div className={styles.formGroup}>
-                <label>Nombre de Usuario (Login)</label>
-                <input
-                  type="text"
-                  required
-                  placeholder="Ej: andres.admin"
-                  value={usuario}
-                  onChange={(e) => setUsuario(e.target.value)}
-                />
-              </div>
-              <div className={styles.modalFooter}>
-                <button type="button" className={styles.cancelBtn} onClick={() => setShowModal(false)}>Cancelar</button>
-                <button type="submit" className={styles.saveBtn}>Crear Usuario</button>
-              </div>
-            </form>
+      <div className={styles.tableCard} style={{ padding: "24px", maxWidth: "480px" }}>
+        <form onSubmit={handleSubmit} className={styles.form} style={{ padding: 0 }}>
+          <div className={styles.formGroup}>
+            <label>Nombre de Usuario</label>
+            <input
+              type="text"
+              required
+              value={usuario}
+              onChange={(e) => setUsuario(e.target.value)}
+            />
           </div>
-        </div>
-      )}
+
+          <div className={styles.formGroup}>
+            <label>Contraseña Actual</label>
+            <input
+              type="password"
+              required
+              value={passwordActual}
+              onChange={(e) => setPasswordActual(e.target.value)}
+            />
+          </div>
+
+          <div className={styles.formGroup}>
+            <label>Nueva Contraseña</label>
+            <input
+              type="password"
+              required
+              value={passwordNueva}
+              onChange={(e) => setPasswordNueva(e.target.value)}
+            />
+          </div>
+
+          <div className={styles.formGroup}>
+            <label>Confirmar Nueva Contraseña</label>
+            <input
+              type="password"
+              required
+              value={confirmarPassword}
+              onChange={(e) => setConfirmarPassword(e.target.value)}
+            />
+          </div>
+
+          {error && <div style={{ color: "#ef4444", fontSize: "13px" }}>⚠️ {error}</div>}
+
+          <button type="submit" className={styles.createBtn} style={{ justifyContent: "center", marginTop: "8px" }} disabled={guardando}>
+            {guardando ? "Guardando..." : "Actualizar Cuenta"}
+          </button>
+        </form>
+      </div>
     </AdminLayout>
   );
 }

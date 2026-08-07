@@ -6,8 +6,7 @@ import Badge from "../components/Badge.jsx";
 import ProgressBar from "../components/ProgressBar.jsx";
 import PremioImage from "../components/PremioImage.jsx";
 import Icon from "../icons/Icon.jsx";
-import { getSorteos } from "../services/api.js";
-import { categorias } from "../data/sorteos.js";
+import { getSorteos, getCategorias } from "../services/api.js";
 import { formatMoney } from "../utils/format.js";
 import styles from "./Sorteos.module.css";
 
@@ -15,6 +14,7 @@ export default function Sorteos() {
   const [query, setQuery] = useState("");
   const [categoria, setCategoria] = useState("todos");
   const [sorteos, setSorteos] = useState([]);
+  const [categorias, setCategorias] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -28,6 +28,9 @@ export default function Sorteos() {
         console.error("Error cargando sorteos:", err);
         setLoading(false);
       });
+    getCategorias()
+      .then(setCategorias)
+      .catch((err) => console.error("Error cargando categorías:", err));
   }, []);
 
   const filtrados = sorteos.filter((s) => {
@@ -66,10 +69,10 @@ export default function Sorteos() {
             <button
               key={c.id}
               type="button"
-              className={`${styles.filtro} ${categoria === c.id ? styles.filtroActivo : ""}`}
-              onClick={() => setCategoria(c.id)}
+              className={`${styles.filtro} ${categoria === c.slug ? styles.filtroActivo : ""}`}
+              onClick={() => setCategoria(c.slug)}
             >
-              {c.label}
+              {c.nombre}
             </button>
           ))}
         </div>

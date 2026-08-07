@@ -15,6 +15,20 @@ const dbConfig = {
 
 let pool;
 
+// Adds a column to an existing table only if it doesn't already exist yet.
+// CREATE TABLE IF NOT EXISTS does not alter tables that already exist, so
+// schema changes on tables with production data need this instead.
+async function ensureColumn(pool, tabla, columna, definicionSQL) {
+  const [rows] = await pool.query(
+    `SELECT COUNT(*) as count FROM information_schema.COLUMNS
+     WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = ? AND COLUMN_NAME = ?`,
+    [tabla, columna]
+  );
+  if (rows[0].count === 0) {
+    await pool.query(`ALTER TABLE ${tabla} ADD COLUMN ${columna} ${definicionSQL}`);
+  }
+}
+
 export async function initDB() {
   try {
     // Connect pool to sorteos_db
@@ -74,6 +88,7 @@ export async function initDB() {
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
       ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
     `);
+    await ensureColumn(pool, 'clientes', 'bloqueado', 'TINYINT(1) DEFAULT 0');
 
     await pool.query(`
       CREATE TABLE IF NOT EXISTS compras (
@@ -138,6 +153,32 @@ export async function initDB() {
       ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
     `);
 
+    await pool.query(`
+      CREATE TABLE IF NOT EXISTS descuentos_volumen (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        cantidad_minima INT NOT NULL,
+        porcentaje INT NOT NULL,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+    `);
+
+    await pool.query(`
+      CREATE TABLE IF NOT EXISTS configuracion (
+        id INT PRIMARY KEY DEFAULT 1,
+        nombre_empresa VARCHAR(255) DEFAULT 'SORTEOS EN LÍNEA',
+        whatsapp VARCHAR(50) DEFAULT '',
+        correo VARCHAR(255) DEFAULT '',
+        facebook VARCHAR(255) DEFAULT '',
+        instagram VARCHAR(255) DEFAULT '',
+        tiktok VARCHAR(255) DEFAULT '',
+        color_tema VARCHAR(20) DEFAULT '#6d3cf5',
+        politicas TEXT NULL,
+        faq_texto TEXT NULL,
+        metodos_pago JSON NULL,
+        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+      ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+    `);
+
     // Seed default data if empty
     const [cats] = await pool.query('SELECT COUNT(*) as count FROM categorias');
     if (cats[0].count === 0) {
@@ -164,6 +205,37 @@ export async function initDB() {
 
       await generarBoletosMySQL(resS1.insertId, 1000, 480);
       await generarBoletosMySQL(resS2.insertId, 500, 320);
+    }
+
+    const [descuentosCount] = await pool.query('SELECT COUNT(*) as count FROM descuentos_volumen');
+    if (descuentosCount[0].count === 0) {
+      await pool.query(`
+        INSERT INTO descuentos_volumen (cantidad_minima, porcentaje) VALUES
+        (5, 10),
+        (10, 20),
+        (20, 30);
+      `);
+    }
+
+    const [configCount] = await pool.query('SELECT COUNT(*) as count FROM configuracion');
+    if (configCount[0].count === 0) {
+      await pool.query(
+        `INSERT INTO configuracion
+         (id, nombre_empresa, whatsapp, correo, facebook, instagram, tiktok, color_tema, politicas, faq_texto, metodos_pago)
+         VALUES (1, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+        [
+          'SORTEOS EN LÍNEA',
+          '+593 99 999 9999',
+          'soporte@sorteosenlinea.com',
+          'https://facebook.com/sorteosenlinea',
+          'https://instagram.com/sorteosenlinea',
+          'https://tiktok.com/@sorteosenlinea',
+          '#6d3cf5',
+          'Todos los sorteos son supervisados y auditados. Los boletos son únicos y no reembolsables una vez realizado el sorteo.',
+          '¿Cómo sé si gané? Te contactaremos por teléfono y WhatsApp oficial inmediatamente después del sorteo.',
+          JSON.stringify({ tarjeta: true, payphone: true, deuna: true, transferencia: true, paypal: true }),
+        ]
+      );
     }
 
     const [adminsCount] = await pool.query('SELECT COUNT(*) as count FROM admins');

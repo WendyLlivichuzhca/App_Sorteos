@@ -1,23 +1,50 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import AdminLayout from "../../components/admin/AdminLayout.jsx";
+import { getAdminClientes, getClienteHistorial, toggleBloqueoCliente } from "../../services/api.js";
+import { formatMoney } from "../../utils/format.js";
 import styles from "./AdminSorteos.module.css";
 
-const clientesMock = [
-  { id: "c1", nombre: "Carlos Mendoza", correo: "carlos.mendoza@email.com", celular: "0991234567", cedula: "1726384910", compras: 3, totalGastado: 45.0, bloqueado: false },
-  { id: "c2", nombre: "María Fernanda Ríos", correo: "maria.rios@email.com", celular: "0987654321", cedula: "0918273645", compras: 5, totalGastado: 78.0, bloqueado: false },
-  { id: "c3", nombre: "Juan Pablo Torres", correo: "juan.torres@email.com", celular: "0998877665", cedula: "0102938475", compras: 2, totalGastado: 30.0, bloqueado: false },
-  { id: "c4", nombre: "Lucía Gómez", correo: "lucia.gomez@email.com", celular: "0991122334", cedula: "1720394857", compras: 1, totalGastado: 2.0, bloqueado: true },
-];
-
 export default function AdminClientes() {
-  const [list, setList] = useState(clientesMock);
+  const [list, setList] = useState([]);
+  const [loading, setLoading] = useState(true);
   const [query, setQuery] = useState("");
   const [selectedClient, setSelectedClient] = useState(null);
+  const [historial, setHistorial] = useState([]);
+  const [historialLoading, setHistorialLoading] = useState(false);
 
-  const toggleBloqueo = (id) => {
-    setList((prev) =>
-      prev.map((c) => (c.id === id ? { ...c, bloqueado: !c.bloqueado } : c))
-    );
+  const cargarClientes = () => {
+    setLoading(true);
+    getAdminClientes()
+      .then(setList)
+      .catch((err) => console.error("Error cargando clientes:", err))
+      .finally(() => setLoading(false));
+  };
+
+  useEffect(() => {
+    cargarClientes();
+  }, []);
+
+  const toggleBloqueo = async (c) => {
+    try {
+      await toggleBloqueoCliente(c.id, !c.bloqueado);
+      cargarClientes();
+    } catch (err) {
+      alert(err.message || "No se pudo actualizar el bloqueo del cliente");
+    }
+  };
+
+  const verHistorial = async (c) => {
+    setSelectedClient(c);
+    setHistorialLoading(true);
+    try {
+      const data = await getClienteHistorial(c.id);
+      setHistorial(data);
+    } catch (err) {
+      console.error("Error cargando historial:", err);
+      setHistorial([]);
+    } finally {
+      setHistorialLoading(false);
+    }
   };
 
   const filtered = list.filter(
@@ -55,11 +82,14 @@ export default function AdminClientes() {
               <th>Celular</th>
               <th>Cédula</th>
               <th>Compras</th>
+              <th>Total Gastado</th>
               <th>Estado</th>
               <th>Acciones</th>
             </tr>
           </thead>
           <tbody>
+            {loading && <tr><td colSpan={8}>Cargando clientes...</td></tr>}
+            {!loading && filtered.length === 0 && <tr><td colSpan={8}>No hay clientes registrados todavía.</td></tr>}
             {filtered.map((c) => (
               <tr key={c.id}>
                 <td><strong>{c.nombre}</strong></td>
@@ -67,6 +97,7 @@ export default function AdminClientes() {
                 <td>{c.celular}</td>
                 <td>{c.cedula}</td>
                 <td>{c.compras} compras</td>
+                <td>{formatMoney(c.total_gastado)}</td>
                 <td>
                   <span className={`${styles.statusPill} ${c.bloqueado ? styles.finalizado : styles.activo}`}>
                     {c.bloqueado ? "BLOQUEADO" : "ACTIVO"}
@@ -74,14 +105,10 @@ export default function AdminClientes() {
                 </td>
                 <td>
                   <div className={styles.actionsCell}>
-                    <button type="button" className={styles.iconBtn} onClick={() => setSelectedClient(c)}>
+                    <button type="button" className={styles.iconBtn} onClick={() => verHistorial(c)}>
                       📜 Historial
                     </button>
-                    <button
-                      type="button"
-                      className={styles.iconBtn}
-                      onClick={() => toggleBloqueo(c.id)}
-                    >
+                    <button type="button" className={styles.iconBtn} onClick={() => toggleBloqueo(c)}>
                       {c.bloqueado ? "🔓 Desbloquear" : "🚫 Bloquear"}
                     </button>
                   </div>
@@ -104,9 +131,16 @@ export default function AdminClientes() {
               <p style={{ marginTop: "4px" }}><strong>Correo:</strong> {selectedClient.correo}</p>
               <div style={{ marginTop: "16px", background: "#f8f7fc", padding: "14px", borderRadius: "10px" }}>
                 <p style={{ fontWeight: "700" }}>Sorteos Participados:</p>
+                {historialLoading && <p style={{ marginTop: "8px", fontSize: "13px" }}>Cargando...</p>}
+                {!historialLoading && historial.length === 0 && (
+                  <p style={{ marginTop: "8px", fontSize: "13px", color: "#6b6880" }}>Sin compras registradas.</p>
+                )}
                 <ul style={{ marginTop: "8px", fontSize: "13px", color: "#6b6880", lineHeight: "1.6" }}>
-                  <li>• Toyota Fortuner 4x4 - Boleto #1894 ($15.00)</li>
-                  <li>• iPhone 15 Pro Max - Boleto #0012 ($6.00)</li>
+                  {historial.map((h) => (
+                    <li key={h.id}>
+                      • {h.sorteoNombre} - {h.boletos} boletos ({formatMoney(h.total)}) — {h.estado}
+                    </li>
+                  ))}
                 </ul>
               </div>
               <button

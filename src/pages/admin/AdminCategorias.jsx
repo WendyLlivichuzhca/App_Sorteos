@@ -1,40 +1,62 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import AdminLayout from "../../components/admin/AdminLayout.jsx";
-import Icon from "../../icons/Icon.jsx";
-import { categorias as initialCategorias } from "../../data/sorteos.js";
+import { getCategorias, createCategoria, updateCategoria, deleteCategoria } from "../../services/api.js";
 import styles from "./AdminSorteos.module.css";
 
 export default function AdminCategorias() {
-  const [cats, setCats] = useState(initialCategorias);
+  const [cats, setCats] = useState([]);
+  const [loading, setLoading] = useState(true);
   const [newLabel, setNewLabel] = useState("");
   const [editingId, setEditingId] = useState(null);
   const [editLabel, setEditLabel] = useState("");
 
-  const handleAdd = (e) => {
+  const cargarCategorias = () => {
+    setLoading(true);
+    getCategorias()
+      .then(setCats)
+      .catch((err) => console.error("Error cargando categorías:", err))
+      .finally(() => setLoading(false));
+  };
+
+  useEffect(() => {
+    cargarCategorias();
+  }, []);
+
+  const handleAdd = async (e) => {
     e.preventDefault();
     if (!newLabel.trim()) return;
-    const newCat = {
-      id: newLabel.toLowerCase().replace(/\s+/g, "-"),
-      label: newLabel,
-      icon: "dots",
-    };
-    setCats([...cats, newCat]);
-    setNewLabel("");
+    try {
+      const slug = newLabel.trim().toLowerCase().replace(/\s+/g, "-");
+      await createCategoria({ nombre: newLabel.trim(), slug, icono: "dots" });
+      setNewLabel("");
+      cargarCategorias();
+    } catch (err) {
+      alert(err.message || "No se pudo crear la categoría");
+    }
   };
 
   const handleStartEdit = (c) => {
     setEditingId(c.id);
-    setEditLabel(c.label);
+    setEditLabel(c.nombre);
   };
 
-  const handleSaveEdit = (id) => {
-    setCats(cats.map((c) => (c.id === id ? { ...c, label: editLabel } : c)));
-    setEditingId(null);
+  const handleSaveEdit = async (c) => {
+    try {
+      await updateCategoria(c.id, { nombre: editLabel, slug: c.slug, icono: c.icono });
+      setEditingId(null);
+      cargarCategorias();
+    } catch (err) {
+      alert(err.message || "No se pudo guardar la categoría");
+    }
   };
 
-  const handleDelete = (id) => {
-    if (window.confirm("¿Seguro que deseas eliminar esta categoría?")) {
-      setCats(cats.filter((c) => c.id !== id));
+  const handleDelete = async (id) => {
+    if (!window.confirm("¿Seguro que deseas eliminar esta categoría?")) return;
+    try {
+      await deleteCategoria(id);
+      cargarCategorias();
+    } catch (err) {
+      alert(err.message || "No se pudo eliminar la categoría");
     }
   };
 
@@ -52,15 +74,17 @@ export default function AdminCategorias() {
           <table className={styles.table}>
             <thead>
               <tr>
-                <th>ID Identificador</th>
+                <th>Slug</th>
                 <th>Nombre Categoría</th>
                 <th>Acciones</th>
               </tr>
             </thead>
             <tbody>
+              {loading && <tr><td colSpan={3}>Cargando...</td></tr>}
+              {!loading && cats.length === 0 && <tr><td colSpan={3}>No hay categorías todavía.</td></tr>}
               {cats.map((c) => (
                 <tr key={c.id}>
-                  <td><code>{c.id}</code></td>
+                  <td><code>{c.slug}</code></td>
                   <td>
                     {editingId === c.id ? (
                       <input
@@ -70,13 +94,13 @@ export default function AdminCategorias() {
                         style={{ padding: "6px 10px", borderRadius: "6px", border: "1.5px solid #6d3cf5" }}
                       />
                     ) : (
-                      <strong>{c.label}</strong>
+                      <strong>{c.nombre}</strong>
                     )}
                   </td>
                   <td>
                     <div className={styles.actionsCell}>
                       {editingId === c.id ? (
-                        <button type="button" className={styles.iconBtn} onClick={() => handleSaveEdit(c.id)}>
+                        <button type="button" className={styles.iconBtn} onClick={() => handleSaveEdit(c)}>
                           💾 Guardar
                         </button>
                       ) : (

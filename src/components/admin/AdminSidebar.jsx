@@ -14,7 +14,7 @@ const menuGroups = [
     items: [
       { path: "/admin/sorteos", label: "Sorteos", icon: "ticket" },
       { path: "/admin/categorias", label: "Categorías", icon: "dots" },
-      { path: "/admin/paquetes", label: "Paquetes", icon: "box" },
+      { path: "/admin/paquetes", label: "Descuentos", icon: "box" },
       { path: "/admin/boletos", label: "Boletos", icon: "ticket" },
     ],
   },
@@ -31,7 +31,7 @@ const menuGroups = [
     items: [
       { path: "/admin/reportes", label: "Reportes", icon: "chart" },
       { path: "/admin/configuracion", label: "Configuración", icon: "settings" },
-      { path: "/admin/administradores", label: "Administradores", icon: "shield" },
+      { path: "/admin/administradores", label: "Mi Cuenta", icon: "shield" },
     ],
   },
 ];

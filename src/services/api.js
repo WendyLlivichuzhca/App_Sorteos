@@ -101,3 +101,51 @@ export const actualizarGanador = (id, data) =>
     method: 'PUT',
     body: JSON.stringify(data),
   });
+
+// Categorías API
+export const getCategorias = () => fetchApi('/categorias');
+
+export const createCategoria = (data) =>
+  fetchApi('/categorias', { method: 'POST', body: JSON.stringify(data) });
+
+export const updateCategoria = (id, data) =>
+  fetchApi(`/categorias/${id}`, { method: 'PUT', body: JSON.stringify(data) });
+
+export const deleteCategoria = (id) =>
+  fetchApi(`/categorias/${id}`, { method: 'DELETE' });
+
+// Descuentos por volumen API
+export const getDescuentos = () => fetchApi('/descuentos');
+
+export const createDescuento = (data) =>
+  fetchApi('/admin/descuentos', { method: 'POST', body: JSON.stringify(data) });
+
+export const updateDescuento = (id, data) =>
+  fetchApi(`/admin/descuentos/${id}`, { method: 'PUT', body: JSON.stringify(data) });
+
+export const deleteDescuento = (id) =>
+  fetchApi(`/admin/descuentos/${id}`, { method: 'DELETE' });
+
+// Clientes (admin) API
+export const getAdminClientes = () => fetchApi('/admin/clientes');
+
+export const getClienteHistorial = (id) => fetchApi(`/admin/clientes/${id}/compras`);
+
+export const toggleBloqueoCliente = (id, bloqueado) =>
+  fetchApi(`/admin/clientes/${id}/bloqueo`, {
+    method: 'PUT',
+    body: JSON.stringify({ bloqueado }),
+  });
+
+// Reportes (admin) API
+export const getAdminReportes = () => fetchApi('/admin/reportes');
+
+// Configuración API
+export const getConfiguracion = () => fetchApi('/configuracion');
+
+export const updateConfiguracion = (data) =>
+  fetchApi('/admin/configuracion', { method: 'PUT', body: JSON.stringify(data) });
+
+// Cuenta del admin
+export const updateAccount = (data) =>
+  fetchApi('/admin/account', { method: 'PUT', body: JSON.stringify(data) });

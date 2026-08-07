@@ -3,7 +3,7 @@ import { Link, useNavigate, useParams } from "react-router-dom";
 import Navbar from "../components/Navbar.jsx";
 import Icon from "../icons/Icon.jsx";
 import { useApp } from "../context/AppContext.jsx";
-import { getSorteoById } from "../services/api.js";
+import { getSorteoById, getDescuentos } from "../services/api.js";
 import { formatMoney } from "../utils/format.js";
 import styles from "./Paquetes.module.css";
 
@@ -12,6 +12,7 @@ export default function Paquetes() {
   const navigate = useNavigate();
   const { elegirPaquete } = useApp();
   const [sorteo, setSorteo] = useState(null);
+  const [tramos, setTramos] = useState([]);
   const [loading, setLoading] = useState(true);
   const [cantidad, setCantidad] = useState(5);
 
@@ -26,6 +27,9 @@ export default function Paquetes() {
         console.error("Error al obtener sorteo:", err);
         setLoading(false);
       });
+    getDescuentos()
+      .then(setTramos)
+      .catch((err) => console.error("Error cargando descuentos:", err));
   }, [id]);
 
   if (loading) {
@@ -49,11 +53,11 @@ export default function Paquetes() {
     );
   }
 
-  // Descuento por volumen (debe coincidir con server/pricing.js)
-  let ahorra = 0;
-  if (cantidad >= 20) ahorra = 30;
-  else if (cantidad >= 10) ahorra = 20;
-  else if (cantidad >= 5) ahorra = 10;
+  // Descuento por volumen: tramos reales configurados por el admin (/api/descuentos)
+  const tramoAplicable = [...tramos]
+    .sort((a, b) => b.cantidad_minima - a.cantidad_minima)
+    .find((t) => cantidad >= t.cantidad_minima);
+  const ahorra = tramoAplicable ? tramoAplicable.porcentaje : 0;
 
   const precioBase = cantidad * sorteo.precio;
   const precio = ahorra > 0 ? precioBase * (1 - ahorra / 100) : precioBase;

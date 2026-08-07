@@ -1,48 +1,77 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import AdminLayout from "../../components/admin/AdminLayout.jsx";
+import { getDescuentos, createDescuento, updateDescuento, deleteDescuento } from "../../services/api.js";
 import styles from "./AdminSorteos.module.css";
 
-const initialPaquetes = [
-  { id: "p1", nombre: "Paquete Básico", boletos: 1, descuento: 0, regla: "Sin descuento" },
-  { id: "p2", nombre: "Paquete Popular", boletos: 5, descuento: 10, regla: "Ahorro 10%" },
-  { id: "p3", nombre: "Paquete VIP", boletos: 10, descuento: 20, regla: "Ahorro 20%" },
-  { id: "p4", nombre: "Paquete Premium", boletos: 20, descuento: 30, regla: "Ahorro 30%" },
-  { id: "p5", nombre: "Cantidad Personalizada", boletos: "Variable", descuento: "Dinámico", regla: "Ahorro automático" },
-];
-
 export default function AdminPaquetes() {
-  const [list, setList] = useState(initialPaquetes);
+  const [list, setList] = useState([]);
+  const [loading, setLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
-  const [formData, setFormData] = useState({ nombre: "", boletos: 1, descuento: 0 });
+  const [formData, setFormData] = useState({ cantidadMinima: 5, porcentaje: 10 });
+  const [editingId, setEditingId] = useState(null);
+  const [editPorcentaje, setEditPorcentaje] = useState(0);
 
-  const handleCreate = (e) => {
-    e.preventDefault();
-    if (!formData.nombre) return;
-    const newP = {
-      id: `p-${Date.now()}`,
-      nombre: formData.nombre,
-      boletos: formData.boletos,
-      descuento: formData.descuento,
-      regla: `Ahorro ${formData.descuento}%`,
-    };
-    setList([...list, newP]);
-    setShowModal(false);
-    setFormData({ nombre: "", boletos: 1, descuento: 0 });
+  const cargarDescuentos = () => {
+    setLoading(true);
+    getDescuentos()
+      .then(setList)
+      .catch((err) => console.error("Error cargando descuentos:", err))
+      .finally(() => setLoading(false));
   };
 
-  const handleDelete = (id) => {
-    setList(list.filter((p) => p.id !== id));
+  useEffect(() => {
+    cargarDescuentos();
+  }, []);
+
+  const handleCreate = async (e) => {
+    e.preventDefault();
+    try {
+      await createDescuento(formData);
+      setShowModal(false);
+      setFormData({ cantidadMinima: 5, porcentaje: 10 });
+      cargarDescuentos();
+    } catch (err) {
+      alert(err.message || "No se pudo crear el tramo de descuento");
+    }
+  };
+
+  const handleStartEdit = (p) => {
+    setEditingId(p.id);
+    setEditPorcentaje(p.porcentaje);
+  };
+
+  const handleSaveEdit = async (p) => {
+    try {
+      await updateDescuento(p.id, { cantidadMinima: p.cantidad_minima, porcentaje: editPorcentaje });
+      setEditingId(null);
+      cargarDescuentos();
+    } catch (err) {
+      alert(err.message || "No se pudo actualizar el tramo de descuento");
+    }
+  };
+
+  const handleDelete = async (id) => {
+    if (!window.confirm("¿Seguro que deseas eliminar este tramo de descuento?")) return;
+    try {
+      await deleteDescuento(id);
+      cargarDescuentos();
+    } catch (err) {
+      alert(err.message || "No se pudo eliminar el tramo de descuento");
+    }
   };
 
   return (
-    <AdminLayout title="Gestión de Paquetes">
+    <AdminLayout title="Descuentos por Volumen">
       <div className={styles.topRow}>
         <div>
-          <h2>Paquetes y Descuentos de Boletos</h2>
-          <p>Configura precio, cantidad de boletos y porcentaje de descuento</p>
+          <h2>Descuentos por Cantidad de Boletos</h2>
+          <p>
+            Estos tramos son los que realmente usa el checkout: si un cliente compra desde la cantidad mínima,
+            se le aplica automáticamente el porcentaje de descuento.
+          </p>
         </div>
         <button type="button" className={styles.createBtn} onClick={() => setShowModal(true)}>
-          📦 Crear Nuevo Paquete
+          📦 Crear Nuevo Tramo
         </button>
       </div>
 
@@ -50,24 +79,46 @@ export default function AdminPaquetes() {
         <table className={styles.table}>
           <thead>
             <tr>
-              <th>Nombre Paquete</th>
-              <th>Boletos Incluidos</th>
+              <th>Desde (boletos)</th>
               <th>Descuento (%)</th>
-              <th>Regla de Ahorro</th>
               <th>Acciones</th>
             </tr>
           </thead>
           <tbody>
+            {loading && <tr><td colSpan={3}>Cargando...</td></tr>}
+            {!loading && list.length === 0 && <tr><td colSpan={3}>No hay tramos de descuento configurados.</td></tr>}
             {list.map((p) => (
               <tr key={p.id}>
-                <td><strong>{p.nombre}</strong></td>
-                <td>{p.boletos} {typeof p.boletos === "number" ? (p.boletos === 1 ? "Boleto" : "Boletos") : ""}</td>
-                <td><span className={styles.categoryBadge}>{p.descuento === 0 ? "0%" : `${p.descuento}% OFF`}</span></td>
-                <td>{p.regla}</td>
+                <td><strong>{p.cantidad_minima}+ boletos</strong></td>
                 <td>
-                  <button type="button" className={styles.iconBtn} onClick={() => handleDelete(p.id)}>
-                    🗑️ Eliminar
-                  </button>
+                  {editingId === p.id ? (
+                    <input
+                      type="number"
+                      min="0"
+                      max="90"
+                      value={editPorcentaje}
+                      onChange={(e) => setEditPorcentaje(parseInt(e.target.value, 10))}
+                      style={{ width: "70px", padding: "6px 10px", borderRadius: "6px", border: "1.5px solid #6d3cf5" }}
+                    />
+                  ) : (
+                    <span className={styles.categoryBadge}>{p.porcentaje}% OFF</span>
+                  )}
+                </td>
+                <td>
+                  <div className={styles.actionsCell}>
+                    {editingId === p.id ? (
+                      <button type="button" className={styles.iconBtn} onClick={() => handleSaveEdit(p)}>
+                        💾 Guardar
+                      </button>
+                    ) : (
+                      <button type="button" className={styles.iconBtn} onClick={() => handleStartEdit(p)}>
+                        ✏️ Editar
+                      </button>
+                    )}
+                    <button type="button" className={styles.iconBtn} onClick={() => handleDelete(p.id)}>
+                      🗑️ Eliminar
+                    </button>
+                  </div>
                 </td>
               </tr>
             ))}
@@ -79,30 +130,19 @@ export default function AdminPaquetes() {
         <div className={styles.modalOverlay}>
           <div className={styles.modal}>
             <div className={styles.modalHeader}>
-              <h3>Crear Nuevo Paquete</h3>
+              <h3>Crear Tramo de Descuento</h3>
               <button type="button" className={styles.closeBtn} onClick={() => setShowModal(false)}>×</button>
             </div>
             <form onSubmit={handleCreate} className={styles.form}>
-              <div className={styles.formGroup}>
-                <label>Nombre del Paquete</label>
-                <input
-                  type="text"
-                  required
-                  placeholder="Ej: Paquete Platino"
-                  value={formData.nombre}
-                  onChange={(e) => setFormData({ ...formData, nombre: e.target.value })}
-                />
-              </div>
-
               <div className={styles.formRow}>
                 <div className={styles.formGroup}>
-                  <label>Cantidad de Boletos</label>
+                  <label>Cantidad mínima de boletos</label>
                   <input
                     type="number"
                     required
                     min="1"
-                    value={formData.boletos}
-                    onChange={(e) => setFormData({ ...formData, boletos: parseInt(e.target.value, 10) })}
+                    value={formData.cantidadMinima}
+                    onChange={(e) => setFormData({ ...formData, cantidadMinima: parseInt(e.target.value, 10) })}
                   />
                 </div>
 
@@ -110,17 +150,18 @@ export default function AdminPaquetes() {
                   <label>Descuento (%)</label>
                   <input
                     type="number"
+                    required
                     min="0"
                     max="90"
-                    value={formData.descuento}
-                    onChange={(e) => setFormData({ ...formData, descuento: parseInt(e.target.value, 10) })}
+                    value={formData.porcentaje}
+                    onChange={(e) => setFormData({ ...formData, porcentaje: parseInt(e.target.value, 10) })}
                   />
                 </div>
               </div>
 
               <div className={styles.modalFooter}>
                 <button type="button" className={styles.cancelBtn} onClick={() => setShowModal(false)}>Cancelar</button>
-                <button type="submit" className={styles.saveBtn}>Guardar Paquete</button>
+                <button type="submit" className={styles.saveBtn}>Guardar Tramo</button>
               </div>
             </form>
           </div>

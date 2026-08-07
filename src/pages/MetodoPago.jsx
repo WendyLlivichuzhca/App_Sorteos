@@ -4,7 +4,8 @@ import Navbar from "../components/Navbar.jsx";
 import Icon from "../icons/Icon.jsx";
 import PremioImage from "../components/PremioImage.jsx";
 import { useApp } from "../context/AppContext.jsx";
-import { metodosPago } from "../data/sorteos.js";
+import { metodosPago as todosLosMetodosPago } from "../data/sorteos.js";
+import { getConfiguracion } from "../services/api.js";
 import { formatMoney } from "../utils/format.js";
 import styles from "./MetodoPago.module.css";
 
@@ -36,6 +37,16 @@ export default function MetodoPago() {
   const [comprobanteFile, setComprobanteFile] = useState(null);
   const [procesando, setProcesando] = useState(false);
   const [error, setError] = useState("");
+  const [metodosPago, setMetodosPago] = useState(todosLosMetodosPago);
+
+  useEffect(() => {
+    getConfiguracion()
+      .then((config) => {
+        const habilitados = config.metodosPago || {};
+        setMetodosPago(todosLosMetodosPago.filter((m) => habilitados[m.id] !== false));
+      })
+      .catch((err) => console.error("Error cargando métodos de pago:", err));
+  }, []);
 
   useEffect(() => {
     if (!seleccion || !comprador) navigate("/sorteos", { replace: true });
