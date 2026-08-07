@@ -507,7 +507,22 @@ app.get('/api/admin/dashboard', requireAuth, async (req, res) => {
     const [ventas] = await pool.query("SELECT COALESCE(SUM(total_pagado), 0) as total FROM compras WHERE estado = 'aprobado'");
     const [sorteos] = await pool.query("SELECT COUNT(*) as count FROM sorteos WHERE estado = 'activo'");
     const [boletos] = await pool.query("SELECT COALESCE(SUM(vendidos), 0) as total FROM sorteos");
-    const [ultimas] = await pool.query('SELECT * FROM compras ORDER BY id DESC LIMIT 5');
+    const [ultimas] = await pool.query(`
+      SELECT c.*, s.categoria
+      FROM compras c
+      LEFT JOIN sorteos s ON s.id = c.sorteo_id
+      ORDER BY c.id DESC LIMIT 5
+    `);
+    const [ventasMensuales] = await pool.query(`
+      SELECT DATE_FORMAT(fecha_compra, '%Y-%m') AS ym,
+        SUM(cantidad_boletos) AS ventas,
+        SUM(total_pagado) AS ingresos
+      FROM compras
+      WHERE estado = 'aprobado' AND fecha_compra >= DATE_SUB(CURDATE(), INTERVAL 8 MONTH)
+      GROUP BY ym
+      ORDER BY ym ASC
+    `);
+    const [topSorteos] = await pool.query('SELECT nombre, categoria, vendidos, total FROM sorteos ORDER BY vendidos DESC LIMIT 3');
 
     res.json({
       totalVentas: parseFloat(ventas[0].total),
@@ -520,6 +535,18 @@ app.get('/api/admin/dashboard', requireAuth, async (req, res) => {
         total: parseFloat(c.total_pagado),
         boletos: c.cantidad_boletos,
         boletosAsignados: typeof c.boletos_asignados === 'string' ? JSON.parse(c.boletos_asignados || '[]') : c.boletos_asignados || [],
+      })),
+      ventasMensuales: ventasMensuales.map((m) => ({
+        ym: m.ym,
+        ventas: parseInt(m.ventas),
+        ingresos: parseFloat(m.ingresos),
+      })),
+      topSorteos: topSorteos.map((s) => ({
+        nombre: s.nombre,
+        categoria: s.categoria,
+        vendidos: s.vendidos,
+        total: s.total,
+        porcentaje: s.total > 0 ? Math.round((s.vendidos / s.total) * 100) : 0,
       })),
     });
   } catch (err) {
