@@ -1,12 +1,13 @@
 import { useState, useEffect } from "react";
 import AdminLayout from "../../components/admin/AdminLayout.jsx";
 import Icon from "../../icons/Icon.jsx";
-import { getSorteos, createSorteo, updateSorteo, deleteSorteo } from "../../services/api.js";
+import { getSorteos, createSorteo, updateSorteo, deleteSorteo, getCategorias } from "../../services/api.js";
 import { formatMoney } from "../../utils/format.js";
 import styles from "./AdminSorteos.module.css";
 
 export default function AdminSorteos() {
   const [list, setList] = useState([]);
+  const [categorias, setCategorias] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
   const [editingItem, setEditingItem] = useState(null);
@@ -31,6 +32,9 @@ export default function AdminSorteos() {
 
   useEffect(() => {
     cargarSorteos();
+    getCategorias()
+      .then(setCategorias)
+      .catch((err) => console.error("Error cargando categorías:", err));
   }, []);
 
   const handleOpenCreate = () => {
@@ -177,11 +181,9 @@ export default function AdminSorteos() {
                     value={formData.categoria}
                     onChange={(e) => setFormData({ ...formData, categoria: e.target.value })}
                   >
-                    <option value="autos">Autos</option>
-                    <option value="motos">Motos</option>
-                    <option value="tecnologia">Tecnología</option>
-                    <option value="ropa">Ropa</option>
-                    <option value="hogar">Hogar</option>
+                    {categorias.map((c) => (
+                      <option key={c.id} value={c.slug}>{c.nombre}</option>
+                    ))}
                   </select>
                 </div>
 
