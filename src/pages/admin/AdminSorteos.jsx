@@ -61,10 +61,15 @@ export default function AdminSorteos() {
   const handleSave = async (e) => {
     e.preventDefault();
     try {
+      const galeria = formData.imagenUrl
+        ? [...formData.galeria, formData.imagenUrl]
+        : formData.galeria;
+      const payload = { ...formData, galeria };
+
       if (editingItem) {
-        await updateSorteo(editingItem.id, formData);
+        await updateSorteo(editingItem.id, payload);
       } else {
-        await createSorteo(formData);
+        await createSorteo(payload);
       }
       setShowModal(false);
       cargarSorteos();
