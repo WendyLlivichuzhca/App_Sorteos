@@ -101,9 +101,9 @@ export default function Sorteos() {
                 </h3>
 
                 {s.estado === "proximamente" ? (
-                  <p className={styles.inicia}>Inicia el 01 Jun 2024</p>
+                  <p className={styles.inicia}>Muy pronto</p>
                 ) : s.estado === "finalizado" ? (
-                  <p className={styles.inicia}>Ganador: <strong>{s.ganador}</strong> ({s.boletoGanador})</p>
+                  <p className={styles.inicia}>Sorteo finalizado</p>
                 ) : s.estado === "agotado" ? (
                   <p className={styles.inicia}>Boletos 100% agotados</p>
                 ) : (

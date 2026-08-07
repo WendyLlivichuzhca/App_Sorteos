@@ -146,7 +146,7 @@ export default function SorteoDetalle() {
               </>
             ) : (
               <div className={styles.proximamenteBox}>
-                Este sorteo inicia el {new Date(sorteo.inicia).toLocaleDateString("es-ES", { day: "2-digit", month: "long", year: "numeric" })}. ¡Vuelve pronto!
+                Este sorteo estará disponible muy pronto. ¡Vuelve pronto!
               </div>
             )}
           </div>
