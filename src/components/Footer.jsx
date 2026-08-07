@@ -1,8 +1,21 @@
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import Icon from "../icons/Icon.jsx";
+import { getConfiguracion } from "../services/api.js";
 import styles from "./Footer.module.css";
 
 export default function Footer() {
+  const [config, setConfig] = useState(null);
+
+  useEffect(() => {
+    getConfiguracion()
+      .then(setConfig)
+      .catch((err) => console.error("Error cargando configuración:", err));
+  }, []);
+
+  const correo = config?.correo || "soporte@sorteosenlinea.com";
+  const whatsapp = config?.whatsapp?.replace(/\D/g, "") || "593999999999";
+
   return (
     <footer className={styles.footer}>
       <div className={`container ${styles.inner}`}>
@@ -32,8 +45,8 @@ export default function Footer() {
 
         <div className={styles.col}>
           <h4>Contacto</h4>
-          <a href="mailto:soporte@sorteosenlinea.com">soporte@sorteosenlinea.com</a>
-          <a href="https://wa.me/593999999999" target="_blank" rel="noopener noreferrer">WhatsApp Soporte</a>
+          <a href={`mailto:${correo}`}>{correo}</a>
+          <a href={`https://wa.me/${whatsapp}`} target="_blank" rel="noopener noreferrer">WhatsApp Soporte</a>
         </div>
       </div>
       <div className={styles.bottom}>© {new Date().getFullYear()} Sorteos en Línea. Todos los derechos reservados.</div>

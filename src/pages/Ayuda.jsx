@@ -1,6 +1,7 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Navbar from "../components/Navbar.jsx";
 import Icon from "../icons/Icon.jsx";
+import { getConfiguracion } from "../services/api.js";
 import styles from "./Ayuda.module.css";
 
 const faqs = [
@@ -28,6 +29,19 @@ const faqs = [
 
 export default function Ayuda() {
   const [openIndex, setOpenIndex] = useState(0);
+  const [config, setConfig] = useState(null);
+
+  useEffect(() => {
+    getConfiguracion()
+      .then(setConfig)
+      .catch((err) => console.error("Error cargando configuración:", err));
+  }, []);
+
+  const correo = config?.correo || "soporte@sorteosenlinea.com";
+  const whatsapp = config?.whatsapp?.replace(/\D/g, "") || "593999999999";
+  const instagram = config?.instagram || "https://instagram.com";
+  const facebook = config?.facebook || "https://facebook.com";
+  const tiktok = config?.tiktok || "https://tiktok.com";
 
   const toggleFaq = (index) => {
     setOpenIndex(openIndex === index ? null : index);
@@ -48,7 +62,7 @@ export default function Ayuda() {
         {/* Tarjetas de contacto rápido */}
         <div className={styles.contactGrid}>
           <a
-            href="https://wa.me/593999999999?text=Hola,%20necesito%20ayuda%20con%20mis%20boletos"
+            href={`https://wa.me/${whatsapp}?text=Hola,%20necesito%20ayuda%20con%20mis%20boletos`}
             target="_blank"
             rel="noopener noreferrer"
             className={`${styles.contactCard} ${styles.whatsappCard}`}
@@ -63,15 +77,15 @@ export default function Ayuda() {
             <span className={styles.cardArrow}>→</span>
           </a>
 
-          <div className={styles.contactCard}>
+          <a href={`mailto:${correo}`} className={styles.contactCard}>
             <div className={styles.contactIcon}>
               <Icon name="mail" size={24} />
             </div>
             <div>
               <h3>Correo Electrónico</h3>
-              <p>soporte@sorteosenlinea.com</p>
+              <p>{correo}</p>
             </div>
-          </div>
+          </a>
 
           <div className={styles.contactCard}>
             <div className={styles.contactIcon}>
@@ -118,13 +132,13 @@ export default function Ayuda() {
           <p>Mira los sorteos en vivo y fotos de entregas de premios</p>
 
           <div className={styles.socialLinks}>
-            <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" className={styles.socialBtn}>
+            <a href={instagram} target="_blank" rel="noopener noreferrer" className={styles.socialBtn}>
               Instagram
             </a>
-            <a href="https://facebook.com" target="_blank" rel="noopener noreferrer" className={styles.socialBtn}>
+            <a href={facebook} target="_blank" rel="noopener noreferrer" className={styles.socialBtn}>
               Facebook
             </a>
-            <a href="https://tiktok.com" target="_blank" rel="noopener noreferrer" className={styles.socialBtn}>
+            <a href={tiktok} target="_blank" rel="noopener noreferrer" className={styles.socialBtn}>
               TikTok
             </a>
           </div>
