@@ -44,9 +44,6 @@ export default function Navbar({ variant = "full", step }) {
               >
                 Consultar boletos
               </button>
-              <button type="button" className={styles.settingsBtn} aria-label="Configuración">
-                <Icon name="settings" size={18} strokeWidth={1.8} />
-              </button>
             </div>
           </>
         )}

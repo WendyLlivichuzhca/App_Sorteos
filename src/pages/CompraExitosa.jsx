@@ -14,8 +14,13 @@ export default function CompraExitosa() {
   const { ultimaCompra, reiniciarFlujo } = useApp();
 
   useEffect(() => {
-    if (!ultimaCompra) navigate("/sorteos", { replace: true });
-  }, [ultimaCompra, navigate]);
+    if (!ultimaCompra) {
+      navigate("/sorteos", { replace: true });
+      return;
+    }
+    reiniciarFlujo();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   if (!ultimaCompra) return null;
 
@@ -56,11 +61,6 @@ Comprador: ${ultimaCompra.comprador.nombre}
   };
 
   const irAConsultarBoletos = () => navigate("/consultar-boletos");
-
-  const finalizarFlujo = (destino) => {
-    reiniciarFlujo();
-    navigate(destino);
-  };
 
   return (
     <div className="page">
@@ -132,18 +132,6 @@ Comprador: ${ultimaCompra.comprador.nombre}
             <button type="button" className="btn btn-primary btn-block" onClick={irAConsultarBoletos}>
               Ver mis boletos
             </button>
-          </div>
-
-          <div className={styles.cuentaBox}>
-            <p>¿Quieres administrar tus compras y participar en más sorteos?</p>
-            <div className={styles.cuentaAcciones}>
-              <button type="button" className="btn btn-primary btn-sm" onClick={() => finalizarFlujo("/")}>
-                Crear cuenta
-              </button>
-              <button type="button" className="btn btn-secondary btn-sm" onClick={() => finalizarFlujo("/sorteos")}>
-                Más tarde
-              </button>
-            </div>
           </div>
         </div>
       </div>
