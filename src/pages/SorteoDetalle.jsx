@@ -125,7 +125,7 @@ export default function SorteoDetalle() {
             <div className={styles.incluyeBox}>
               <h4>Incluye además</h4>
               <ul>
-                {sorteo.incluye.map((item) => (
+                {(sorteo.incluye || []).map((item) => (
                   <li key={item}>
                     <Icon name="check" size={15} strokeWidth={2.4} /> {item}
                   </li>
