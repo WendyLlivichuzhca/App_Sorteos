@@ -178,6 +178,7 @@ export async function initDB() {
         updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
       ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
     `);
+    await ensureColumn(pool, 'configuracion', 'instrucciones_pago', 'TEXT NULL');
 
     // Seed default data if empty
     const [cats] = await pool.query('SELECT COUNT(*) as count FROM categorias');

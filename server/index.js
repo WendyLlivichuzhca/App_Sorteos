@@ -681,17 +681,17 @@ app.put('/api/admin/configuracion', requireAuth, async (req, res) => {
     const pool = getPool();
     const {
       nombreEmpresa, whatsapp, correo, facebook, instagram, tiktok,
-      colorTema, politicas, faqTexto, metodosPago,
+      colorTema, politicas, faqTexto, metodosPago, instruccionesPago,
     } = req.body;
 
     await pool.query(
       `UPDATE configuracion SET
         nombre_empresa = ?, whatsapp = ?, correo = ?, facebook = ?, instagram = ?, tiktok = ?,
-        color_tema = ?, politicas = ?, faq_texto = ?, metodos_pago = ?
+        color_tema = ?, politicas = ?, faq_texto = ?, metodos_pago = ?, instrucciones_pago = ?
        WHERE id = 1`,
       [
         nombreEmpresa, whatsapp, correo, facebook, instagram, tiktok,
-        colorTema, politicas, faqTexto, JSON.stringify(metodosPago || {}),
+        colorTema, politicas, faqTexto, JSON.stringify(metodosPago || {}), instruccionesPago || '',
       ]
     );
     res.json({ message: 'Configuración actualizada' });

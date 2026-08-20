@@ -38,12 +38,17 @@ export default function MetodoPago() {
   const [procesando, setProcesando] = useState(false);
   const [error, setError] = useState("");
   const [metodosPago, setMetodosPago] = useState(todosLosMetodosPago);
+  const [instruccionesPago, setInstruccionesPago] = useState("");
+  const [politicas, setPoliticas] = useState("");
+  const [aceptaTerminos, setAceptaTerminos] = useState(false);
 
   useEffect(() => {
     getConfiguracion()
       .then((config) => {
         const habilitados = config.metodosPago || {};
         setMetodosPago(todosLosMetodosPago.filter((m) => habilitados[m.id] !== false));
+        setInstruccionesPago(config.instrucciones_pago || "");
+        setPoliticas(config.politicas || "");
       })
       .catch((err) => console.error("Error cargando métodos de pago:", err));
   }, []);
@@ -102,6 +107,13 @@ export default function MetodoPago() {
               ))}
             </div>
 
+            {instruccionesPago && (
+              <div style={{ background: "#f8f7fc", border: "1px dashed #6d3cf5", borderRadius: "10px", padding: "14px 16px", marginTop: "16px", fontSize: "13px", color: "#17152b", whiteSpace: "pre-line" }}>
+                <strong style={{ display: "block", marginBottom: "4px" }}>Cómo pagar:</strong>
+                {instruccionesPago}
+              </div>
+            )}
+
             <div className={styles.fileInputBox}>
               <label>Subir foto del comprobante (opcional):</label>
               <input
@@ -112,9 +124,21 @@ export default function MetodoPago() {
               />
             </div>
 
+            {politicas && (
+              <label style={{ display: "flex", gap: "8px", alignItems: "flex-start", marginTop: "16px", fontSize: "12.5px", color: "#6b6880", cursor: "pointer" }}>
+                <input
+                  type="checkbox"
+                  checked={aceptaTerminos}
+                  onChange={(e) => setAceptaTerminos(e.target.checked)}
+                  style={{ marginTop: "2px", accentColor: "#6d3cf5" }}
+                />
+                <span>He leído y acepto los términos: {politicas}</span>
+              </label>
+            )}
+
             {error && <div style={{ color: "#ef4444", fontSize: "13px", marginTop: "10px" }}>⚠️ {error}</div>}
 
-            <button className="btn btn-primary btn-full" onClick={handleConfirmar} disabled={procesando} style={{ marginTop: "20px" }}>
+            <button className="btn btn-primary btn-full" onClick={handleConfirmar} disabled={procesando || (Boolean(politicas) && !aceptaTerminos)} style={{ marginTop: "20px" }}>
               {procesando ? "Procesando compra..." : "Confirmar y Pagar"} <Icon name="arrowRight" size={18} />
             </button>
           </div>
@@ -158,7 +182,7 @@ export default function MetodoPago() {
               type="button"
               className={`btn btn-primary btn-block ${styles.pagarBtn}`}
               onClick={handleConfirmar}
-              disabled={procesando}
+              disabled={procesando || (Boolean(politicas) && !aceptaTerminos)}
             >
               {procesando ? "Procesando..." : (
                 <>

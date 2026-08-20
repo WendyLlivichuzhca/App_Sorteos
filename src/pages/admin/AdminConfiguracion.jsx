@@ -25,6 +25,7 @@ export default function AdminConfiguracion() {
     colorTema: "#6d3cf5",
     politicas: "",
     faqTexto: "",
+    instruccionesPago: "",
   });
   const [metodos, setMetodos] = useState({});
 
@@ -41,6 +42,7 @@ export default function AdminConfiguracion() {
           colorTema: data.color_tema,
           politicas: data.politicas || "",
           faqTexto: data.faq_texto || "",
+          instruccionesPago: data.instrucciones_pago || "",
         });
         setMetodos(data.metodosPago || {});
       })
@@ -185,6 +187,20 @@ export default function AdminConfiguracion() {
                   />
                 </label>
               ))}
+            </div>
+
+            <div className={styles.formGroup} style={{ marginTop: "16px" }}>
+              <label>Instrucciones de Pago (se muestran en el checkout)</label>
+              <textarea
+                rows="4"
+                placeholder="Ej: Banco Pichincha, Cuenta de Ahorros N° 1234567890, a nombre de Wendy Llivichuzhca, cédula 1234567890. Envía tu comprobante por WhatsApp al +593 99 999 9999."
+                value={config.instruccionesPago}
+                onChange={(e) => setConfig({ ...config, instruccionesPago: e.target.value })}
+                style={{ padding: "10px", borderRadius: "10px", border: "1.5px solid #ecebf3", fontSize: "13px", outline: "none" }}
+              />
+              <span style={{ fontSize: "11.5px", color: "#9795a8" }}>
+                Escribe aquí tu número de cuenta, WhatsApp, o cualquier dato que el cliente necesite para pagarte.
+              </span>
             </div>
           </div>
 
