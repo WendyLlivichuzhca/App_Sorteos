@@ -180,9 +180,8 @@ export const ganadores = [
 export const getSorteoById = (id) => sorteos.find((s) => s.id === id);
 
 export const metodosPago = [
-  { id: "tarjeta", nombre: "Tarjeta de crédito / débito", detalle: "Visa, Mastercard, AMEX", icon: "card" },
-  { id: "payphone", nombre: "PayPhone", detalle: "Paga escaneando un código QR", icon: "qr" },
-  { id: "transferencia", nombre: "Transferencia bancaria", detalle: "Desde tu banco favorito", icon: "bank" },
-  { id: "deuna", nombre: "DeUna!", detalle: "Pago rápido y seguro", icon: "deuna" },
-  { id: "paypal", nombre: "PayPal", detalle: "Paga con tu cuenta PayPal", icon: "paypal" },
+  { id: "transferencia", nombre: "Transferencia bancaria o depósito", icon: "bank" },
+  { id: "payphone", nombre: "Pagar con tarjetas de crédito o débito Visa o Mastercard | Payphone", icon: "payphone" },
+  { id: "tarjeta", nombre: "Pagar con tarjetas de crédito y débito Visa, Mastercard, Diners, American Express y Discover", icon: "card" },
+  { id: "paypal", nombre: "Pagar con PayPal", icon: "paypal" },
 ];
