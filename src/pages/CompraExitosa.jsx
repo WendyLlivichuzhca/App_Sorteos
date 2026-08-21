@@ -142,9 +142,33 @@ Comprador: ${ultimaCompra.comprador.nombre}
                 <span style={{ display: "block", fontSize: "12.5px" }}><strong>Cédula:</strong> 1400435705</span>
               </div>
 
-              <p style={{ fontSize: "12px", color: "#64748b", marginTop: "10px" }}>
+              <p style={{ fontSize: "12px", color: "#64748b", marginTop: "10px", marginBottom: "14px" }}>
                 Por favor, realiza la transferencia por el total e indica tu código de orden <strong>{ultimaCompra.codigo}</strong>.
               </p>
+
+              {/* Carga de Comprobante en la Pantalla de Éxito */}
+              <div style={{ background: "#ffffff", border: "1px dashed #6d3cf5", borderRadius: "6px", padding: "14px", marginTop: "10px" }}>
+                <strong style={{ display: "block", fontSize: "13px", color: "#1e293b", marginBottom: "6px" }}>
+                  📤 Adjunta aquí tu comprobante de pago:
+                </strong>
+                <input
+                  type="file"
+                  accept="image/*,application/pdf"
+                  onChange={async (e) => {
+                    const file = e.target.files[0];
+                    if (file && ultimaCompra.compraId) {
+                      try {
+                        const { subirComprobante } = await import("../services/api.js");
+                        await subirComprobante(ultimaCompra.compraId, file);
+                        alert("¡Comprobante subido con éxito! El administrador revisará tu pago.");
+                      } catch (err) {
+                        alert(err.message || "Error al subir comprobante");
+                      }
+                    }
+                  }}
+                  style={{ fontSize: "12.5px", width: "100%" }}
+                />
+              </div>
             </div>
           )}
 
