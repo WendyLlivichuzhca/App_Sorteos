@@ -342,14 +342,6 @@ export default function Checkout() {
                       <p>
                         Por favor, <strong>NO PROCEDAS SI NO ESTÁS SEGURO</strong> de que quieres realizar la compra. Realiza tu pago directamente con transferencia o depósito a nuestra cuenta bancaria. Tu pedido no se procesará hasta que se haya recibido el importe en nuestra cuenta.
                       </p>
-                      <div className={styles.fileUpload} style={{ marginTop: "12px" }}>
-                        <label>Subir comprobante de transferencia (opcional):</label>
-                        <input
-                          type="file"
-                          accept="image/*,application/pdf"
-                          onChange={(e) => setComprobanteFile(e.target.files[0])}
-                        />
-                      </div>
                     </div>
                   )}
                 </div>
