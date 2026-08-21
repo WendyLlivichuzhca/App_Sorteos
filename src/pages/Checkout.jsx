@@ -342,36 +342,7 @@ export default function Checkout() {
                       <p>
                         Por favor, <strong>NO PROCEDAS SI NO ESTÁS SEGURO</strong> de que quieres realizar la compra. Realiza tu pago directamente con transferencia o depósito a nuestra cuenta bancaria. Tu pedido no se procesará hasta que se haya recibido el importe en nuestra cuenta.
                       </p>
-                      
-                      <div className={styles.instruccionesBox}>
-                        <strong style={{ display: "block", marginBottom: "8px", color: "#1e293b", fontSize: "13.5px" }}>
-                          🏦 Cuentas Bancarias para Transferencia o Depósito:
-                        </strong>
-
-                        <div style={{ background: "#f8fafc", border: "1px solid #e2e8f0", borderRadius: "6px", padding: "10px 12px", marginBottom: "10px" }}>
-                          <strong style={{ color: "#0f172a", display: "block" }}>1. BANCO PICHINCHA</strong>
-                          <span style={{ display: "block", fontSize: "12.5px" }}><strong>Tipo:</strong> Cuenta de Ahorros</span>
-                          <span style={{ display: "block", fontSize: "12.5px" }}><strong>N° de Cuenta:</strong> 2216306156</span>
-                          <span style={{ display: "block", fontSize: "12.5px" }}><strong>Titular:</strong> Elizabeth Veronica Vintimilla Cordova</span>
-                          <span style={{ display: "block", fontSize: "12.5px" }}><strong>Cédula:</strong> 1400435705</span>
-                        </div>
-
-                        <div style={{ background: "#f8fafc", border: "1px solid #e2e8f0", borderRadius: "6px", padding: "10px 12px" }}>
-                          <strong style={{ color: "#0f172a", display: "block" }}>2. CUENTA N° 406004387500</strong>
-                          <span style={{ display: "block", fontSize: "12.5px" }}><strong>Tipo:</strong> Cuenta de Ahorros / Única</span>
-                          <span style={{ display: "block", fontSize: "12.5px" }}><strong>N° de Cuenta:</strong> 406004387500</span>
-                          <span style={{ display: "block", fontSize: "12.5px" }}><strong>Titular:</strong> Elizabeth Veronica Vintimilla Cordova</span>
-                          <span style={{ display: "block", fontSize: "12.5px" }}><strong>Cédula:</strong> 1400435705</span>
-                        </div>
-
-                        {instruccionesPago && (
-                          <div style={{ marginTop: "10px", fontSize: "12.5px", color: "#475569", whiteSpace: "pre-line" }}>
-                            {instruccionesPago}
-                          </div>
-                        )}
-                      </div>
-
-                      <div className={styles.fileUpload}>
+                      <div className={styles.fileUpload} style={{ marginTop: "12px" }}>
                         <label>Subir comprobante de transferencia (opcional):</label>
                         <input
                           type="file"

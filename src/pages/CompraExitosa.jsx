@@ -120,6 +120,34 @@ Comprador: ${ultimaCompra.comprador.nombre}
             </div>
           </div>
 
+          {ultimaCompra.metodoPago === "transferencia" && (
+            <div style={{ margin: "20px 0", background: "#f8fafc", border: "1px dashed #cbd5e1", borderRadius: "8px", padding: "16px", textAlign: "left" }}>
+              <h4 style={{ fontSize: "14px", fontWeight: "800", color: "#0f172a", marginBottom: "10px" }}>
+                🏦 Cuentas Bancarias para Realizar tu Transferencia:
+              </h4>
+
+              <div style={{ background: "#ffffff", border: "1px solid #e2e8f0", borderRadius: "6px", padding: "10px 12px", marginBottom: "8px" }}>
+                <strong style={{ color: "#0f172a", display: "block", fontSize: "13px" }}>1. BANCO PICHINCHA</strong>
+                <span style={{ display: "block", fontSize: "12.5px" }}><strong>Tipo:</strong> Cuenta de Ahorros</span>
+                <span style={{ display: "block", fontSize: "12.5px" }}><strong>N° de Cuenta:</strong> 2216306156</span>
+                <span style={{ display: "block", fontSize: "12.5px" }}><strong>Titular:</strong> Elizabeth Veronica Vintimilla Cordova</span>
+                <span style={{ display: "block", fontSize: "12.5px" }}><strong>Cédula:</strong> 1400435705</span>
+              </div>
+
+              <div style={{ background: "#ffffff", border: "1px solid #e2e8f0", borderRadius: "6px", padding: "10px 12px" }}>
+                <strong style={{ color: "#0f172a", display: "block", fontSize: "13px" }}>2. CUENTA N° 406004387500</strong>
+                <span style={{ display: "block", fontSize: "12.5px" }}><strong>Tipo:</strong> Cuenta de Ahorros / Única</span>
+                <span style={{ display: "block", fontSize: "12.5px" }}><strong>N° de Cuenta:</strong> 406004387500</span>
+                <span style={{ display: "block", fontSize: "12.5px" }}><strong>Titular:</strong> Elizabeth Veronica Vintimilla Cordova</span>
+                <span style={{ display: "block", fontSize: "12.5px" }}><strong>Cédula:</strong> 1400435705</span>
+              </div>
+
+              <p style={{ fontSize: "12px", color: "#64748b", marginTop: "10px" }}>
+                Por favor, realiza la transferencia por el total e indica tu código de orden <strong>{ultimaCompra.codigo}</strong>.
+              </p>
+            </div>
+          )}
+
           <div className={styles.acciones}>
             <div className={styles.accionesFila}>
               <button type="button" className="btn btn-secondary btn-sm" onClick={descargarComprobante}>
