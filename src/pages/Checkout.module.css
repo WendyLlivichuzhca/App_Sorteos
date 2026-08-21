@@ -1,0 +1,415 @@
+.wrap {
+  max-width: 1140px;
+  margin: 0 auto;
+  padding: 30px 20px 90px;
+  font-family: inherit;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: 1.15fr 1fr;
+  gap: 40px;
+  align-items: start;
+}
+
+/* Columna Izquierda: Datos de Facturación */
+.colFacturacion h2 {
+  font-size: 20px;
+  font-weight: 800;
+  color: #1e293b;
+  margin-bottom: 20px;
+}
+
+.rowTwo {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin-bottom: 14px;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  margin-bottom: 14px;
+}
+
+.field span {
+  font-size: 13px;
+  font-weight: 700;
+  color: #334155;
+}
+
+.field input,
+.field select {
+  border: 1px solid #cbd5e1;
+  border-radius: 3px;
+  padding: 10px 12px;
+  font-size: 13.5px;
+  outline: none;
+  width: 100%;
+  background: #ffffff;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.field input:focus,
+.field select:focus {
+  border-color: #222222;
+}
+
+.inputError {
+  border-color: #dc2626 !important;
+}
+
+.field em {
+  font-style: normal;
+  font-size: 12px;
+  color: #dc2626;
+}
+
+.readOnlyInput {
+  background: #f8fafc !important;
+  color: #64748b;
+  cursor: not-allowed;
+}
+
+/* Columna Derecha: Tu Pedido + Selección de Método de Pago */
+.colPedidoPago {
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+}
+
+/* Tu Pedido Box */
+.tuPedidoBox h3 {
+  font-size: 20px;
+  font-weight: 800;
+  color: #1e293b;
+  margin-bottom: 16px;
+}
+
+.pedidoTableHeader {
+  display: flex;
+  justify-content: space-between;
+  padding-bottom: 8px;
+  border-bottom: 1px dotted #cbd5e1;
+  font-size: 13px;
+  font-weight: 700;
+  color: #334155;
+}
+
+.rightAlign {
+  text-align: right;
+}
+
+.pedidoTableBody {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 0;
+  border-bottom: 1px dotted #cbd5e1;
+  font-size: 13.5px;
+}
+
+.productoText {
+  flex: 1;
+  color: #334155;
+  line-height: 1.4;
+  padding-right: 14px;
+}
+
+.colMult {
+  width: 60px;
+  text-align: center;
+  font-weight: 600;
+  color: #64748b;
+}
+
+.colPrice {
+  font-weight: 700;
+  color: #0f172a;
+}
+
+.pedidoTableTotal {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: 14px;
+  font-size: 14.5px;
+}
+
+.pedidoTableTotal span {
+  font-weight: 700;
+  color: #334155;
+}
+
+.pedidoTableTotal strong {
+  font-size: 16px;
+  font-weight: 800;
+  color: #0f172a;
+}
+
+/* Selección de método de pago */
+.metodosBox h3 {
+  font-size: 19px;
+  font-weight: 800;
+  color: #1e293b;
+  margin-bottom: 16px;
+}
+
+.metodosList {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.metodoItem {
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.metodoItem:last-child {
+  border-bottom: none;
+}
+
+.radioLabel {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 14px 18px;
+  cursor: pointer;
+  background: #f8fafc;
+  transition: background 0.15s ease;
+}
+
+.radioLabel:hover {
+  background: #f1f5f9;
+}
+
+.radioLabel input[type="radio"] {
+  margin-top: 3px;
+  width: 15px;
+  height: 15px;
+  accent-color: #d97706;
+  cursor: pointer;
+}
+
+.radioTextContent {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  flex: 1;
+}
+
+.radioText {
+  font-size: 13.5px;
+  font-weight: 600;
+  color: #334155;
+  line-height: 1.4;
+}
+
+/* Badges */
+.badgesRow {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 5px;
+}
+
+.visaBadge {
+  font-size: 10px;
+  font-weight: 900;
+  color: #1a1f71;
+  font-style: italic;
+  background: #ffffff;
+  border: 1px solid #cbd5e1;
+  padding: 2px 6px;
+  border-radius: 3px;
+}
+
+.masterBadge {
+  width: 20px;
+  height: 14px;
+  border-radius: 2px;
+  background: linear-gradient(90deg, #eb001b 50%, #f79e1b 50%);
+  border: 1px solid #cbd5e1;
+}
+
+.dinersBadge {
+  font-size: 10px;
+  font-weight: 700;
+  color: #004a97;
+  background: #ffffff;
+  border: 1px solid #cbd5e1;
+  padding: 2px 6px;
+  border-radius: 3px;
+}
+
+.amexBadge {
+  font-size: 10px;
+  font-weight: 800;
+  color: #006fcf;
+  background: #ffffff;
+  border: 1px solid #cbd5e1;
+  padding: 2px 6px;
+  border-radius: 3px;
+}
+
+.discoverBadge {
+  font-size: 10px;
+  font-weight: 800;
+  color: #f6821f;
+  background: #ffffff;
+  border: 1px solid #cbd5e1;
+  padding: 2px 6px;
+  border-radius: 3px;
+}
+
+.payphoneBadge {
+  font-size: 10px;
+  font-weight: 800;
+  color: #ff6f00;
+  background: #ffffff;
+  border: 1px solid #ffcc80;
+  padding: 2px 6px;
+  border-radius: 3px;
+}
+
+/* Gray Expand Box */
+.expandGrayBox {
+  background: #eceef0;
+  padding: 14px 18px;
+  border-top: 1px solid #e2e8f0;
+  font-size: 13px;
+  color: #475569;
+  line-height: 1.5;
+}
+
+.expandGrayBox p {
+  margin: 0;
+}
+
+.instruccionesBox {
+  margin-top: 10px;
+  background: #ffffff;
+  border: 1px dashed #cbd5e1;
+  padding: 10px 12px;
+  border-radius: 4px;
+  white-space: pre-line;
+}
+
+.fileUpload {
+  margin-top: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.fileUpload label {
+  font-size: 12px;
+  font-weight: 700;
+  color: #334155;
+}
+
+.privacyNote {
+  margin-top: 14px;
+  font-size: 12px;
+  color: #64748b;
+  line-height: 1.4;
+}
+
+.termsRow {
+  margin-top: 14px;
+}
+
+.termsLabel {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  font-size: 13px;
+  color: #334155;
+  cursor: pointer;
+  line-height: 1.4;
+}
+
+.termsLabel input {
+  margin-top: 2px;
+  width: 15px;
+  height: 15px;
+  accent-color: #222222;
+  cursor: pointer;
+}
+
+.errorMessage {
+  margin-top: 12px;
+  color: #dc2626;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.btnRow {
+  margin-top: 18px;
+}
+
+.blackBtn {
+  width: 100%;
+  background: #222222;
+  color: #ffffff;
+  border: none;
+  padding: 14px 20px;
+  font-size: 15px;
+  font-weight: 700;
+  border-radius: 4px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition: background 0.15s ease;
+}
+
+.blackBtn:hover:not(:disabled) {
+  background: #000000;
+}
+
+.blackBtn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.paypalBtn {
+  width: 100%;
+  background: #ffc439;
+  color: #003087;
+  border: none;
+  padding: 12px 20px;
+  font-size: 18px;
+  font-weight: 900;
+  border-radius: 4px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.15s ease;
+}
+
+.paypalBtn:hover:not(:disabled) {
+  background: #f2ba31;
+}
+
+.paypalBtn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.paypalLogoText {
+  font-style: italic;
+  letter-spacing: -0.5px;
+}
+
+@media (max-width: 860px) {
+  .grid {
+    grid-template-columns: 1fr;
+    gap: 30px;
+  }
+}

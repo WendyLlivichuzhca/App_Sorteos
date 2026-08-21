@@ -9,8 +9,7 @@ import Landing from "./pages/Landing.jsx";
 import Sorteos from "./pages/Sorteos.jsx";
 import SorteoDetalle from "./pages/SorteoDetalle.jsx";
 import Paquetes from "./pages/Paquetes.jsx";
-import DatosComprador from "./pages/DatosComprador.jsx";
-import MetodoPago from "./pages/MetodoPago.jsx";
+import Checkout from "./pages/Checkout.jsx";
 import CompraExitosa from "./pages/CompraExitosa.jsx";
 import ConsultarBoletos from "./pages/ConsultarBoletos.jsx";
 import Resultados from "./pages/Resultados.jsx";
@@ -50,8 +49,9 @@ export default function App() {
             <Route path="/sorteos" element={<Sorteos />} />
             <Route path="/sorteos/:id" element={<SorteoDetalle />} />
             <Route path="/sorteos/:id/paquetes" element={<Paquetes />} />
-            <Route path="/checkout/datos" element={<DatosComprador />} />
-            <Route path="/checkout/pago" element={<MetodoPago />} />
+            <Route path="/checkout" element={<Checkout />} />
+            <Route path="/checkout/datos" element={<Checkout />} />
+            <Route path="/checkout/pago" element={<Checkout />} />
             <Route path="/checkout/exito" element={<CompraExitosa />} />
             <Route path="/consultar-boletos" element={<ConsultarBoletos />} />
             <Route path="/resultados" element={<Resultados />} />
