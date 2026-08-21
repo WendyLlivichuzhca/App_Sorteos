@@ -16,8 +16,20 @@ export async function fetchApi(endpoint, options = {}) {
       },
       ...options,
     });
+
+    // Sesión deslizante: cada request autenticado exitoso trae un token renovado.
+    const refreshed = res.headers.get('X-Refresh-Token');
+    if (refreshed) setToken(refreshed);
+
     if (!res.ok) {
       const errData = await res.json().catch(() => ({}));
+      if (res.status === 401 && token) {
+        clearToken();
+        localStorage.removeItem('sorteos_admin_user');
+        if (typeof window !== 'undefined' && !window.location.pathname.startsWith('/admin/login')) {
+          window.location.href = '/admin/login';
+        }
+      }
       throw new Error(errData.error || `Error ${res.status}`);
     }
     return await res.json();
