@@ -53,14 +53,24 @@ export default function Paquetes() {
     );
   }
 
-  // Descuento por volumen: tramos reales configurados por el admin (/api/descuentos)
-  const tramoAplicable = [...tramos]
-    .sort((a, b) => b.cantidad_minima - a.cantidad_minima)
-    .find((t) => cantidad >= t.cantidad_minima);
-  const ahorra = tramoAplicable ? tramoAplicable.porcentaje : 0;
+  const getDescuentoParaCantidad = (numBoletos) => {
+    const tramo = [...tramos]
+      .sort((a, b) => b.cantidad_minima - a.cantidad_minima)
+      .find((t) => numBoletos >= t.cantidad_minima);
+    return tramo ? tramo.porcentaje : 0;
+  };
 
+  const ahorra = getDescuentoParaCantidad(cantidad);
   const precioBase = cantidad * sorteo.precio;
   const precio = ahorra > 0 ? precioBase * (1 - ahorra / 100) : precioBase;
+
+  // Paquetes predefinidos estándar (sus descuentos se calculan dinámicamente del panel admin)
+  const paquetesPreset = [
+    { id: "basico", nombre: "Paquete Básico", boletos: 1 },
+    { id: "popular", nombre: "Paquete Popular", boletos: 5, popular: true },
+    { id: "vip", nombre: "Paquete VIP", boletos: 10 },
+    { id: "premium", nombre: "Paquete Premium", boletos: 20 },
+  ];
 
   const paquete = {
     nombre: "Selección de boletos",
@@ -78,6 +88,10 @@ export default function Paquetes() {
     setCantidad((prev) => Math.max(1, Math.min(500, prev + delta)));
   };
 
+  const seleccionarPreset = (numBoletos) => {
+    setCantidad(numBoletos);
+  };
+
   return (
     <div className="page">
       <Navbar variant="cart" />
@@ -87,7 +101,7 @@ export default function Paquetes() {
           <Icon name="chevronLeft" size={16} /> {sorteo.nombre}
         </Link>
 
-        <h1>Elige tu cantidad de boletos</h1>
+        <h1>Elige tu paquete o cantidad de boletos</h1>
 
         <div className={styles.notice}>
           <Icon name="share" size={18} />
@@ -95,12 +109,50 @@ export default function Paquetes() {
         </div>
 
         <div className={styles.paquetes}>
-          <div className={`${styles.paquete} ${styles.paqueteCustom} ${styles.paqueteActivo}`}>
-            <div className={styles.paqueteInfo}>
-              <strong>Cantidad de boletos</strong>
-              <span className={styles.paqueteBoletos}>
-                {ahorra > 0 && <span className={styles.ahorro}>Ahorra {ahorra}%</span>}
+          {/* Tarjetas de Paquetes Predefinidos (Foto 1) */}
+          {paquetesPreset.map((p) => {
+            const porcentajeAhorro = getDescuentoParaCantidad(p.boletos);
+            const precioPresetBase = p.boletos * sorteo.precio;
+            const precioPreset = porcentajeAhorro > 0 ? precioPresetBase * (1 - porcentajeAhorro / 100) : precioPresetBase;
+            const esActivo = cantidad === p.boletos;
+
+            return (
+              <button
+                key={p.id}
+                type="button"
+                className={`${styles.paquete} ${esActivo ? styles.paqueteActivo : ""}`}
+                onClick={() => seleccionarPreset(p.boletos)}
+              >
+                <span className={styles.radio}>
+                  {esActivo && <span className={styles.radioDot} />}
+                </span>
+                <div className={styles.paqueteInfo}>
+                  <strong>{p.nombre}</strong>
+                  <span className={styles.paqueteBoletos}>
+                    {p.boletos} {p.boletos === 1 ? "Boleto" : "Boletos"}
+                    {porcentajeAhorro > 0 && <span className={styles.ahorro}>Ahorra {porcentajeAhorro}%</span>}
+                  </span>
+                </div>
+                <span className={styles.paquetePrecio}>
+                  {formatMoney(precioPreset)}
+                </span>
+              </button>
+            );
+          })}
+
+          {/* Opción Personalizada con contador + y - (Foto 2) */}
+          <div className={`${styles.paquete} ${styles.paqueteCustom} ${!paquetesPreset.some(p => p.boletos === cantidad) ? styles.paqueteActivo : ""}`}>
+            <div className={styles.customHeaderBtn} style={{ padding: "14px 20px" }}>
+              <span className={styles.radio}>
+                {!paquetesPreset.some(p => p.boletos === cantidad) && <span className={styles.radioDot} />}
               </span>
+              <div className={styles.paqueteInfo}>
+                <strong>Cantidad personalizada</strong>
+                <span className={styles.paqueteBoletos}>
+                  Elige la cantidad exacta que desees
+                  {ahorra > 0 && <span className={styles.ahorro}>Ahorra {ahorra}%</span>}
+                </span>
+              </div>
             </div>
 
             <div className={styles.counterRow}>
