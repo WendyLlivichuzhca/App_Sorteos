@@ -28,10 +28,12 @@ export default function AdminBoletos() {
       .finally(() => setLoading(false));
   }, [sorteoId]);
 
+  const cleanFilter = filter.replace(/^#/, "").trim().toLowerCase();
   const filtered = boletos.filter(
     (b) =>
-      b.numero.toLowerCase().includes(filter.toLowerCase()) ||
-      (b.cliente_nombre || "").toLowerCase().includes(filter.toLowerCase())
+      b.numero.toLowerCase().includes(cleanFilter) ||
+      (b.cliente_nombre || "").toLowerCase().includes(cleanFilter) ||
+      (b.cliente_cedula || "").toLowerCase().includes(cleanFilter)
   );
 
   return (
