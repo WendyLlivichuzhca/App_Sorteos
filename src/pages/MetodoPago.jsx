@@ -12,14 +12,16 @@ import styles from "./MetodoPago.module.css";
 const brandChip = (icon) => {
   switch (icon) {
     case "card":
+    case "payphone":
       return (
         <span className={styles.brandChip}>
           <span className={styles.visa}>VISA</span>
           <span className={styles.mastercard} />
+          <span className={styles.payphoneBadge}>PayPhone</span>
         </span>
       );
     case "qr":
-      return <Icon name="qr" size={26} strokeWidth={1.4} className={styles.brandIcon} />;
+      return <Icon name="qr" size={24} strokeWidth={1.5} className={styles.brandIcon} />;
     case "bank":
       return <Icon name="bank" size={24} strokeWidth={1.6} className={styles.brandIcon} />;
     case "deuna":
@@ -63,12 +65,18 @@ export default function MetodoPago() {
 
   const handleConfirmar = async () => {
     setError("");
+
+    if (!aceptaTerminos) {
+      setError("Debes aceptar los términos y condiciones para continuar.");
+      return;
+    }
+
     setProcesando(true);
     try {
       await confirmarCompra(comprobanteFile);
       navigate("/checkout/exito");
     } catch (err) {
-      setError(err.message || "No se pudo procesar tu compra, intenta de nuevo");
+      setError(err.message || "No se pudo procesar tu compra, intenta de nuevo.");
     } finally {
       setProcesando(false);
     }
@@ -80,116 +88,188 @@ export default function MetodoPago() {
 
       <div className={`container ${styles.wrap}`}>
         <Link to="/checkout/datos" className={styles.volver}>
-          <Icon name="chevronLeft" size={16} /> Volver
+          <Icon name="chevronLeft" size={16} /> Volver a datos personales
         </Link>
 
         <div className={styles.grid}>
+          {/* Columna Izquierda: Selección de Métodos de Pago */}
           <div className={styles.metodos}>
-            <h1>Selecciona un método de pago</h1>
+            <h1>Selecciona tu método de pago</h1>
+            <p className={styles.subtitle}>Elige cómo deseas realizar tu pago de manera rápida y segura.</p>
 
             <div className={styles.lista}>
-              {metodosPago.map((m) => (
-                <button
-                  key={m.id}
-                  type="button"
-                  className={`${styles.metodo} ${metodoPago === m.id ? styles.metodoActivo : ""}`}
-                  onClick={() => setMetodoPago(m.id)}
-                >
-                  <span className={styles.radio}>
-                    {metodoPago === m.id && <span className={styles.radioDot} />}
-                  </span>
-                  <span className={styles.metodoInfo}>
-                    <strong>{m.nombre}</strong>
-                    <span>{m.detalle}</span>
-                  </span>
-                  {brandChip(m.icon)}
-                </button>
-              ))}
+              {metodosPago.map((m) => {
+                const esActivo = metodoPago === m.id;
+                return (
+                  <div key={m.id} className={styles.metodoBox}>
+                    <button
+                      type="button"
+                      className={`${styles.metodo} ${esActivo ? styles.metodoActivo : ""}`}
+                      onClick={() => setMetodoPago(m.id)}
+                    >
+                      <span className={styles.radio}>
+                        {esActivo && <span className={styles.radioDot} />}
+                      </span>
+                      <span className={styles.metodoInfo}>
+                        <strong>{m.nombre}</strong>
+                        <span>{m.detalle}</span>
+                      </span>
+                      {brandChip(m.icon)}
+                    </button>
+
+                    {/* Detalle desplegable según el método seleccionado */}
+                    {esActivo && (
+                      <div className={styles.metodoDetalleBox}>
+                        {m.id === "transferencia" && (
+                          <div className={styles.transferenciaAlert}>
+                            <div className={styles.alertNotice}>
+                              <Icon name="alertTriangle" size={18} />
+                              <span>
+                                Por favor, <strong>NO PROCEDAS SI NO ESTÁS SEGURO</strong> de que quieres realizar la compra. Realiza tu pago directamente con transferencia o depósito a nuestra cuenta bancaria. Tu pedido no se procesará hasta que se haya verificado el importe en nuestra cuenta.
+                              </span>
+                            </div>
+
+                            {instruccionesPago && (
+                              <div className={styles.instruccionesText}>
+                                <strong>Datos de la Cuenta Bancaria:</strong>
+                                <p>{instruccionesPago}</p>
+                              </div>
+                            )}
+
+                            <div className={styles.uploadBox}>
+                              <label>Subir comprobante de transferencia (Imagen o PDF):</label>
+                              <input
+                                type="file"
+                                accept="image/*,application/pdf"
+                                onChange={(e) => setComprobanteFile(e.target.files[0])}
+                              />
+                            </div>
+                          </div>
+                        )}
+
+                        {m.id === "payphone" && (
+                          <div className={styles.payphoneAlert}>
+                            <p>
+                              Paga de forma instantánea con cualquier tarjeta de crédito o débito (Visa / Mastercard / Discover) o desde la app oficial de <strong>PayPhone</strong>.
+                            </p>
+                            {instruccionesPago && (
+                              <div className={styles.instruccionesText}>
+                                <p>{instruccionesPago}</p>
+                              </div>
+                            )}
+                            <div className={styles.uploadBox}>
+                              <label>Subir comprobante de pago de Payphone (opcional):</label>
+                              <input
+                                type="file"
+                                accept="image/*,application/pdf"
+                                onChange={(e) => setComprobanteFile(e.target.files[0])}
+                              />
+                            </div>
+                          </div>
+                        )}
+
+                        {m.id === "tarjeta" && (
+                          <div className={styles.tarjetaAlert}>
+                            <p>Procesamiento directo de tarjeta de crédito/débito nacional o internacional.</p>
+                          </div>
+                        )}
+                      </div>
+                    )}
+                  </div>
+                );
+              })}
             </div>
 
-            {instruccionesPago && (
-              <div style={{ background: "#f8f7fc", border: "1px dashed #6d3cf5", borderRadius: "10px", padding: "14px 16px", marginTop: "16px", fontSize: "13px", color: "#17152b", whiteSpace: "pre-line" }}>
-                <strong style={{ display: "block", marginBottom: "4px" }}>Cómo pagar:</strong>
-                {instruccionesPago}
-              </div>
-            )}
-
-            <div className={styles.fileInputBox}>
-              <label>Subir foto del comprobante (opcional):</label>
-              <input
-                type="file"
-                accept="image/*,application/pdf"
-                onChange={(e) => setComprobanteFile(e.target.files[0])}
-                style={{ marginTop: "6px", fontSize: "13px" }}
-              />
-            </div>
-
-            {politicas && (
-              <label style={{ display: "flex", gap: "8px", alignItems: "flex-start", marginTop: "16px", fontSize: "12.5px", color: "#6b6880", cursor: "pointer" }}>
+            {/* Checkbox de Términos y Condiciones */}
+            <div className={styles.termsBox}>
+              <label className={styles.termsLabel}>
                 <input
                   type="checkbox"
                   checked={aceptaTerminos}
                   onChange={(e) => setAceptaTerminos(e.target.checked)}
-                  style={{ marginTop: "2px", accentColor: "#6d3cf5" }}
                 />
-                <span>He leído y acepto los términos: {politicas}</span>
+                <span>
+                  He leído y estoy de acuerdo con los <strong>términos y condiciones</strong> de la web y la política de sorteos. *
+                </span>
               </label>
-            )}
-
-            {error && <div style={{ color: "#ef4444", fontSize: "13px", marginTop: "10px" }}>⚠️ {error}</div>}
-
-            <button className="btn btn-primary btn-full" onClick={handleConfirmar} disabled={procesando || (Boolean(politicas) && !aceptaTerminos)} style={{ marginTop: "20px" }}>
-              {procesando ? "Procesando compra..." : "Confirmar y Pagar"} <Icon name="arrowRight" size={18} />
-            </button>
-          </div>
-
-          <div className={styles.resumen}>
-            <h3>Resumen de tu compra</h3>
-
-            <div className={styles.resumenItem}>
-              <div className={styles.resumenImg}>
-                <PremioImage categoria={sorteo.categoria} iconSize={22} />
-              </div>
-              <span>{sorteo.nombre}</span>
             </div>
 
-            <div className={styles.resumenRows}>
-              <div className={styles.resumenRow}>
-                <span>Paquete seleccionado</span>
-                <strong>{paquete.nombre} ({paquete.boletos} boleto{paquete.boletos > 1 ? "s" : ""})</strong>
-              </div>
-              <div className={styles.resumenRow}>
-                <span>Precio por boleto</span>
-                <strong>{formatMoney(sorteo.precio)}</strong>
-              </div>
-              <div className={styles.resumenRow}>
-                <span>Cantidad de boletos</span>
-                <strong>{paquete.boletos}</strong>
-              </div>
-            </div>
-
-            <div className={styles.totalRow}>
-              <span>Total a pagar</span>
-              <strong>{formatMoney(paquete.precio)}</strong>
-            </div>
-
-            <div className={styles.seguridad}>
-              <span><Icon name="shield" size={14} /> Pago 100% seguro</span>
-              <span><Icon name="lock" size={14} /> Encriptación SSL</span>
-            </div>
+            {error && <div className={styles.errorMessage}>⚠️ {error}</div>}
 
             <button
-              type="button"
-              className={`btn btn-primary btn-block ${styles.pagarBtn}`}
+              className={`btn btn-primary btn-block ${styles.pagarMainBtn}`}
               onClick={handleConfirmar}
-              disabled={procesando || (Boolean(politicas) && !aceptaTerminos)}
+              disabled={procesando || !aceptaTerminos}
             >
-              {procesando ? "Procesando..." : (
+              {procesando ? (
+                "Procesando pago..."
+              ) : (
                 <>
-                  Pagar ahora <Icon name="lock" size={16} />
+                  Pagar {formatMoney(paquete.precio)} <Icon name="lock" size={17} />
                 </>
               )}
             </button>
+          </div>
+
+          {/* Columna Derecha: Resumen de Pedido y Datos del Comprador */}
+          <div className={styles.resumenCol}>
+            <div className={styles.resumenCard}>
+              <h3>Tu Pedido</h3>
+
+              <div className={styles.sorteoRow}>
+                <div className={styles.sorteoImg}>
+                  <PremioImage categoria={sorteo.categoria} src={sorteo.imagenUrl} iconSize={26} />
+                </div>
+                <div className={styles.sorteoText}>
+                  <h4>{sorteo.nombre}</h4>
+                  <span>
+                    {paquete.boletos} {paquete.boletos === 1 ? "Boleto" : "Boletos"} × {formatMoney(sorteo.precio)}
+                  </span>
+                </div>
+                <strong className={styles.sorteoTotal}>{formatMoney(paquete.precio)}</strong>
+              </div>
+
+              <div className={styles.compradorResumen}>
+                <h5>Datos del Comprador:</h5>
+                <div className={styles.compradorLine}>
+                  <span>Nombre:</span> <strong>{comprador.nombre}</strong>
+                </div>
+                <div className={styles.compradorLine}>
+                  <span>Cédula:</span> <strong>{comprador.cedula}</strong>
+                </div>
+                <div className={styles.compradorLine}>
+                  <span>Correo:</span> <strong>{comprador.correo}</strong>
+                </div>
+                <div className={styles.compradorLine}>
+                  <span>Celular:</span> <strong>{comprador.celular}</strong>
+                </div>
+                {comprador.ciudad && (
+                  <div className={styles.compradorLine}>
+                    <span>Ciudad:</span> <strong>{comprador.ciudad}, {comprador.provincia}</strong>
+                  </div>
+                )}
+              </div>
+
+              <div className={styles.totalBox}>
+                <div className={styles.subtotalRow}>
+                  <span>Subtotal</span>
+                  <strong>{formatMoney(paquete.precio)}</strong>
+                </div>
+                <div className={styles.finalTotalRow}>
+                  <span>Total a pagar</span>
+                  <strong>{formatMoney(paquete.precio)}</strong>
+                </div>
+              </div>
+
+              <div className={styles.seguridadBox}>
+                <div className={styles.seguridadItem}>
+                  <Icon name="shield" size={15} /> <span>Pago 100% Garantizado</span>
+                </div>
+                <div className={styles.seguridadItem}>
+                  <Icon name="lock" size={15} /> <span>Encriptación SSL 256-bit</span>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
