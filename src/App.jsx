@@ -11,6 +11,7 @@ import SorteoDetalle from "./pages/SorteoDetalle.jsx";
 import Paquetes from "./pages/Paquetes.jsx";
 import Checkout from "./pages/Checkout.jsx";
 import CompraExitosa from "./pages/CompraExitosa.jsx";
+import PayphoneConfirmacion from "./pages/PayphoneConfirmacion.jsx";
 import ConsultarBoletos from "./pages/ConsultarBoletos.jsx";
 import Resultados from "./pages/Resultados.jsx";
 import Ayuda from "./pages/Ayuda.jsx";
@@ -53,6 +54,7 @@ export default function App() {
             <Route path="/checkout/datos" element={<Checkout />} />
             <Route path="/checkout/pago" element={<Checkout />} />
             <Route path="/checkout/exito" element={<CompraExitosa />} />
+            <Route path="/checkout/payphone/confirmacion" element={<PayphoneConfirmacion />} />
             <Route path="/consultar-boletos" element={<ConsultarBoletos />} />
             <Route path="/resultados" element={<Resultados />} />
             <Route path="/ayuda" element={<Ayuda />} />

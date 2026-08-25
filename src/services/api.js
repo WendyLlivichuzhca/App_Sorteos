@@ -79,6 +79,16 @@ export const subirComprobante = async (compraId, file) => {
   return await res.json();
 };
 
+// PayPhone (cobro real con tarjeta)
+export const iniciarPagoPayphone = (compraId) =>
+  fetchApi(`/compras/${compraId}/payphone/iniciar`, { method: 'POST' });
+
+export const confirmarPagoPayphone = (id, clientTransactionId) =>
+  fetchApi('/compras/payphone/confirmar', {
+    method: 'POST',
+    body: JSON.stringify({ id, clientTransactionId }),
+  });
+
 export const buscarBoletosPorCedula = (cedula) =>
   fetchApi(`/compras/buscar?cedula=${encodeURIComponent(cedula)}`);
 

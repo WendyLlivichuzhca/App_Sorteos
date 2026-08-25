@@ -112,6 +112,7 @@ export async function initDB() {
         FOREIGN KEY (cliente_id) REFERENCES clientes(id) ON DELETE CASCADE
       ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
     `);
+    await ensureColumn(pool, 'compras', 'payphone_transaction_id', 'VARCHAR(100) NULL');
 
     await pool.query(`
       CREATE TABLE IF NOT EXISTS admins (

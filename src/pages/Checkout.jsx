@@ -4,7 +4,7 @@ import Navbar from "../components/Navbar.jsx";
 import Icon from "../icons/Icon.jsx";
 import { useApp } from "../context/AppContext.jsx";
 import { metodosPago as todosLosMetodosPago } from "../data/sorteos.js";
-import { getConfiguracion } from "../services/api.js";
+import { getConfiguracion, iniciarPagoPayphone } from "../services/api.js";
 import { formatMoney } from "../utils/format.js";
 import styles from "./Checkout.module.css";
 
@@ -121,7 +121,15 @@ export default function Checkout() {
     setComprador(compradorFinal);
 
     try {
-      await confirmarCompra(comprobanteFile);
+      const compra = await confirmarCompra(comprobanteFile);
+
+      if (metodoPago === "payphone" || metodoPago === "tarjeta") {
+        // Métodos respaldados por PayPhone: se redirige a su pasarela real de pago.
+        const { payWithCard } = await iniciarPagoPayphone(compra.compraId);
+        window.location.href = payWithCard;
+        return;
+      }
+
       navigate("/checkout/exito");
     } catch (err) {
       setErrorGlobal(err.message || "No se pudo procesar tu pedido. Inténtalo de nuevo.");

@@ -5,10 +5,13 @@ import path from 'path';
 import fs from 'fs';
 import jwt from 'jsonwebtoken';
 import bcrypt from 'bcryptjs';
+import fetch from 'node-fetch';
 import { fileURLToPath } from 'url';
 import { initDB, getPool, generarBoletosMySQL } from './db.js';
 import { requireAuth } from './middleware/auth.js';
 import { calcularTotal } from './pricing.js';
+
+const PAYPHONE_API_BASE = 'https://pay.payphonetodoesposible.com';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -48,6 +51,32 @@ const upload = multer({
     else cb(new Error('Tipo de archivo no permitido. Solo se aceptan imágenes o PDF.'));
   },
 });
+
+// Aprueba/rechaza una compra: marca boletos vendido/disponible y ajusta sorteos.vendidos.
+// Se usa tanto desde el panel admin como desde la confirmacion automatica de PayPhone,
+// para que el comportamiento sea identico sin importar quien aprueba.
+async function aprobarCompra(pool, compraId) {
+  const [compras] = await pool.query('SELECT * FROM compras WHERE id = ?', [compraId]);
+  if (compras.length === 0) return null;
+  const compra = compras[0];
+  if (compra.estado !== 'pendiente') return compra; // ya procesada, no duplicar
+
+  await pool.query("UPDATE compras SET estado = 'aprobado' WHERE id = ?", [compraId]);
+  await pool.query("UPDATE boletos SET estado = 'vendido' WHERE compra_id = ?", [compraId]);
+  await pool.query('UPDATE sorteos SET vendidos = vendidos + ? WHERE id = ?', [compra.cantidad_boletos, compra.sorteo_id]);
+  return { ...compra, estado: 'aprobado' };
+}
+
+async function rechazarCompra(pool, compraId, estadoFinal = 'rechazado') {
+  const [compras] = await pool.query('SELECT * FROM compras WHERE id = ?', [compraId]);
+  if (compras.length === 0) return null;
+  const compra = compras[0];
+  if (compra.estado !== 'pendiente') return compra;
+
+  await pool.query('UPDATE compras SET estado = ? WHERE id = ?', [estadoFinal, compraId]);
+  await pool.query("UPDATE boletos SET estado = 'disponible', compra_id = NULL, cliente_id = NULL WHERE compra_id = ?", [compraId]);
+  return { ...compra, estado: estadoFinal };
+}
 
 // ==========================================
 // 0. AUTH
@@ -482,20 +511,109 @@ app.put('/api/admin/compras/:id/estado', requireAuth, async (req, res) => {
   try {
     const pool = getPool();
     const { estado } = req.body;
+
+    let resultado;
+    if (estado === 'aprobado') {
+      resultado = await aprobarCompra(pool, req.params.id);
+    } else if (estado === 'rechazado' || estado === 'cancelado') {
+      resultado = await rechazarCompra(pool, req.params.id, estado);
+    } else {
+      return res.status(400).json({ error: 'Estado no válido' });
+    }
+
+    if (!resultado) return res.status(404).json({ error: 'Compra no encontrada' });
+    res.json({ message: `Compra ${estado} exitosamente en MySQL` });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// ==========================================
+// PAYPHONE (cobro real con tarjeta)
+// ==========================================
+app.post('/api/compras/:id/payphone/iniciar', async (req, res) => {
+  try {
+    const pool = getPool();
     const [compras] = await pool.query('SELECT * FROM compras WHERE id = ?', [req.params.id]);
     if (compras.length === 0) return res.status(404).json({ error: 'Compra no encontrada' });
     const compra = compras[0];
-
-    await pool.query('UPDATE compras SET estado = ? WHERE id = ?', [estado, req.params.id]);
-
-    if (estado === 'aprobado') {
-      await pool.query("UPDATE boletos SET estado = 'vendido' WHERE compra_id = ?", [req.params.id]);
-      await pool.query('UPDATE sorteos SET vendidos = vendidos + ? WHERE id = ?', [compra.cantidad_boletos, compra.sorteo_id]);
-    } else if (estado === 'rechazado' || estado === 'cancelado') {
-      await pool.query("UPDATE boletos SET estado = 'disponible', compra_id = NULL, cliente_id = NULL WHERE compra_id = ?", [req.params.id]);
+    if (compra.estado !== 'pendiente') {
+      return res.status(400).json({ error: 'Esta compra ya fue procesada' });
     }
 
-    res.json({ message: `Compra ${estado} exitosamente en MySQL` });
+    const totalCentavos = Math.round(parseFloat(compra.total_pagado) * 100);
+    const responseUrl = `${process.env.FRONTEND_URL || 'http://localhost:5173'}/checkout/payphone/confirmacion`;
+
+    const prepareRes = await fetch(`${PAYPHONE_API_BASE}/api/button/Prepare`, {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${process.env.PAYPHONE_TOKEN}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        amount: totalCentavos,
+        amountWithoutTax: totalCentavos,
+        amountWithTax: 0,
+        tax: 0,
+        clientTransactionId: compra.codigo,
+        currency: 'USD',
+        storeId: process.env.PAYPHONE_STORE_ID,
+        reference: `Boletos ${compra.sorteo_nombre}`,
+        responseUrl,
+      }),
+    });
+
+    const prepareData = await prepareRes.json();
+    if (!prepareRes.ok) {
+      return res.status(502).json({ error: prepareData.message || 'No se pudo iniciar el pago con PayPhone' });
+    }
+
+    res.json({ payWithCard: prepareData.payWithCard, payWithPayPhone: prepareData.payWithPayPhone });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+app.post('/api/compras/payphone/confirmar', async (req, res) => {
+  try {
+    const pool = getPool();
+    const { id, clientTransactionId } = req.body;
+    if (!id || !clientTransactionId) {
+      return res.status(400).json({ error: 'Faltan datos para confirmar el pago' });
+    }
+
+    const [compras] = await pool.query('SELECT * FROM compras WHERE codigo = ?', [clientTransactionId]);
+    if (compras.length === 0) return res.status(404).json({ error: 'Compra no encontrada' });
+    const compra = compras[0];
+
+    const confirmRes = await fetch(`${PAYPHONE_API_BASE}/api/button/V2/Confirm`, {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${process.env.PAYPHONE_TOKEN}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ id: parseInt(id), clientTxId: clientTransactionId }),
+    });
+    const confirmData = await confirmRes.json();
+
+    await pool.query('UPDATE compras SET payphone_transaction_id = ? WHERE id = ?', [String(id), compra.id]);
+
+    const aprobado = confirmRes.ok && confirmData.transactionStatus === 'Approved';
+    if (aprobado) {
+      await aprobarCompra(pool, compra.id);
+    } else {
+      await rechazarCompra(pool, compra.id, 'rechazado');
+    }
+
+    res.json({
+      aprobado,
+      compra: {
+        codigo: compra.codigo,
+        sorteoNombre: compra.sorteo_nombre,
+        total: parseFloat(compra.total_pagado),
+        boletos: typeof compra.boletos_asignados === 'string' ? JSON.parse(compra.boletos_asignados || '[]') : compra.boletos_asignados || [],
+      },
+    });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
