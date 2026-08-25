@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import Icon from "../icons/Icon.jsx";
 import { getConfiguracion } from "../services/api.js";
 import styles from "./Footer.module.css";
 
@@ -22,7 +21,7 @@ export default function Footer() {
         <div className={styles.brand}>
           <span className={styles.logo}>
             <span className={styles.logoIcon}>
-              <Icon name="mail" size={16} strokeWidth={2} />
+              <img src="/logo-icon.svg" alt="" className={styles.logoImg} />
             </span>
             SORTEOS <span className={styles.logoAccent}>EN LÍNEA</span>
           </span>

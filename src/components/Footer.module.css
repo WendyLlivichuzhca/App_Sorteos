@@ -35,8 +35,14 @@
   width: 28px;
   height: 28px;
   border-radius: 8px;
-  background: var(--color-accent-red);
-  color: #fff;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+.logoImg {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }
 
 .logoAccent {

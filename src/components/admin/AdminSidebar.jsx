@@ -44,7 +44,7 @@ export default function AdminSidebar() {
       {/* Logo Header */}
       <div className={styles.brand}>
         <div className={styles.logoBadge}>
-          <Icon name="mail" size={20} strokeWidth={2} />
+          <img src="/logo-icon.svg" alt="" className={styles.logoImg} />
         </div>
         <div className={styles.logoInfo}>
           <span className={styles.brandTitle}>SORTEOS <span className={styles.accent}>EN LÍNEA</span></span>

@@ -23,7 +23,7 @@ export default function Navbar({ variant = "full", step }) {
       <div className={`container ${styles.inner}`}>
         <Link to="/" className={styles.logo}>
           <span className={styles.logoIcon}>
-            <Icon name="mail" size={18} strokeWidth={2} />
+            <img src="/logo-icon.svg" alt="" className={styles.logoImg} />
           </span>
           SORTEOS <span className={styles.logoAccent}> EN LÍNEA</span>
         </Link>
