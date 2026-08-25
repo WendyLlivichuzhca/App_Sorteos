@@ -25,7 +25,7 @@ export default function Navbar({ variant = "full", step }) {
           <span className={styles.logoIcon}>
             <img src="/logo-icon.svg" alt="" className={styles.logoImg} />
           </span>
-          SORTEOS <span className={styles.logoAccent}> EN LÍNEA</span>
+          EL TRÉBOL <span className={styles.logoAccent}> DE GAYA</span>
         </Link>
 
         {variant === "full" && (

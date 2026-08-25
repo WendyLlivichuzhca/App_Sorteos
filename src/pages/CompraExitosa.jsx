@@ -27,7 +27,7 @@ export default function CompraExitosa() {
   const metodo = metodosPago.find((m) => m.id === ultimaCompra.metodoPago);
 
   const descargarComprobante = () => {
-    const contenido = `SORTEOS EN LÍNEA - Comprobante de compra
+    const contenido = `EL TRÉBOL DE GAYA - Comprobante de compra
 Código de orden: ${ultimaCompra.codigo}
 Boletos: ${ultimaCompra.boletos.join(", ")}
 Sorteo: ${ultimaCompra.sorteoNombre}
@@ -47,10 +47,10 @@ Comprador: ${ultimaCompra.comprador.nombre}
   };
 
   const compartir = async () => {
-    const texto = `¡Ya estoy participando en el sorteo de ${ultimaCompra.sorteoNombre} en SORTEOS EN LÍNEA! Mis boletos: ${ultimaCompra.boletos.join(", ")}`;
+    const texto = `¡Ya estoy participando en el sorteo de ${ultimaCompra.sorteoNombre} en EL TRÉBOL DE GAYA! Mis boletos: ${ultimaCompra.boletos.join(", ")}`;
     if (navigator.share) {
       try {
-        await navigator.share({ text: texto, title: "SORTEOS EN LÍNEA" });
+        await navigator.share({ text: texto, title: "El Trébol de Gaya" });
       } catch {
         // usuario canceló, no hacer nada
       }

@@ -12,7 +12,7 @@ export default function Footer() {
       .catch((err) => console.error("Error cargando configuración:", err));
   }, []);
 
-  const correo = config?.correo || "soporte@sorteosenlinea.com";
+  const correo = config?.correo || "soporte@eltreboldegaya.com";
   const whatsapp = config?.whatsapp?.replace(/\D/g, "") || "593999999999";
 
   return (
@@ -23,7 +23,7 @@ export default function Footer() {
             <span className={styles.logoIcon}>
               <img src="/logo-icon.svg" alt="" className={styles.logoImg} />
             </span>
-            SORTEOS <span className={styles.logoAccent}>EN LÍNEA</span>
+            EL TRÉBOL <span className={styles.logoAccent}>DE GAYA</span>
           </span>
           <p>Sorteos verificados con premios reales. Compra segura y transparente.</p>
         </div>
@@ -48,7 +48,7 @@ export default function Footer() {
           <a href={`https://wa.me/${whatsapp}`} target="_blank" rel="noopener noreferrer">WhatsApp Soporte</a>
         </div>
       </div>
-      <div className={styles.bottom}>© {new Date().getFullYear()} Sorteos en Línea. Todos los derechos reservados.</div>
+      <div className={styles.bottom}>© {new Date().getFullYear()} El Trébol de Gaya. Todos los derechos reservados.</div>
     </footer>
   );
 }

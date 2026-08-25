@@ -47,7 +47,7 @@ export default function AdminSidebar() {
           <img src="/logo-icon.svg" alt="" className={styles.logoImg} />
         </div>
         <div className={styles.logoInfo}>
-          <span className={styles.brandTitle}>SORTEOS <span className={styles.accent}>EN LÍNEA</span></span>
+          <span className={styles.brandTitle}>EL TRÉBOL <span className={styles.accent}>DE GAYA</span></span>
           <span className={styles.adminBadge}>PANEL ADMIN</span>
         </div>
       </div>

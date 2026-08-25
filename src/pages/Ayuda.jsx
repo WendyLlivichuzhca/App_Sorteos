@@ -37,7 +37,7 @@ export default function Ayuda() {
       .catch((err) => console.error("Error cargando configuración:", err));
   }, []);
 
-  const correo = config?.correo || "soporte@sorteosenlinea.com";
+  const correo = config?.correo || "soporte@eltreboldegaya.com";
   const whatsapp = config?.whatsapp?.replace(/\D/g, "") || "593999999999";
   const instagram = config?.instagram || "https://instagram.com";
   const facebook = config?.facebook || "https://facebook.com";
