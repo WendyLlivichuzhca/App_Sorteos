@@ -1,4 +1,6 @@
+import { useEffect, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
+import { getConfiguracion } from "../../services/api.js";
 import Icon from "../../icons/Icon.jsx";
 import styles from "./AdminSidebar.module.css";
 
@@ -38,6 +40,13 @@ const menuGroups = [
 
 export default function AdminSidebar() {
   const location = useLocation();
+  const [nombreEmpresa, setNombreEmpresa] = useState("El Trébol de Gaya");
+
+  useEffect(() => {
+    getConfiguracion()
+      .then((config) => setNombreEmpresa(config.nombre_empresa || "El Trébol de Gaya"))
+      .catch((err) => console.error("Error cargando configuración:", err));
+  }, []);
 
   return (
     <aside className={styles.sidebar}>
@@ -47,7 +56,7 @@ export default function AdminSidebar() {
           <img src="/logo-icon.svg" alt="" className={styles.logoImg} />
         </div>
         <div className={styles.logoInfo}>
-          <span className={styles.brandTitle}>EL TRÉBOL <span className={styles.accent}>DE GAYA</span></span>
+          <span className={styles.brandTitle}>{nombreEmpresa}</span>
           <span className={styles.adminBadge}>PANEL ADMIN</span>
         </div>
       </div>
