@@ -23,7 +23,7 @@ const faqs = [
   },
   {
     q: "¿Cuáles son los métodos de pago aceptados?",
-    a: "Aceptamos Tarjetas de Crédito/Débito (Visa, Mastercard), PayPhone, DeUna!, Transferencias bancarias directas y PayPal.",
+    a: "Aceptamos Tarjetas de Crédito/Débito (Visa, Mastercard, Diners, American Express, Discover) a través de PayPhone, y Transferencias bancarias directas.",
   },
 ];
 
@@ -42,6 +42,7 @@ export default function Ayuda() {
   const instagram = config?.instagram || "https://instagram.com";
   const facebook = config?.facebook || "https://facebook.com";
   const tiktok = config?.tiktok || "https://tiktok.com";
+  const politicas = config?.politicas || "";
 
   const toggleFaq = (index) => {
     setOpenIndex(openIndex === index ? null : index);
@@ -124,6 +125,20 @@ export default function Ayuda() {
               </div>
             ))}
           </div>
+        </section>
+
+        {/* Términos y Políticas */}
+        <section className={styles.faqSection}>
+          <h2>Términos y Condiciones / Política de Privacidad</h2>
+          {politicas ? (
+            <p style={{ whiteSpace: "pre-line" }}>{politicas}</p>
+          ) : (
+            <p>
+              Todos los sorteos son supervisados y auditados. Los boletos son únicos y no reembolsables una vez
+              realizado el sorteo. Tus datos personales se usan únicamente para procesar tu compra y contactarte en
+              caso de ser ganador.
+            </p>
+          )}
         </section>
 
         {/* Redes sociales */}

@@ -1,7 +1,11 @@
+import { useEffect, useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useApp } from "../context/AppContext.jsx";
+import { getConfiguracion } from "../services/api.js";
 import Icon from "../icons/Icon.jsx";
 import styles from "./Navbar.module.css";
+
+const NOMBRE_POR_DEFECTO = "El Trébol de Gaya";
 
 const STEPS = [
   { id: "datos", label: "Datos" },
@@ -15,8 +19,19 @@ export default function Navbar({ variant = "full", step }) {
   const navigate = useNavigate();
   const cartCount = seleccion ? seleccion.paquete.boletos : 0;
   const dark = location.pathname === "/";
+  const [nombreEmpresa, setNombreEmpresa] = useState(NOMBRE_POR_DEFECTO);
 
   const stepIndex = STEPS.findIndex((s) => s.id === step);
+
+  useEffect(() => {
+    getConfiguracion()
+      .then((config) => {
+        const nombre = config.nombre_empresa || NOMBRE_POR_DEFECTO;
+        setNombreEmpresa(nombre);
+        document.title = nombre;
+      })
+      .catch((err) => console.error("Error cargando configuración:", err));
+  }, []);
 
   return (
     <header className={`${styles.header} ${dark ? styles.dark : ""}`}>
@@ -25,7 +40,7 @@ export default function Navbar({ variant = "full", step }) {
           <span className={styles.logoIcon}>
             <img src="/logo-icon.svg" alt="" className={styles.logoImg} />
           </span>
-          EL TRÉBOL <span className={styles.logoAccent}> DE GAYA</span>
+          {nombreEmpresa}
         </Link>
 
         {variant === "full" && (

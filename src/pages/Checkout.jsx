@@ -60,18 +60,33 @@ export default function Checkout() {
   const [errores, setErrores] = useState({});
   const [errorGlobal, setErrorGlobal] = useState("");
   const [instruccionesPago, setInstruccionesPago] = useState("");
+  const [metodosHabilitados, setMetodosHabilitados] = useState({ transferencia: true, payphone: true, tarjeta: true });
   const [aceptaTerminos, setAceptaTerminos] = useState(false);
 
   useEffect(() => {
-    if (!metodoPago || metodoPago === "deuna") {
+    if (!metodoPago || metodoPago === "deuna" || metodoPago === "paypal") {
       setMetodoPago("transferencia");
     }
     getConfiguracion()
       .then((config) => {
         setInstruccionesPago(config.instrucciones_pago || "");
+        const metodos = config.metodosPago || {};
+        setMetodosHabilitados({
+          transferencia: metodos.transferencia !== false,
+          payphone: metodos.payphone !== false,
+          tarjeta: metodos.tarjeta !== false,
+        });
       })
       .catch((err) => console.error("Error cargando configuración:", err));
   }, []);
+
+  useEffect(() => {
+    if (metodoPago && metodosHabilitados[metodoPago] === false) {
+      const primerHabilitado = Object.keys(metodosHabilitados).find((k) => metodosHabilitados[k]);
+      if (primerHabilitado) setMetodoPago(primerHabilitado);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [metodosHabilitados]);
 
   useEffect(() => {
     if (!seleccion) navigate("/sorteos", { replace: true });
@@ -326,6 +341,7 @@ export default function Checkout() {
 
               <div className={styles.metodosList}>
                 {/* Opción 1: Transferencia bancaria o depósito */}
+                {metodosHabilitados.transferencia && (
                 <div className={styles.metodoItem}>
                   <label className={styles.radioLabel} onClick={() => setMetodoPago("transferencia")}>
                     <input
@@ -348,8 +364,10 @@ export default function Checkout() {
                     </div>
                   )}
                 </div>
+                )}
 
                 {/* Opción 2: Pagar con tarjetas de crédito o débito Visa o Mastercard | Payphone */}
+                {metodosHabilitados.payphone && (
                 <div className={styles.metodoItem}>
                   <label className={styles.radioLabel} onClick={() => setMetodoPago("payphone")}>
                     <input
@@ -379,8 +397,10 @@ export default function Checkout() {
                     </div>
                   )}
                 </div>
+                )}
 
                 {/* Opción 3: Pagar con tarjetas de crédito y débito Visa, Mastercard, Diners, American Express y Discover */}
+                {metodosHabilitados.tarjeta && (
                 <div className={styles.metodoItem}>
                   <label className={styles.radioLabel} onClick={() => setMetodoPago("tarjeta")}>
                     <input
@@ -409,6 +429,7 @@ export default function Checkout() {
                     </div>
                   )}
                 </div>
+                )}
 
               </div>
 

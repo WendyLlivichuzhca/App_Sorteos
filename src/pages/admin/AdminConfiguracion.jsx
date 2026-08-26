@@ -4,11 +4,9 @@ import { getConfiguracion, updateConfiguracion } from "../../services/api.js";
 import styles from "./AdminSorteos.module.css";
 
 const metodosPagoNombres = [
-  { key: "tarjeta", name: "Tarjeta de crédito / débito (Visa, MC)" },
-  { key: "payphone", name: "PayPhone (Código QR)" },
-  { key: "deuna", name: "DeUna! (Pago móvil)" },
-  { key: "transferencia", name: "Transferencia bancaria" },
-  { key: "paypal", name: "PayPal" },
+  { key: "transferencia", name: "Transferencia bancaria o depósito" },
+  { key: "payphone", name: "Tarjeta con PayPhone" },
+  { key: "tarjeta", name: "Tarjeta (Visa, Mastercard, Amex, Diners, Discover)" },
 ];
 
 export default function AdminConfiguracion() {
@@ -81,7 +79,7 @@ export default function AdminConfiguracion() {
       <div className={styles.topRow}>
         <div>
           <h2>Ajustes Globales de la Plataforma</h2>
-          <p>Configura métodos de pago, redes sociales, datos de la empresa, colores y políticas</p>
+          <p>Configura métodos de pago, redes sociales, datos de la empresa y políticas</p>
         </div>
       </div>
 
@@ -123,16 +121,6 @@ export default function AdminConfiguracion() {
                   onChange={(e) => setConfig({ ...config, correo: e.target.value })}
                 />
               </div>
-            </div>
-
-            <div className={styles.formGroup}>
-              <label>Color Principal del Tema</label>
-              <input
-                type="color"
-                value={config.colorTema}
-                onChange={(e) => setConfig({ ...config, colorTema: e.target.value })}
-                style={{ height: "42px", padding: "4px", cursor: "pointer" }}
-              />
             </div>
 
             <div className={styles.formGroup}>
