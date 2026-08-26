@@ -139,14 +139,6 @@ export default function Checkout() {
   };
 
   const renderBotonPago = () => {
-    if (metodoPago === "paypal") {
-      return (
-        <button type="submit" className={styles.paypalBtn} disabled={procesando}>
-          {procesando ? "Procesando..." : <span className={styles.paypalLogoText}>PayPal</span>}
-        </button>
-      );
-    }
-
     if (metodoPago === "tarjeta") {
       return (
         <button type="submit" className={styles.blackBtn} disabled={procesando}>
@@ -350,6 +342,9 @@ export default function Checkout() {
                       <p>
                         Por favor, <strong>NO PROCEDAS SI NO ESTÁS SEGURO</strong> de que quieres realizar la compra. Realiza tu pago directamente con transferencia o depósito a nuestra cuenta bancaria. Tu pedido no se procesará hasta que se haya recibido el importe en nuestra cuenta.
                       </p>
+                      {instruccionesPago && (
+                        <p style={{ whiteSpace: "pre-line", marginTop: "10px" }}>{instruccionesPago}</p>
+                      )}
                     </div>
                   )}
                 </div>
@@ -415,26 +410,6 @@ export default function Checkout() {
                   )}
                 </div>
 
-                {/* Opción 4: Pagar con PayPal */}
-                <div className={styles.metodoItem}>
-                  <label className={styles.radioLabel} onClick={() => setMetodoPago("paypal")}>
-                    <input
-                      type="radio"
-                      name="metodo"
-                      checked={metodoPago === "paypal"}
-                      onChange={() => setMetodoPago("paypal")}
-                    />
-                    <span className={styles.radioText}>Pagar con PayPal</span>
-                  </label>
-
-                  {metodoPago === "paypal" && (
-                    <div className={styles.expandGrayBox}>
-                      <p>
-                        Nuestra solución de pago todo en uno te permite ofrecer PayPal, Venmo, opciones de pago posterior y mucho más para ayudar a maximizar la conversión.
-                      </p>
-                    </div>
-                  )}
-                </div>
               </div>
 
               <p className={styles.privacyNote}>

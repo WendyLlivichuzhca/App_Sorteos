@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 import Navbar from "../components/Navbar.jsx";
 import Footer from "../components/Footer.jsx";
 import Badge from "../components/Badge.jsx";
@@ -11,8 +11,9 @@ import { formatMoney } from "../utils/format.js";
 import styles from "./Sorteos.module.css";
 
 export default function Sorteos() {
+  const [searchParams] = useSearchParams();
   const [query, setQuery] = useState("");
-  const [categoria, setCategoria] = useState("todos");
+  const [categoria, setCategoria] = useState(searchParams.get("categoria") || "todos");
   const [sorteos, setSorteos] = useState([]);
   const [categorias, setCategorias] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -91,14 +92,7 @@ export default function Sorteos() {
               </div>
 
               <div className={styles.body}>
-                <h3 className={styles.cardTitle}>
-                  {s.nombre}
-                  {s.id === "iphone-15-pro-max" && (
-                    <span className={styles.verifiedBadge}>
-                      <Icon name="badgeCheck" size={16} strokeWidth={2} />
-                    </span>
-                  )}
-                </h3>
+                <h3 className={styles.cardTitle}>{s.nombre}</h3>
 
                 {s.estado === "proximamente" ? (
                   <p className={styles.inicia}>Muy pronto</p>

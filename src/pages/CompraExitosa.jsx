@@ -1,9 +1,10 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Navbar from "../components/Navbar.jsx";
 import Icon from "../icons/Icon.jsx";
 import { useApp } from "../context/AppContext.jsx";
 import { metodosPago } from "../data/sorteos.js";
+import { getConfiguracion } from "../services/api.js";
 import { formatDate, formatMoney } from "../utils/format.js";
 import styles from "./CompraExitosa.module.css";
 
@@ -12,6 +13,7 @@ const confettiColors = ["#6d3cf5", "#e63950", "#f5a623", "#16a34a", "#2f6df5"];
 export default function CompraExitosa() {
   const navigate = useNavigate();
   const { ultimaCompra, reiniciarFlujo } = useApp();
+  const [instruccionesPago, setInstruccionesPago] = useState("");
 
   useEffect(() => {
     if (!ultimaCompra) {
@@ -19,6 +21,9 @@ export default function CompraExitosa() {
       return;
     }
     reiniciarFlujo();
+    getConfiguracion()
+      .then((config) => setInstruccionesPago(config.instrucciones_pago || ""))
+      .catch((err) => console.error("Error cargando configuración:", err));
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -126,21 +131,15 @@ Comprador: ${ultimaCompra.comprador.nombre}
                 🏦 Cuentas Bancarias para Realizar tu Transferencia:
               </h4>
 
-              <div style={{ background: "#ffffff", border: "1px solid #e2e8f0", borderRadius: "6px", padding: "10px 12px", marginBottom: "8px" }}>
-                <strong style={{ color: "#0f172a", display: "block", fontSize: "13px" }}>1. BANCO PICHINCHA</strong>
-                <span style={{ display: "block", fontSize: "12.5px" }}><strong>Tipo:</strong> Cuenta de Ahorros</span>
-                <span style={{ display: "block", fontSize: "12.5px" }}><strong>N° de Cuenta:</strong> 2216306156</span>
-                <span style={{ display: "block", fontSize: "12.5px" }}><strong>Titular:</strong> Elizabeth Veronica Vintimilla Cordova</span>
-                <span style={{ display: "block", fontSize: "12.5px" }}><strong>Cédula:</strong> 1400435705</span>
-              </div>
-
-              <div style={{ background: "#ffffff", border: "1px solid #e2e8f0", borderRadius: "6px", padding: "10px 12px" }}>
-                <strong style={{ color: "#0f172a", display: "block", fontSize: "13px" }}>2. CUENTA N° 406004387500</strong>
-                <span style={{ display: "block", fontSize: "12.5px" }}><strong>Tipo:</strong> Cuenta de Ahorros / Única</span>
-                <span style={{ display: "block", fontSize: "12.5px" }}><strong>N° de Cuenta:</strong> 406004387500</span>
-                <span style={{ display: "block", fontSize: "12.5px" }}><strong>Titular:</strong> Elizabeth Veronica Vintimilla Cordova</span>
-                <span style={{ display: "block", fontSize: "12.5px" }}><strong>Cédula:</strong> 1400435705</span>
-              </div>
+              {instruccionesPago ? (
+                <div style={{ background: "#ffffff", border: "1px solid #e2e8f0", borderRadius: "6px", padding: "10px 12px", marginBottom: "8px", whiteSpace: "pre-line", fontSize: "12.5px", color: "#0f172a" }}>
+                  {instruccionesPago}
+                </div>
+              ) : (
+                <p style={{ fontSize: "12.5px", color: "#64748b" }}>
+                  Todavía no se han configurado las instrucciones de pago. Ingresa a <strong>Configuración</strong> en el panel admin para agregarlas.
+                </p>
+              )}
 
               <p style={{ fontSize: "12px", color: "#64748b", marginTop: "10px", marginBottom: "14px" }}>
                 Por favor, realiza la transferencia por el total e indica tu código de orden <strong>{ultimaCompra.codigo}</strong>.

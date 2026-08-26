@@ -105,7 +105,7 @@ export default function Landing() {
         <h2>Categorías populares</h2>
         <div className={styles.categorias}>
           {categorias.map((c) => (
-            <Link key={c.id} to="/sorteos" className={styles.categoria}>
+            <Link key={c.id} to={`/sorteos?categoria=${c.slug}`} className={styles.categoria}>
               <span className={styles.categoriaIcon}>
                 <Icon name={c.icono} size={24} strokeWidth={1.6} />
               </span>
