@@ -86,9 +86,6 @@ export default function Sorteos() {
                 <div className={styles.badgeWrap}>
                   <Badge estado={s.estado} />
                 </div>
-                <button type="button" className={styles.favBtn} aria-label="Favorito">
-                  <Icon name="heart" size={16} strokeWidth={1.8} />
-                </button>
               </div>
 
               <div className={styles.body}>
