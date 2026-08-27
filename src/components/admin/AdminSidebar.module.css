@@ -13,7 +13,7 @@
 }
 
 .brand {
-  height: 58px;
+  height: 68px;
   box-sizing: border-box;
   display: flex;
   align-items: center;
@@ -75,10 +75,10 @@
 .menu {
   flex: 1;
   overflow-y: auto;
-  padding: 16px 12px;
+  padding: 20px 12px;
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 18px;
   scrollbar-width: thin;
   scrollbar-color: #ecebf3 transparent;
 }
