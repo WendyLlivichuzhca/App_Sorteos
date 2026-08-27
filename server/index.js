@@ -196,6 +196,14 @@ app.post('/api/sorteos', requireAuth, async (req, res) => {
     const newId = result.insertId;
     await generarBoletosMySQL(newId, parseInt(total), 0);
 
+    // Todo sorteo arranca con un lugar por defecto (1er lugar = el premio completo del
+    // sorteo), así los sorteos simples de un solo ganador siguen funcionando igual que
+    // siempre. Si la jefa quiere un combo con varios ganadores, agrega más lugares luego.
+    await pool.query(
+      'INSERT INTO sorteo_lugares (sorteo_id, orden, premio) VALUES (?, 1, ?)',
+      [newId, nombre]
+    );
+
     res.status(201).json({ id: newId, message: 'Sorteo creado exitosamente en MySQL' });
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -975,61 +983,21 @@ app.put('/api/admin/account', requireAuth, async (req, res) => {
 });
 
 // ==========================================
-// 4. GANADORES / SORTEO DE PREMIO (MySQL)
+// 4. LUGARES Y GANADORES (un sorteo puede repartir varios premios/lugares)
 // ==========================================
 app.get('/api/ganadores', async (req, res) => {
   try {
     const pool = getPool();
     const [rows] = await pool.query(
-      `SELECT g.*, s.categoria
-       FROM ganadores g
-       LEFT JOIN sorteos s ON s.id = g.sorteo_id
-       ORDER BY g.fecha_sorteo DESC`
+      `SELECT l.id, l.sorteo_id, s.nombre AS sorteo_nombre, s.categoria,
+              l.orden, l.premio, l.boleto_numero, l.cliente_nombre,
+              l.entregado AS premio_entregado, l.fecha_sorteo
+       FROM sorteo_lugares l
+       LEFT JOIN sorteos s ON s.id = l.sorteo_id
+       WHERE l.boleto_numero IS NOT NULL
+       ORDER BY l.fecha_sorteo DESC`
     );
     res.json(rows);
-  } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
-});
-
-app.post('/api/admin/sorteos/:id/sortear', requireAuth, async (req, res) => {
-  try {
-    const pool = getPool();
-    const sId = req.params.id;
-
-    const [sorteos] = await pool.query('SELECT * FROM sorteos WHERE id = ?', [sId]);
-    if (sorteos.length === 0) return res.status(404).json({ error: 'Sorteo no encontrado' });
-    const sorteo = sorteos[0];
-
-    const [candidatos] = await pool.query(
-      `SELECT b.numero, b.cliente_id, c.nombre AS cliente_nombre
-       FROM boletos b
-       LEFT JOIN clientes c ON c.id = b.cliente_id
-       WHERE b.sorteo_id = ? AND b.estado = 'vendido'
-       ORDER BY RAND() LIMIT 1`,
-      [sId]
-    );
-
-    if (candidatos.length === 0) {
-      return res.status(400).json({ error: 'No hay boletos vendidos para sortear en este sorteo' });
-    }
-
-    const ganador = candidatos[0];
-    const [insG] = await pool.query(
-      `INSERT INTO ganadores (sorteo_id, sorteo_nombre, boleto_numero, cliente_id, cliente_nombre)
-       VALUES (?, ?, ?, ?, ?)`,
-      [sId, sorteo.nombre, ganador.numero, ganador.cliente_id, ganador.cliente_nombre || 'Cliente']
-    );
-
-    await pool.query("UPDATE sorteos SET estado = 'finalizado' WHERE id = ?", [sId]);
-
-    res.status(201).json({
-      id: insG.insertId,
-      sorteoId: sId,
-      sorteoNombre: sorteo.nombre,
-      boletoNumero: ganador.numero,
-      clienteNombre: ganador.cliente_nombre || 'Cliente',
-    });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
@@ -1038,23 +1006,146 @@ app.post('/api/admin/sorteos/:id/sortear', requireAuth, async (req, res) => {
 app.put('/api/admin/ganadores/:id', requireAuth, async (req, res) => {
   try {
     const pool = getPool();
-    const { ciudad, premioEntregado } = req.body;
+    const { premioEntregado } = req.body;
+    if (premioEntregado === undefined) return res.status(400).json({ error: 'Nada que actualizar' });
+    await pool.query('UPDATE sorteo_lugares SET entregado = ? WHERE id = ?', [premioEntregado ? 1 : 0, req.params.id]);
+    res.json({ message: 'Ganador actualizado' });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
 
+app.get('/api/sorteos/:id/lugares', async (req, res) => {
+  try {
+    const pool = getPool();
+    const [rows] = await pool.query(
+      'SELECT id, orden, premio, boleto_numero, cliente_nombre, entregado FROM sorteo_lugares WHERE sorteo_id = ? ORDER BY orden ASC',
+      [req.params.id]
+    );
+    res.json(rows);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+app.get('/api/admin/sorteos/:id/lugares', requireAuth, async (req, res) => {
+  try {
+    const pool = getPool();
+    const [rows] = await pool.query(
+      'SELECT * FROM sorteo_lugares WHERE sorteo_id = ? ORDER BY orden ASC',
+      [req.params.id]
+    );
+    res.json(rows);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+app.post('/api/admin/sorteos/:id/lugares', requireAuth, async (req, res) => {
+  try {
+    const pool = getPool();
+    const { premio } = req.body;
+    if (!premio || !premio.trim()) return res.status(400).json({ error: 'El premio es obligatorio' });
+
+    const [max] = await pool.query('SELECT MAX(orden) AS maxOrden FROM sorteo_lugares WHERE sorteo_id = ?', [req.params.id]);
+    const siguienteOrden = (max[0].maxOrden || 0) + 1;
+
+    const [result] = await pool.query(
+      'INSERT INTO sorteo_lugares (sorteo_id, orden, premio) VALUES (?, ?, ?)',
+      [req.params.id, siguienteOrden, premio.trim()]
+    );
+    res.status(201).json({ id: result.insertId, orden: siguienteOrden, message: 'Lugar creado' });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+app.put('/api/admin/lugares/:id', requireAuth, async (req, res) => {
+  try {
+    const pool = getPool();
+    const { premio, entregado } = req.body;
     const campos = [];
     const valores = [];
-    if (ciudad !== undefined) {
-      campos.push('ciudad = ?');
-      valores.push(ciudad);
-    }
-    if (premioEntregado !== undefined) {
-      campos.push('premio_entregado = ?');
-      valores.push(premioEntregado ? 1 : 0);
-    }
+    if (premio !== undefined) { campos.push('premio = ?'); valores.push(premio); }
+    if (entregado !== undefined) { campos.push('entregado = ?'); valores.push(entregado ? 1 : 0); }
     if (campos.length === 0) return res.status(400).json({ error: 'Nada que actualizar' });
-
     valores.push(req.params.id);
-    await pool.query(`UPDATE ganadores SET ${campos.join(', ')} WHERE id = ?`, valores);
-    res.json({ message: 'Ganador actualizado' });
+    await pool.query(`UPDATE sorteo_lugares SET ${campos.join(', ')} WHERE id = ?`, valores);
+    res.json({ message: 'Lugar actualizado' });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+app.delete('/api/admin/lugares/:id', requireAuth, async (req, res) => {
+  try {
+    const pool = getPool();
+    const [rows] = await pool.query('SELECT boleto_numero FROM sorteo_lugares WHERE id = ?', [req.params.id]);
+    if (rows.length === 0) return res.status(404).json({ error: 'Lugar no encontrado' });
+    if (rows[0].boleto_numero) {
+      return res.status(400).json({ error: 'No se puede eliminar un lugar que ya fue sorteado' });
+    }
+    await pool.query('DELETE FROM sorteo_lugares WHERE id = ?', [req.params.id]);
+    res.json({ message: 'Lugar eliminado' });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+app.post('/api/admin/lugares/:id/sortear', requireAuth, async (req, res) => {
+  try {
+    const pool = getPool();
+    const lugarId = req.params.id;
+
+    const [lugares] = await pool.query('SELECT * FROM sorteo_lugares WHERE id = ?', [lugarId]);
+    if (lugares.length === 0) return res.status(404).json({ error: 'Lugar no encontrado' });
+    const lugar = lugares[0];
+    if (lugar.boleto_numero) return res.status(400).json({ error: 'Este lugar ya fue sorteado' });
+
+    const [sorteos] = await pool.query('SELECT * FROM sorteos WHERE id = ?', [lugar.sorteo_id]);
+    const sorteo = sorteos[0];
+
+    // Un boleto que ya ganó otro lugar de este mismo sorteo no puede volver a ganar.
+    const [candidatos] = await pool.query(
+      `SELECT b.numero, b.cliente_id, c.nombre AS cliente_nombre
+       FROM boletos b
+       LEFT JOIN clientes c ON c.id = b.cliente_id
+       WHERE b.sorteo_id = ? AND b.estado = 'vendido'
+       AND b.numero NOT IN (
+         SELECT boleto_numero FROM sorteo_lugares WHERE sorteo_id = ? AND boleto_numero IS NOT NULL
+       )
+       ORDER BY RAND() LIMIT 1`,
+      [lugar.sorteo_id, lugar.sorteo_id]
+    );
+
+    if (candidatos.length === 0) {
+      return res.status(400).json({ error: 'No hay boletos vendidos disponibles para sortear este lugar' });
+    }
+
+    const ganador = candidatos[0];
+    await pool.query(
+      `UPDATE sorteo_lugares SET boleto_numero = ?, cliente_id = ?, cliente_nombre = ?, fecha_sorteo = NOW() WHERE id = ?`,
+      [ganador.numero, ganador.cliente_id, ganador.cliente_nombre || 'Cliente', lugarId]
+    );
+
+    // Si ya no quedan lugares pendientes de este sorteo, se marca finalizado.
+    const [pendientes] = await pool.query(
+      'SELECT COUNT(*) AS count FROM sorteo_lugares WHERE sorteo_id = ? AND boleto_numero IS NULL',
+      [lugar.sorteo_id]
+    );
+    if (pendientes[0].count === 0) {
+      await pool.query("UPDATE sorteos SET estado = 'finalizado' WHERE id = ?", [lugar.sorteo_id]);
+    }
+
+    res.status(201).json({
+      id: lugar.id,
+      sorteoId: lugar.sorteo_id,
+      sorteoNombre: sorteo.nombre,
+      premio: lugar.premio,
+      orden: lugar.orden,
+      boletoNumero: ganador.numero,
+      clienteNombre: ganador.cliente_nombre || 'Cliente',
+    });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }

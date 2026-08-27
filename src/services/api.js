@@ -115,14 +115,28 @@ export const login = (usuario, password) =>
 // Ganadores API
 export const getGanadores = () => fetchApi('/ganadores');
 
-export const sortearGanador = (sorteoId) =>
-  fetchApi(`/admin/sorteos/${sorteoId}/sortear`, { method: 'POST' });
-
 export const actualizarGanador = (id, data) =>
   fetchApi(`/admin/ganadores/${id}`, {
     method: 'PUT',
     body: JSON.stringify(data),
   });
+
+// Lugares del sorteo (premio mayor con varios ganadores) API
+export const getLugaresPublic = (sorteoId) => fetchApi(`/sorteos/${sorteoId}/lugares`);
+
+export const getLugaresAdmin = (sorteoId) => fetchApi(`/admin/sorteos/${sorteoId}/lugares`);
+
+export const crearLugar = (sorteoId, data) =>
+  fetchApi(`/admin/sorteos/${sorteoId}/lugares`, { method: 'POST', body: JSON.stringify(data) });
+
+export const actualizarLugar = (id, data) =>
+  fetchApi(`/admin/lugares/${id}`, { method: 'PUT', body: JSON.stringify(data) });
+
+export const eliminarLugar = (id) =>
+  fetchApi(`/admin/lugares/${id}`, { method: 'DELETE' });
+
+export const sortearLugar = (id) =>
+  fetchApi(`/admin/lugares/${id}/sortear`, { method: 'POST' });
 
 // Categorías API
 export const getCategorias = () => fetchApi('/categorias');

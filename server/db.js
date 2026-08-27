@@ -140,6 +140,39 @@ export async function initDB() {
     `);
 
     await pool.query(`
+      CREATE TABLE IF NOT EXISTS sorteo_lugares (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        sorteo_id INT NOT NULL,
+        orden INT NOT NULL,
+        premio VARCHAR(255) NOT NULL,
+        boleto_numero VARCHAR(50) NULL,
+        cliente_id INT NULL,
+        cliente_nombre VARCHAR(255) NULL,
+        entregado TINYINT(1) DEFAULT 0,
+        fecha_sorteo TIMESTAMP NULL,
+        FOREIGN KEY (sorteo_id) REFERENCES sorteos(id) ON DELETE CASCADE,
+        FOREIGN KEY (cliente_id) REFERENCES clientes(id) ON DELETE SET NULL,
+        UNIQUE KEY uq_sorteo_orden (sorteo_id, orden)
+      ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+    `);
+
+    // Migra los ganadores ya sorteados con el sistema viejo (un solo ganador por
+    // sorteo) a la nueva tabla de lugares, como "1er lugar", para no perder ese
+    // historial. Solo corre si sorteo_lugares está vacía.
+    const [lugaresCount] = await pool.query('SELECT COUNT(*) as count FROM sorteo_lugares');
+    if (lugaresCount[0].count === 0) {
+      const [ganadoresViejos] = await pool.query('SELECT * FROM ganadores');
+      for (const g of ganadoresViejos) {
+        await pool.query(
+          `INSERT IGNORE INTO sorteo_lugares
+           (sorteo_id, orden, premio, boleto_numero, cliente_id, cliente_nombre, entregado, fecha_sorteo)
+           VALUES (?, 1, ?, ?, ?, ?, ?, ?)`,
+          [g.sorteo_id, g.sorteo_nombre, g.boleto_numero, g.cliente_id, g.cliente_nombre, g.premio_entregado, g.fecha_sorteo]
+        );
+      }
+    }
+
+    await pool.query(`
       CREATE TABLE IF NOT EXISTS boletos (
         id INT AUTO_INCREMENT PRIMARY KEY,
         sorteo_id INT NOT NULL,

@@ -5,6 +5,9 @@ import Icon from "../../icons/Icon.jsx";
 import { getSorteos, getGanadores, actualizarGanador } from "../../services/api.js";
 import styles from "./AdminSorteos.module.css";
 
+const NOMBRES_LUGAR = ["1er Lugar", "2do Lugar", "3er Lugar", "4to Lugar", "5to Lugar"];
+const nombreLugar = (orden) => NOMBRES_LUGAR[orden - 1] || `${orden}° Lugar`;
+
 export default function AdminGanadores() {
   const [sorteos, setSorteos] = useState([]);
   const [sorteoId, setSorteoId] = useState("");
@@ -103,19 +106,23 @@ export default function AdminGanadores() {
           <thead>
             <tr>
               <th>Sorteo</th>
+              <th>Lugar</th>
+              <th>Premio</th>
               <th>Ganador</th>
-              <th>Boleto Ganador</th>
+              <th>Boleto</th>
               <th>Fecha Sorteo</th>
               <th>Premio Entregado</th>
             </tr>
           </thead>
           <tbody>
             {ganadores.length === 0 && (
-              <tr><td colSpan={5}>Todavía no se ha sorteado ningún ganador.</td></tr>
+              <tr><td colSpan={7}>Todavía no se ha sorteado ningún ganador.</td></tr>
             )}
             {ganadores.map((g) => (
               <tr key={g.id}>
-                <td><strong>{g.sorteo_nombre}</strong></td>
+                <td>{g.sorteo_nombre}</td>
+                <td><span className={styles.categoryBadge}>{nombreLugar(g.orden)}</span></td>
+                <td><strong>{g.premio}</strong></td>
                 <td>{g.cliente_nombre}</td>
                 <td><span className={styles.categoryBadge}>#{g.boleto_numero}</span></td>
                 <td>{new Date(g.fecha_sorteo).toLocaleDateString("es-ES")}</td>

@@ -5,6 +5,9 @@ import { getGanadores } from "../services/api.js";
 import PremioImage from "../components/PremioImage.jsx";
 import styles from "./Resultados.module.css";
 
+const NOMBRES_LUGAR = ["1er Lugar", "2do Lugar", "3er Lugar", "4to Lugar", "5to Lugar"];
+const nombreLugar = (orden) => NOMBRES_LUGAR[orden - 1] || `${orden}° Lugar`;
+
 export default function Resultados() {
   const [ganadores, setGanadores] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -50,7 +53,12 @@ export default function Resultados() {
 
               <div className={styles.body}>
                 {g.categoria && <span className={styles.category}>{g.categoria.toUpperCase()}</span>}
-                <h3>{g.sorteo_nombre}</h3>
+                <h3>{g.premio || g.sorteo_nombre}</h3>
+                {g.premio && g.sorteo_nombre && (
+                  <p className={styles.sorteoOrigen}>
+                    {nombreLugar(g.orden)} — {g.sorteo_nombre}
+                  </p>
+                )}
 
                 <div className={styles.winnerInfo}>
                   <div className={styles.winnerAvatar}>
@@ -58,7 +66,6 @@ export default function Resultados() {
                   </div>
                   <div>
                     <strong className={styles.winnerName}>{g.cliente_nombre}</strong>
-                    {g.ciudad && <span className={styles.winnnerCity}>{g.ciudad}</span>}
                   </div>
                 </div>
 
