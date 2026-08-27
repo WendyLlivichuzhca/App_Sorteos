@@ -1054,6 +1054,11 @@ app.post('/api/admin/sorteos/:id/lugares', requireAuth, async (req, res) => {
       'INSERT INTO sorteo_lugares (sorteo_id, orden, premio) VALUES (?, ?, ?)',
       [req.params.id, siguienteOrden, premio.trim()]
     );
+
+    // Si el sorteo ya estaba marcado como finalizado (porque se sortearon todos los
+    // lugares que tenía), este lugar nuevo lo deja pendiente otra vez.
+    await pool.query("UPDATE sorteos SET estado = 'activo' WHERE id = ? AND estado = 'finalizado'", [req.params.id]);
+
     res.status(201).json({ id: result.insertId, orden: siguienteOrden, message: 'Lugar creado' });
   } catch (err) {
     res.status(500).json({ error: err.message });

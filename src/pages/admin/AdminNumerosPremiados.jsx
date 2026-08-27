@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useParams, useNavigate, Link } from "react-router-dom";
+import { useParams, Link } from "react-router-dom";
 import AdminLayout from "../../components/admin/AdminLayout.jsx";
 import Icon from "../../icons/Icon.jsx";
 import { getSorteoById, getPremiadosAdmin, crearPremiado, actualizarPremiado, eliminarPremiado, generarPremiadosAlAzar } from "../../services/api.js";
@@ -7,7 +7,6 @@ import styles from "./AdminSorteos.module.css";
 
 export default function AdminNumerosPremiados() {
   const { sorteoId } = useParams();
-  const navigate = useNavigate();
   const [sorteo, setSorteo] = useState(null);
   const [list, setList] = useState([]);
   const [loading, setLoading] = useState(true);
