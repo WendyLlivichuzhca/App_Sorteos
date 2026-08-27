@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import AdminLayout from "../../components/admin/AdminLayout.jsx";
+import Icon from "../../icons/Icon.jsx";
 import { getSorteos, getGanadores, sortearGanador, actualizarGanador } from "../../services/api.js";
 import styles from "./AdminSorteos.module.css";
 
@@ -57,20 +58,38 @@ export default function AdminGanadores() {
   const sorteoActual = sorteos.find((s) => String(s.id) === sorteoId);
   const puedeSortear = sorteoActual && sorteoActual.estado !== "finalizado" && sorteoActual.vendidos > 0;
 
+  const kpis = [
+    { label: "Total Ganadores", value: ganadores.length, subtitle: "Sorteos con ganador", icon: "award", color: "purple" },
+    { label: "Premios Entregados", value: ganadores.filter((g) => g.premio_entregado).length, subtitle: "Ya entregados", icon: "box", color: "green" },
+    { label: "Premios Pendientes", value: ganadores.filter((g) => !g.premio_entregado).length, subtitle: "Por entregar", icon: "clock", color: "orange" },
+    { label: "Sorteos por Sortear", value: sorteos.filter((s) => s.estado !== "finalizado" && s.vendidos > 0).length, subtitle: "Listos para sortear", icon: "ticket", color: "blue" },
+  ];
+
   return (
-    <AdminLayout title="Gestión de Ganadores">
-      <div className={styles.topRow}>
-        <div>
-          <h2>Sorteo y Publicación de Ganadores</h2>
-          <p>Elige un sorteo con boletos vendidos y realiza el sorteo del ganador</p>
-        </div>
+    <AdminLayout title="Gestión de Ganadores" subtitle="Elige un sorteo con boletos vendidos y realiza el sorteo del ganador">
+      <div className={styles.kpiGrid}>
+        {kpis.map((k) => (
+          <div key={k.label} className={styles.kpiCard}>
+            <div className={`${styles.kpiIconWrap} ${styles[k.color]}`}>
+              <Icon name={k.icon} size={19} />
+            </div>
+            <div>
+              <span className={styles.kpiLabel}>{k.label}</span>
+              <strong className={styles.kpiValue}>{k.value}</strong>
+              <span className={styles.kpiSubtitle}>{k.subtitle}</span>
+            </div>
+          </div>
+        ))}
       </div>
 
-      <div className={styles.tableCard} style={{ padding: "20px", display: "flex", gap: "12px", alignItems: "center", flexWrap: "wrap" }}>
+      <div className={styles.tableCard} style={{ padding: "18px" }}>
+        <h3 style={{ fontSize: "13.5px", fontWeight: "800", color: "#17152b", marginBottom: "14px" }}>Realizar Sorteo</h3>
+        <div style={{ display: "flex", gap: "12px", alignItems: "center", flexWrap: "wrap" }}>
         <select
           value={sorteoId}
           onChange={(e) => setSorteoId(e.target.value)}
-          style={{ padding: "10px 14px", borderRadius: "10px", border: "1.5px solid #ecebf3", minWidth: "260px" }}
+          className={styles.filterSelect}
+          style={{ minWidth: "260px" }}
         >
           {sorteos.map((s) => (
             <option key={s.id} value={s.id}>
@@ -93,9 +112,16 @@ export default function AdminGanadores() {
           <span style={{ fontSize: "13px", color: "#9795a8" }}>Este sorteo todavía no tiene boletos vendidos.</span>
         )}
         {error && <span style={{ fontSize: "13px", color: "#ef4444" }}>⚠️ {error}</span>}
+        </div>
       </div>
 
       <div className={styles.tableCard} style={{ marginTop: "16px" }}>
+        <div className={styles.tableCardHeader} style={{ borderBottom: "1.5px solid #ecebf3" }}>
+          <div>
+            <h3>Historial de Ganadores</h3>
+            <p>Ganadores sorteados y estado de entrega del premio</p>
+          </div>
+        </div>
         <table className={styles.table}>
           <thead>
             <tr>
