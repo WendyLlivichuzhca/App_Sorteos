@@ -14,6 +14,7 @@ export default function CompraExitosa() {
   const navigate = useNavigate();
   const { ultimaCompra, reiniciarFlujo } = useApp();
   const [instruccionesPago, setInstruccionesPago] = useState("");
+  const [whatsapp, setWhatsapp] = useState("");
 
   useEffect(() => {
     if (!ultimaCompra) {
@@ -22,7 +23,10 @@ export default function CompraExitosa() {
     }
     reiniciarFlujo();
     getConfiguracion()
-      .then((config) => setInstruccionesPago(config.instrucciones_pago || ""))
+      .then((config) => {
+        setInstruccionesPago(config.instrucciones_pago || "");
+        setWhatsapp(config.whatsapp || "");
+      })
       .catch((err) => console.error("Error cargando configuración:", err));
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -137,7 +141,9 @@ Comprador: ${ultimaCompra.comprador.nombre}
                 </div>
               ) : (
                 <p style={{ fontSize: "12.5px", color: "#64748b" }}>
-                  Todavía no se han configurado las instrucciones de pago. Ingresa a <strong>Configuración</strong> en el panel admin para agregarlas.
+                  {whatsapp
+                    ? <>Escríbenos por WhatsApp al <strong>{whatsapp}</strong> y te enviamos los datos de la cuenta para tu transferencia.</>
+                    : "Por favor contáctanos para que te enviemos los datos de la cuenta para tu transferencia."}
                 </p>
               )}
 
