@@ -179,6 +179,16 @@ app.post('/api/sorteos', requireAuth, async (req, res) => {
     const pool = getPool();
     const { nombre, categoria, precio, total, estado, fechaSorteo, galeria } = req.body;
 
+    if (!nombre || !nombre.trim()) {
+      return res.status(400).json({ error: 'El nombre del sorteo es obligatorio' });
+    }
+    if (!precio || parseFloat(precio) <= 0) {
+      return res.status(400).json({ error: 'El precio por boleto debe ser mayor a 0' });
+    }
+    if (!total || parseInt(total) <= 0) {
+      return res.status(400).json({ error: 'El total de boletos debe ser mayor a 0' });
+    }
+
     const [result] = await pool.query(
       `INSERT INTO sorteos (nombre, categoria, precio, total, vendidos, estado, fecha_sorteo, galeria)
        VALUES (?, ?, ?, ?, 0, ?, ?, ?)`,
@@ -215,6 +225,16 @@ app.put('/api/sorteos/:id', requireAuth, async (req, res) => {
     const pool = getPool();
     const { nombre, categoria, precio, total, estado, fechaSorteo, galeria } = req.body;
     const nuevoTotal = parseInt(total);
+
+    if (!nombre || !nombre.trim()) {
+      return res.status(400).json({ error: 'El nombre del sorteo es obligatorio' });
+    }
+    if (!precio || parseFloat(precio) <= 0) {
+      return res.status(400).json({ error: 'El precio por boleto debe ser mayor a 0' });
+    }
+    if (!nuevoTotal || nuevoTotal <= 0) {
+      return res.status(400).json({ error: 'El total de boletos debe ser mayor a 0' });
+    }
 
     const [sorteos] = await pool.query('SELECT * FROM sorteos WHERE id = ?', [req.params.id]);
     if (sorteos.length === 0) return res.status(404).json({ error: 'Sorteo no encontrado' });
