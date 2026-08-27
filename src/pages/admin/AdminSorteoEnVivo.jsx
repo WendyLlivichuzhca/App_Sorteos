@@ -110,9 +110,13 @@ export default function AdminSorteoEnVivo() {
           <p className={styles.eyebrow}>Sorteo en vivo</p>
           <h1 className={styles.sorteoNombre}>{sorteoActual.nombre}</h1>
 
-          <div className={`${styles.numeroWrap} ${estado === "girando" ? styles.girando : ""}`}>
-            <span className={styles.hash}>#</span>
-            <span className={styles.numero}>{numeroMostrado}</span>
+          <div className={styles.wheelWrap}>
+            <div className={styles.pointer} />
+            <div className={`${styles.wheel} ${estado === "girando" ? styles.wheelGirando : ""}`} />
+            <div className={styles.hub}>
+              <span className={styles.hubHash}>#</span>
+              <span className={styles.hubNumero}>{numeroMostrado}</span>
+            </div>
           </div>
 
           {!puedeSortear && sorteoActual.estado === "finalizado" && (

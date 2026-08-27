@@ -72,32 +72,88 @@
   max-width: 700px;
 }
 
-.numeroWrap {
+.wheelWrap {
+  position: relative;
+  width: 300px;
+  height: 300px;
+  margin: 40px auto;
+}
+
+.pointer {
+  position: absolute;
+  top: -10px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 0;
+  height: 0;
+  border-left: 15px solid transparent;
+  border-right: 15px solid transparent;
+  border-top: 26px solid #b91c1c;
+  filter: drop-shadow(0 3px 4px rgba(0, 0, 0, 0.35));
+  z-index: 3;
+}
+
+.wheel {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  background: conic-gradient(
+    #fbbf24 0deg 30deg,
+    #fb923c 30deg 60deg,
+    #f97316 60deg 90deg,
+    #ec4899 90deg 120deg,
+    #d946ef 120deg 150deg,
+    #a855f7 150deg 180deg,
+    #6366f1 180deg 210deg,
+    #3b82f6 210deg 240deg,
+    #06b6d4 240deg 270deg,
+    #10b981 270deg 300deg,
+    #84cc16 300deg 330deg,
+    #facc15 330deg 360deg
+  );
+  border: 12px solid #e7c9a3;
+  box-shadow: 0 14px 46px rgba(0, 0, 0, 0.4), inset 0 0 0 2px rgba(255, 255, 255, 0.5);
+}
+
+.wheelGirando {
+  animation: girarRuleta 4.8s cubic-bezier(0.14, 0.7, 0.2, 1) forwards;
+}
+
+@keyframes girarRuleta {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(2160deg); }
+}
+
+.hub {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 92px;
+  height: 92px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 30%, #f87171, #b91c1c);
+  border: 4px solid #ffffff;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.35);
   display: flex;
   align-items: baseline;
   justify-content: center;
-  gap: 6px;
-  margin: 46px 0 30px;
-  transition: filter 0.15s ease;
+  gap: 1px;
+  z-index: 2;
 }
 
-.numeroWrap.girando .numero {
-  filter: blur(0.5px);
-}
-
-.hash {
-  font-size: 48px;
+.hubHash {
+  font-size: 16px;
   font-weight: 800;
-  color: rgba(255, 255, 255, 0.5);
+  color: rgba(255, 255, 255, 0.75);
 }
 
-.numero {
-  font-size: 120px;
+.hubNumero {
+  font-size: 22px;
   font-weight: 900;
-  line-height: 1;
-  letter-spacing: 2px;
+  color: #ffffff;
   font-variant-numeric: tabular-nums;
-  text-shadow: 0 8px 40px rgba(109, 60, 245, 0.6);
+  letter-spacing: 0.5px;
 }
 
 .aviso {
@@ -236,7 +292,9 @@
 }
 
 @media (max-width: 560px) {
-  .numero { font-size: 72px; }
+  .wheelWrap { width: 220px; height: 220px; }
+  .hub { width: 72px; height: 72px; }
+  .hubNumero { font-size: 17px; }
   .sorteoNombre, .sorteoNombreLight { font-size: 22px; }
   .numeroFinal { font-size: 56px; }
   .ganadorNombre { font-size: 20px; }
