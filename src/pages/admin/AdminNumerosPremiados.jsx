@@ -15,7 +15,6 @@ export default function AdminNumerosPremiados() {
   const [premio, setPremio] = useState("");
   const [error, setError] = useState("");
   const [cantidadAzar, setCantidadAzar] = useState(10);
-  const [premioAzar, setPremioAzar] = useState("");
   const [generando, setGenerando] = useState(false);
   const [errorAzar, setErrorAzar] = useState("");
   const [editingId, setEditingId] = useState(null);
@@ -78,11 +77,10 @@ export default function AdminNumerosPremiados() {
   const handleGenerarAzar = async (e) => {
     e.preventDefault();
     setErrorAzar("");
-    if (!cantidadAzar || cantidadAzar < 1 || !premioAzar.trim()) return;
+    if (!cantidadAzar || cantidadAzar < 1) return;
     setGenerando(true);
     try {
-      await generarPremiadosAlAzar(sorteoId, { cantidad: cantidadAzar, premio: premioAzar.trim() });
-      setPremioAzar("");
+      await generarPremiadosAlAzar(sorteoId, { cantidad: cantidadAzar, premio: "Por definir" });
       cargar();
     } catch (err) {
       setErrorAzar(err.message || "No se pudieron generar los números");
@@ -240,7 +238,7 @@ export default function AdminNumerosPremiados() {
           <div className={styles.tableCard} style={{ padding: "18px" }}>
             <h3 style={{ fontSize: "13.5px", fontWeight: "800", color: "#17152b" }}>🎲 Generar al Azar</h3>
             <p style={{ fontSize: "11.5px", color: "#6b6880", marginTop: "4px" }}>
-              Elige números reales de este sorteo al azar. Después puedes editar el premio de cada uno con el ✏️ de la tabla, si quieres que no todos valgan lo mismo.
+              Elige números reales de este sorteo al azar. Después ponle el premio a cada uno con el ✏️ de la tabla.
             </p>
             <form onSubmit={handleGenerarAzar} style={{ marginTop: "14px", display: "flex", flexDirection: "column", gap: "12px" }}>
               <div className={styles.formGroup}>
@@ -250,15 +248,6 @@ export default function AdminNumerosPremiados() {
                   min="1"
                   value={cantidadAzar}
                   onChange={(e) => setCantidadAzar(parseInt(e.target.value, 10) || "")}
-                />
-              </div>
-              <div className={styles.formGroup}>
-                <label>Premio para todos</label>
-                <input
-                  type="text"
-                  placeholder="Ej: $20 en efectivo"
-                  value={premioAzar}
-                  onChange={(e) => setPremioAzar(e.target.value)}
                 />
               </div>
               {errorAzar && <span style={{ fontSize: "12px", color: "#ef4444" }}>⚠️ {errorAzar}</span>}
