@@ -99,7 +99,7 @@
 .group {
   display: flex;
   flex-direction: column;
-  gap: 5px;
+  gap: 8px;
 }
 
 .groupTitle {
@@ -114,15 +114,15 @@
 .groupItems {
   display: flex;
   flex-direction: column;
-  gap: 3px;
+  gap: 5px;
 }
 
 .item {
   display: flex;
   align-items: center;
-  gap: 10px;
-  padding: 8px 12px;
-  border-radius: 10px;
+  gap: 12px;
+  padding: 8px 10px;
+  border-radius: 12px;
   color: #6b6880;
   font-size: 12px;
   font-weight: 600;
@@ -135,18 +135,33 @@
   color: #17152b;
 }
 
+.item:hover .itemIcon {
+  background: #efe9fe;
+  color: #6d3cf5;
+}
+
 .itemActive {
   background: #efe9fe !important;
   color: #6d3cf5 !important;
 }
 
 .itemIcon {
-  width: 19px;
-  height: 19px;
+  width: 32px;
+  height: 32px;
+  border-radius: 10px;
+  background: #f4f3f8;
+  color: #9795a8;
   display: flex;
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
+  transition: all 0.15s ease;
+}
+
+.itemActive .itemIcon {
+  background: linear-gradient(135deg, #7848f5, #5424e0);
+  color: #ffffff;
+  box-shadow: 0 3px 10px rgba(109, 60, 245, 0.35);
 }
 
 .itemLabel {
