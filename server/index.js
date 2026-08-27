@@ -124,6 +124,8 @@ app.post('/api/auth/login', async (req, res) => {
 // ==========================================
 // 1. SORTEOS ENDPOINTS (MySQL)
 // ==========================================
+const ESTADOS_SORTEO_VALIDOS = ['activo', 'proximamente', 'agotado', 'finalizado'];
+
 app.get('/api/sorteos', async (req, res) => {
   try {
     const pool = getPool();
@@ -188,6 +190,9 @@ app.post('/api/sorteos', requireAuth, async (req, res) => {
     if (!total || parseInt(total) <= 0) {
       return res.status(400).json({ error: 'El total de boletos debe ser mayor a 0' });
     }
+    if (estado && !ESTADOS_SORTEO_VALIDOS.includes(estado)) {
+      return res.status(400).json({ error: 'Estado de sorteo no válido' });
+    }
 
     const [result] = await pool.query(
       `INSERT INTO sorteos (nombre, categoria, precio, total, vendidos, estado, fecha_sorteo, galeria)
@@ -234,6 +239,9 @@ app.put('/api/sorteos/:id', requireAuth, async (req, res) => {
     }
     if (!nuevoTotal || nuevoTotal <= 0) {
       return res.status(400).json({ error: 'El total de boletos debe ser mayor a 0' });
+    }
+    if (!ESTADOS_SORTEO_VALIDOS.includes(estado)) {
+      return res.status(400).json({ error: 'Estado de sorteo no válido' });
     }
 
     const [sorteos] = await pool.query('SELECT * FROM sorteos WHERE id = ?', [req.params.id]);
