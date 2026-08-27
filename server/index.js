@@ -509,7 +509,11 @@ app.put('/api/admin/premiados/:id', requireAuth, async (req, res) => {
     const { premio, entregado } = req.body;
     const campos = [];
     const valores = [];
-    if (premio !== undefined) { campos.push('premio = ?'); valores.push(premio); }
+    if (premio !== undefined) {
+      if (!premio.trim()) return res.status(400).json({ error: 'El premio no puede quedar vacío' });
+      campos.push('premio = ?');
+      valores.push(premio.trim());
+    }
     if (entregado !== undefined) { campos.push('entregado = ?'); valores.push(entregado ? 1 : 0); }
     if (campos.length === 0) return res.status(400).json({ error: 'Nada que actualizar' });
     valores.push(req.params.id);
@@ -1133,7 +1137,11 @@ app.put('/api/admin/lugares/:id', requireAuth, async (req, res) => {
     const { premio, entregado } = req.body;
     const campos = [];
     const valores = [];
-    if (premio !== undefined) { campos.push('premio = ?'); valores.push(premio); }
+    if (premio !== undefined) {
+      if (!premio.trim()) return res.status(400).json({ error: 'El premio no puede quedar vacío' });
+      campos.push('premio = ?');
+      valores.push(premio.trim());
+    }
     if (entregado !== undefined) { campos.push('entregado = ?'); valores.push(entregado ? 1 : 0); }
     if (campos.length === 0) return res.status(400).json({ error: 'Nada que actualizar' });
     valores.push(req.params.id);
