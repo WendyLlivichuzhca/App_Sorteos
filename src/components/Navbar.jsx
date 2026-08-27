@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { useApp } from "../context/AppContext.jsx";
 import { getConfiguracion } from "../services/api.js";
 import Icon from "../icons/Icon.jsx";
 import styles from "./Navbar.module.css";
@@ -14,10 +13,8 @@ const STEPS = [
 ];
 
 export default function Navbar({ variant = "full", step }) {
-  const { seleccion } = useApp();
   const location = useLocation();
   const navigate = useNavigate();
-  const cartCount = seleccion ? seleccion.paquete.boletos : 0;
   const dark = location.pathname === "/";
   const [nombreEmpresa, setNombreEmpresa] = useState(NOMBRE_POR_DEFECTO);
 
@@ -64,29 +61,12 @@ export default function Navbar({ variant = "full", step }) {
         )}
 
         {variant === "nav" && (
-          <>
-            <nav className={styles.nav}>
-              <Link to="/sorteos">Sorteos</Link>
-              <a href="/#como-funciona">Cómo funciona</a>
-              <Link to="/resultados">Resultados</Link>
-              <Link to="/ayuda">Ayuda</Link>
-            </nav>
-            <div className={styles.actions}>
-              <button type="button" className={styles.cartBtn} aria-label="Carrito" onClick={() => seleccion && navigate("/checkout/datos")}>
-                <Icon name="cart" size={20} strokeWidth={1.8} />
-                <span className={styles.cartBadge}>{cartCount}</span>
-              </button>
-            </div>
-          </>
-        )}
-
-        {variant === "cart" && (
-          <div className={styles.actions}>
-            <button type="button" className={styles.cartBtn} aria-label="Carrito" onClick={() => seleccion && navigate("/checkout/datos")}>
-              <Icon name="cart" size={20} strokeWidth={1.8} />
-              {cartCount > 0 && <span className={styles.cartBadge}>{cartCount}</span>}
-            </button>
-          </div>
+          <nav className={styles.nav}>
+            <Link to="/sorteos">Sorteos</Link>
+            <a href="/#como-funciona">Cómo funciona</a>
+            <Link to="/resultados">Resultados</Link>
+            <Link to="/ayuda">Ayuda</Link>
+          </nav>
         )}
 
         {variant === "checkout" && (
