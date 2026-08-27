@@ -190,6 +190,9 @@ app.post('/api/sorteos', requireAuth, async (req, res) => {
     if (!total || parseInt(total) <= 0) {
       return res.status(400).json({ error: 'El total de boletos debe ser mayor a 0' });
     }
+    if (parseInt(total) > 100000) {
+      return res.status(400).json({ error: 'El total de boletos no puede superar 100,000 (revisa si no sobra un cero)' });
+    }
     if (estado && !ESTADOS_SORTEO_VALIDOS.includes(estado)) {
       return res.status(400).json({ error: 'Estado de sorteo no válido' });
     }
@@ -239,6 +242,9 @@ app.put('/api/sorteos/:id', requireAuth, async (req, res) => {
     }
     if (!nuevoTotal || nuevoTotal <= 0) {
       return res.status(400).json({ error: 'El total de boletos debe ser mayor a 0' });
+    }
+    if (nuevoTotal > 100000) {
+      return res.status(400).json({ error: 'El total de boletos no puede superar 100,000 (revisa si no sobra un cero)' });
     }
     if (!ESTADOS_SORTEO_VALIDOS.includes(estado)) {
       return res.status(400).json({ error: 'Estado de sorteo no válido' });

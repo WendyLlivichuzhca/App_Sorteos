@@ -340,6 +340,8 @@ export default function AdminSorteos() {
                   <input
                     type="number"
                     required
+                    min="1"
+                    max="100000"
                     value={formData.total}
                     onChange={(e) => setFormData({ ...formData, total: parseInt(e.target.value, 10) })}
                   />
