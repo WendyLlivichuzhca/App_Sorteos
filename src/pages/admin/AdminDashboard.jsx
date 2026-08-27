@@ -132,14 +132,14 @@ export default function AdminDashboard() {
 
   if (loading) {
     return (
-      <AdminLayout title="Dashboard de Control">
+      <AdminLayout title="Dashboard de Control" subtitle="Resumen general de tu sistema">
         <p>Cargando dashboard...</p>
       </AdminLayout>
     );
   }
 
   return (
-    <AdminLayout title="Dashboard de Control">
+    <AdminLayout title="Dashboard de Control" subtitle="Resumen general de tu sistema">
       {/* 1. KPIs Grid Top */}
       <div className={styles.kpiGrid}>
         {kpis.map((k) => (

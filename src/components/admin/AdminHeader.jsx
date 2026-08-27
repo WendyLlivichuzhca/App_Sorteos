@@ -3,7 +3,7 @@ import Icon from "../../icons/Icon.jsx";
 import { useAuth } from "../../context/AuthContext.jsx";
 import styles from "./AdminHeader.module.css";
 
-export default function AdminHeader({ title }) {
+export default function AdminHeader({ title, subtitle }) {
   const { admin, logout } = useAuth();
   const navigate = useNavigate();
 
@@ -16,7 +16,10 @@ export default function AdminHeader({ title }) {
 
   return (
     <header className={styles.header}>
-      <h1 className={styles.title}>{title}</h1>
+      <div>
+        <h1 className={styles.title}>{title}</h1>
+        {subtitle && <p className={styles.subtitle}>{subtitle}</p>}
+      </div>
 
       <div className={styles.right}>
         <div className={styles.search}>
