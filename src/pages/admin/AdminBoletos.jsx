@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import AdminLayout from "../../components/admin/AdminLayout.jsx";
+import Icon from "../../icons/Icon.jsx";
 import { getSorteos, getBoletosAdmin } from "../../services/api.js";
 import styles from "./AdminSorteos.module.css";
 
@@ -36,22 +37,41 @@ export default function AdminBoletos() {
       (b.cliente_cedula || "").toLowerCase().includes(cleanFilter)
   );
 
+  const kpis = [
+    { label: "Total Boletos", value: boletos.length, subtitle: "En este sorteo", icon: "ticket", color: "purple" },
+    { label: "Vendidos", value: boletos.filter((b) => b.estado === "vendido").length, subtitle: "Confirmados", icon: "award", color: "green" },
+    { label: "Reservados", value: boletos.filter((b) => b.estado === "reservado").length, subtitle: "Pago pendiente", icon: "clock", color: "orange" },
+    { label: "Disponibles", value: boletos.filter((b) => b.estado !== "vendido" && b.estado !== "reservado").length, subtitle: "Sin asignar", icon: "box", color: "blue" },
+  ];
+
   return (
-    <AdminLayout title="Gestión de Boletos">
+    <AdminLayout title="Gestión de Boletos" subtitle="Consulta el estado y asignación de boletos por sorteo">
       <div className={styles.topRow}>
-        <div>
-          <h2>Monitoreo de Boletos</h2>
-          <p>Consulta el estado y asignación de boletos por sorteo</p>
-        </div>
+        <div />
         <select
+          className={styles.filterSelect}
           value={sorteoId}
           onChange={(e) => setSorteoId(e.target.value)}
-          style={{ padding: "10px 14px", borderRadius: "10px", border: "1.5px solid #ecebf3" }}
         >
           {sorteos.map((s) => (
             <option key={s.id} value={s.id}>{s.nombre}</option>
           ))}
         </select>
+      </div>
+
+      <div className={styles.kpiGrid}>
+        {kpis.map((k) => (
+          <div key={k.label} className={styles.kpiCard}>
+            <div className={`${styles.kpiIconWrap} ${styles[k.color]}`}>
+              <Icon name={k.icon} size={19} />
+            </div>
+            <div>
+              <span className={styles.kpiLabel}>{k.label}</span>
+              <strong className={styles.kpiValue}>{k.value}</strong>
+              <span className={styles.kpiSubtitle}>{k.subtitle}</span>
+            </div>
+          </div>
+        ))}
       </div>
 
       <div className={styles.tableCard}>
