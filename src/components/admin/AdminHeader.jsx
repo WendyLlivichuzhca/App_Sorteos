@@ -1,4 +1,4 @@
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import Icon from "../../icons/Icon.jsx";
 import { useAuth } from "../../context/AuthContext.jsx";
 import styles from "./AdminHeader.module.css";
@@ -26,6 +26,10 @@ export default function AdminHeader({ title, subtitle }) {
           <Icon name="search" size={16} className={styles.searchIcon} />
           <input type="text" placeholder="Buscar en admin..." />
         </div>
+
+        <Link to="/" target="_blank" className={styles.publicLink}>
+          Visita el sitio del cliente <Icon name="externalLink" size={15} />
+        </Link>
 
         <div className={styles.userProfile}>
           <div className={styles.avatar}>{inicial}</div>

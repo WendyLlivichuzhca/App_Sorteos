@@ -168,30 +168,3 @@
   font-size: 12px;
 }
 
-.footer {
-  padding: 14px 12px;
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-
-.publicLink {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 6px;
-  width: 100%;
-  padding: 9px;
-  border-radius: 10px;
-  background: #6d3cf5;
-  color: #ffffff;
-  font-size: 11.5px;
-  font-weight: 700;
-  text-decoration: none;
-  transition: all 0.15s ease;
-}
-
-.publicLink:hover {
-  background: #5c2fe0;
-  transform: translateY(-1px);
-}
