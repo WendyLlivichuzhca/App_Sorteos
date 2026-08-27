@@ -28,6 +28,13 @@ function construirRangoMeses(ventasMensuales) {
   return rango;
 }
 
+// Genera los puntos de un mini-gráfico de línea (sparkline) a partir de una serie de números reales.
+function sparklinePoints(valores) {
+  const max = Math.max(...valores, 1);
+  const paso = 90 / Math.max(valores.length - 1, 1);
+  return valores.map((v, i) => `${i * paso},${36 - (v / max) * 32}`).join(" ");
+}
+
 const iniciales = (nombre) =>
   (nombre || "?")
     .split(" ")
@@ -75,12 +82,27 @@ export default function AdminDashboard() {
   const mesActual = ventasMensuales[ventasMensuales.length - 1];
   const mesMostrado = selectedMonth || mesActual;
   const maxVal = Math.max(...ventasMensuales.map((m) => m.ventas), 1);
+  const maxIngresos = Math.max(...ventasMensuales.map((m) => m.ingresos), 1);
 
   const kpis = [
-    { label: "Ventas Totales", value: `${stats.boletosVendidos}`, subtitle: "Boletos vendidos", icon: "ticket" },
-    { label: "Ingresos Totales", value: formatMoney(stats.totalVentas), subtitle: "Recaudación neta (aprobado)", icon: "card" },
-    { label: "Sorteos Activos", value: `${stats.sorteosActivos} Activos`, subtitle: "En curso ahora", icon: "award" },
-    { label: "Compras Recientes", value: `${stats.ultimasCompras.length}`, subtitle: "Últimas registradas", icon: "chart" },
+    {
+      label: "Ventas Totales",
+      value: `${stats.boletosVendidos}`,
+      subtitle: "Boletos vendidos",
+      icon: "ticket",
+      color: "purple",
+      sparkline: sparklinePoints(ventasMensuales.map((m) => m.ventas)),
+    },
+    {
+      label: "Ingresos Totales",
+      value: formatMoney(stats.totalVentas),
+      subtitle: "Recaudación neta (aprobado)",
+      icon: "card",
+      color: "green",
+      sparkline: sparklinePoints(ventasMensuales.map((m) => m.ingresos)),
+    },
+    { label: "Sorteos Activos", value: `${stats.sorteosActivos} Activos`, subtitle: "En curso ahora", icon: "award", color: "blue" },
+    { label: "Compras Recientes", value: `${stats.ultimasCompras.length}`, subtitle: "Últimas registradas", icon: "chart", color: "orange" },
   ];
 
   if (loading) {
@@ -98,7 +120,7 @@ export default function AdminDashboard() {
         {kpis.map((k) => (
           <div key={k.label} className={styles.kpiCard}>
             <div className={styles.kpiTop}>
-              <div className={styles.kpiIconWrap}>
+              <div className={`${styles.kpiIconWrap} ${styles[k.color]}`}>
                 <Icon name={k.icon} size={20} />
               </div>
             </div>
@@ -107,6 +129,18 @@ export default function AdminDashboard() {
               <strong className={styles.kpiValue}>{k.value}</strong>
               <span className={styles.kpiSubtitle}>{k.subtitle}</span>
             </div>
+            {k.sparkline && (
+              <svg className={styles.kpiSpark} viewBox="0 0 90 36" preserveAspectRatio="none">
+                <polyline
+                  points={k.sparkline}
+                  fill="none"
+                  stroke={k.color === "green" ? "#16a34a" : "#6d3cf5"}
+                  strokeWidth="2.5"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+              </svg>
+            )}
           </div>
         ))}
       </div>
@@ -121,13 +155,46 @@ export default function AdminDashboard() {
               <p>Boletos vendidos e ingresos aprobados por mes</p>
             </div>
             <div className={styles.chartLegend}>
-              <span className={styles.legendDot} />
-              <span>Boletos vendidos</span>
+              <span className={styles.legendItem}>
+                <span className={styles.legendDot} />
+                <span>Boletos vendidos</span>
+              </span>
+              <span className={styles.legendItem}>
+                <span className={`${styles.legendDot} ${styles.green}`} />
+                <span>Ingresos aprobados</span>
+              </span>
             </div>
           </div>
 
           {/* Renderizado del Gráfico de Barras */}
           <div className={styles.barsContainer}>
+            <svg
+              className={styles.lineOverlay}
+              viewBox={`0 0 ${ventasMensuales.length * 100} 100`}
+              preserveAspectRatio="none"
+            >
+              <polyline
+                points={ventasMensuales
+                  .map((m, i) => `${(i + 0.5) * 100},${100 - (m.ingresos / maxIngresos) * 85}`)
+                  .join(" ")}
+                fill="none"
+                stroke="#16a34a"
+                strokeWidth="2.5"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                vectorEffect="non-scaling-stroke"
+              />
+              {ventasMensuales.map((m, i) => (
+                <circle
+                  key={i}
+                  cx={(i + 0.5) * 100}
+                  cy={100 - (m.ingresos / maxIngresos) * 85}
+                  r="4"
+                  fill="#16a34a"
+                  vectorEffect="non-scaling-stroke"
+                />
+              ))}
+            </svg>
             {ventasMensuales.map((m, i) => {
               const heightPercent = Math.round((m.ventas / maxVal) * 100);
               const isSelected = mesMostrado === m || (!selectedMonth && m.isCurrent);

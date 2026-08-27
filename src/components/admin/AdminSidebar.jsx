@@ -87,11 +87,14 @@ export default function AdminSidebar() {
         ))}
       </nav>
 
-      {/* Footer link to public site */}
+      {/* Footer: ayuda + link al sitio público */}
       <div className={styles.footer}>
-        <Link to="/" className={styles.publicLink} target="_blank">
-          <Icon name="externalLink" size={16} /> Ver sitio del cliente
-        </Link>
+        <div className={styles.helpCard}>
+          <span className={styles.helpText}>¿Necesitas ayuda?</span>
+          <Link to="/" className={styles.publicLink} target="_blank">
+            Visita el sitio del cliente <Icon name="externalLink" size={16} />
+          </Link>
+        </div>
       </div>
     </aside>
   );

@@ -6,10 +6,12 @@
 }
 
 .kpiCard {
+  position: relative;
   background: #ffffff;
   border: 1.5px solid #ecebf3;
   border-radius: 16px;
   padding: 20px;
+  overflow: hidden;
   box-shadow: 0 4px 16px rgba(23, 21, 43, 0.04);
   transition: transform 0.15s ease, box-shadow 0.15s ease;
 }
@@ -34,6 +36,21 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  flex-shrink: 0;
+}
+
+.kpiIconWrap.purple { background: #efe9fe; color: #6d3cf5; }
+.kpiIconWrap.green { background: #dcf5e3; color: #16a34a; }
+.kpiIconWrap.blue { background: #e0ebff; color: #2f6df5; }
+.kpiIconWrap.orange { background: #fdecd2; color: #ea8a1f; }
+
+.kpiSpark {
+  position: absolute;
+  right: -6px;
+  bottom: -4px;
+  width: 90px;
+  height: 44px;
+  opacity: 0.55;
 }
 
 .kpiTrend {
@@ -113,10 +130,16 @@
 .chartLegend {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 16px;
   font-size: 12.5px;
   color: #6b6880;
   font-weight: 600;
+}
+
+.legendItem {
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }
 
 .legendDot {
@@ -126,8 +149,13 @@
   background: #6d3cf5;
 }
 
+.legendDot.green {
+  background: #16a34a;
+}
+
 /* Chart Bars Styles */
 .barsContainer {
+  position: relative;
   height: 200px;
   display: flex;
   align-items: flex-end;
@@ -135,6 +163,12 @@
   gap: 12px;
   padding: 20px 10px 10px;
   border-bottom: 1px solid #f3f2f8;
+}
+
+.lineOverlay {
+  position: absolute;
+  inset: 20px 10px 32px;
+  pointer-events: none;
 }
 
 .barCol {
