@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
 import AdminLayout from "../../components/admin/AdminLayout.jsx";
 import Icon from "../../icons/Icon.jsx";
 import PremioImage from "../../components/PremioImage.jsx";
@@ -187,6 +188,9 @@ export default function AdminSorteos() {
                 </td>
                 <td>
                   <div className={styles.actionsCell}>
+                    <Link to={`/admin/sorteos/${s.id}/premiados`} className={styles.iconBtn} title="Números Premiados" style={{ textDecoration: "none" }}>
+                      🎁
+                    </Link>
                     <button type="button" className={styles.iconBtn} onClick={() => handleOpenEdit(s)} title="Editar">
                       ✏️
                     </button>

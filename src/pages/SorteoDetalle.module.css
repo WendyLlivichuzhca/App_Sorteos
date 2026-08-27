@@ -216,6 +216,72 @@
   line-height: 1.5;
 }
 
+.premiadosSection {
+  margin-top: 56px;
+  padding-top: 40px;
+  border-top: 1px solid var(--color-border);
+  text-align: center;
+}
+
+.premiadosSection h2 {
+  font-size: 22px;
+  font-weight: 800;
+}
+
+.premiadosSection p {
+  margin-top: 8px;
+  color: var(--color-text-muted);
+  font-size: 14px;
+  max-width: 560px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.premiadosGrid {
+  margin-top: 28px;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 16px;
+  max-width: 780px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.premiadoItem {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: 16px 12px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+.premiadoNumero {
+  font-size: 19px;
+  font-weight: 800;
+  letter-spacing: 0.5px;
+}
+
+.premiadoEntregadoTexto {
+  color: var(--color-text-muted);
+  text-decoration: line-through;
+}
+
+.premiadoPremio {
+  font-size: 12.5px;
+  color: var(--color-primary-dark);
+  font-weight: 600;
+}
+
+.premiadoBadge {
+  margin-top: 2px;
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--color-success);
+}
+
 @media (max-width: 860px) {
   .grid {
     grid-template-columns: 1fr;

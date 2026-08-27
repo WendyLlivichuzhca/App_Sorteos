@@ -148,6 +148,20 @@ export const updateDescuento = (id, data) =>
 export const deleteDescuento = (id) =>
   fetchApi(`/admin/descuentos/${id}`, { method: 'DELETE' });
 
+// Números Premiados (premios instantáneos por sorteo) API
+export const getPremiadosPublic = (sorteoId) => fetchApi(`/sorteos/${sorteoId}/premiados`);
+
+export const getPremiadosAdmin = (sorteoId) => fetchApi(`/admin/sorteos/${sorteoId}/premiados`);
+
+export const crearPremiado = (sorteoId, data) =>
+  fetchApi(`/admin/sorteos/${sorteoId}/premiados`, { method: 'POST', body: JSON.stringify(data) });
+
+export const actualizarPremiado = (id, data) =>
+  fetchApi(`/admin/premiados/${id}`, { method: 'PUT', body: JSON.stringify(data) });
+
+export const eliminarPremiado = (id) =>
+  fetchApi(`/admin/premiados/${id}`, { method: 'DELETE' });
+
 // Clientes (admin) API
 export const getAdminClientes = () => fetchApi('/admin/clientes');
 

@@ -155,6 +155,24 @@ export async function initDB() {
     `);
 
     await pool.query(`
+      CREATE TABLE IF NOT EXISTS numeros_premiados (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        sorteo_id INT NOT NULL,
+        numero VARCHAR(50) NOT NULL,
+        premio VARCHAR(255) NOT NULL,
+        ganado TINYINT(1) DEFAULT 0,
+        cliente_id INT NULL,
+        cliente_nombre VARCHAR(255) NULL,
+        entregado TINYINT(1) DEFAULT 0,
+        fecha_ganado TIMESTAMP NULL,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        FOREIGN KEY (sorteo_id) REFERENCES sorteos(id) ON DELETE CASCADE,
+        FOREIGN KEY (cliente_id) REFERENCES clientes(id) ON DELETE SET NULL,
+        UNIQUE KEY uq_sorteo_numero_premiado (sorteo_id, numero)
+      ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+    `);
+
+    await pool.query(`
       CREATE TABLE IF NOT EXISTS descuentos_volumen (
         id INT AUTO_INCREMENT PRIMARY KEY,
         cantidad_minima INT NOT NULL,

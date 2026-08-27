@@ -6,7 +6,7 @@ import StarRating from "../components/StarRating.jsx";
 import PremioImage from "../components/PremioImage.jsx";
 import CountdownTimer from "../components/CountdownTimer.jsx";
 import Icon from "../icons/Icon.jsx";
-import { getSorteoById } from "../services/api.js";
+import { getSorteoById, getPremiadosPublic } from "../services/api.js";
 import { formatMoney } from "../utils/format.js";
 import styles from "./SorteoDetalle.module.css";
 
@@ -16,6 +16,7 @@ export default function SorteoDetalle() {
   const [sorteo, setSorteo] = useState(null);
   const [loading, setLoading] = useState(true);
   const [activeImg, setActiveImg] = useState(0);
+  const [premiados, setPremiados] = useState([]);
 
   useEffect(() => {
     setLoading(true);
@@ -28,6 +29,9 @@ export default function SorteoDetalle() {
         console.error("Error al obtener sorteo:", err);
         setLoading(false);
       });
+    getPremiadosPublic(id)
+      .then(setPremiados)
+      .catch((err) => console.error("Error al obtener números premiados:", err));
   }, [id]);
 
   if (loading) {
@@ -151,6 +155,24 @@ export default function SorteoDetalle() {
             )}
           </div>
         </div>
+
+        {premiados.length > 0 && (
+          <div className={styles.premiadosSection}>
+            <h2>🎁 ¡Premios Instantáneos!</h2>
+            <p>Hay {premiados.length} números premiados con premios extra. Compra tus boletos y revisa si tienes uno de los siguientes números:</p>
+            <div className={styles.premiadosGrid}>
+              {premiados.map((p) => (
+                <div key={p.id} className={styles.premiadoItem}>
+                  <span className={`${styles.premiadoNumero} ${p.entregado ? styles.premiadoEntregadoTexto : ""}`}>
+                    #{p.numero}
+                  </span>
+                  <span className={styles.premiadoPremio}>{p.premio}</span>
+                  {p.entregado && <span className={styles.premiadoBadge}>¡Premio Entregado!</span>}
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );

@@ -64,6 +64,20 @@ async function aprobarCompra(pool, compraId) {
   await pool.query("UPDATE compras SET estado = 'aprobado' WHERE id = ?", [compraId]);
   await pool.query("UPDATE boletos SET estado = 'vendido' WHERE compra_id = ?", [compraId]);
   await pool.query('UPDATE sorteos SET vendidos = vendidos + ? WHERE id = ?', [compra.cantidad_boletos, compra.sorteo_id]);
+
+  // Revisa si alguno de los boletos recién vendidos coincide con un número premiado
+  // (premio instantáneo) todavía sin ganador, y lo marca automáticamente.
+  const [boletosVendidos] = await pool.query('SELECT numero FROM boletos WHERE compra_id = ?', [compraId]);
+  const numeros = boletosVendidos.map((b) => b.numero);
+  if (numeros.length > 0) {
+    const placeholders = numeros.map(() => '?').join(',');
+    await pool.query(
+      `UPDATE numeros_premiados SET ganado = 1, cliente_id = ?, cliente_nombre = ?, fecha_ganado = NOW()
+       WHERE sorteo_id = ? AND numero IN (${placeholders}) AND ganado = 0`,
+      [compra.cliente_id, compra.cliente_nombre, compra.sorteo_id, ...numeros]
+    );
+  }
+
   return { ...compra, estado: 'aprobado' };
 }
 
@@ -328,6 +342,82 @@ app.delete('/api/admin/descuentos/:id', requireAuth, async (req, res) => {
     const pool = getPool();
     await pool.query('DELETE FROM descuentos_volumen WHERE id = ?', [req.params.id]);
     res.json({ message: 'Tramo de descuento eliminado' });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// ==========================================
+// 1.7 NÚMEROS PREMIADOS (premios instantáneos por sorteo)
+// ==========================================
+app.get('/api/sorteos/:id/premiados', async (req, res) => {
+  try {
+    const pool = getPool();
+    const [rows] = await pool.query(
+      'SELECT id, numero, premio, entregado FROM numeros_premiados WHERE sorteo_id = ? ORDER BY numero ASC',
+      [req.params.id]
+    );
+    res.json(rows);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+app.get('/api/admin/sorteos/:id/premiados', requireAuth, async (req, res) => {
+  try {
+    const pool = getPool();
+    const [rows] = await pool.query(
+      'SELECT * FROM numeros_premiados WHERE sorteo_id = ? ORDER BY numero ASC',
+      [req.params.id]
+    );
+    res.json(rows);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+app.post('/api/admin/sorteos/:id/premiados', requireAuth, async (req, res) => {
+  try {
+    const pool = getPool();
+    const { numero, premio } = req.body;
+    if (!numero || !premio) {
+      return res.status(400).json({ error: 'Número y premio son obligatorios' });
+    }
+    const [result] = await pool.query(
+      'INSERT INTO numeros_premiados (sorteo_id, numero, premio) VALUES (?, ?, ?)',
+      [req.params.id, String(numero).trim(), premio]
+    );
+    res.status(201).json({ id: result.insertId, message: 'Número premiado creado' });
+  } catch (err) {
+    if (err.code === 'ER_DUP_ENTRY') {
+      return res.status(400).json({ error: 'Ese número ya está registrado como premiado en este sorteo' });
+    }
+    res.status(500).json({ error: err.message });
+  }
+});
+
+app.put('/api/admin/premiados/:id', requireAuth, async (req, res) => {
+  try {
+    const pool = getPool();
+    const { premio, entregado } = req.body;
+    const campos = [];
+    const valores = [];
+    if (premio !== undefined) { campos.push('premio = ?'); valores.push(premio); }
+    if (entregado !== undefined) { campos.push('entregado = ?'); valores.push(entregado ? 1 : 0); }
+    if (campos.length === 0) return res.status(400).json({ error: 'Nada que actualizar' });
+    valores.push(req.params.id);
+    await pool.query(`UPDATE numeros_premiados SET ${campos.join(', ')} WHERE id = ?`, valores);
+    res.json({ message: 'Número premiado actualizado' });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+app.delete('/api/admin/premiados/:id', requireAuth, async (req, res) => {
+  try {
+    const pool = getPool();
+    await pool.query('DELETE FROM numeros_premiados WHERE id = ?', [req.params.id]);
+    res.json({ message: 'Número premiado eliminado' });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
