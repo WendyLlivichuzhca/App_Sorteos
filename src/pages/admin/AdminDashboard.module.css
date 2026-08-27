@@ -167,7 +167,7 @@
 
 .lineOverlay {
   position: absolute;
-  inset: 20px 10px 32px;
+  inset: 20px 10px 10px;
   pointer-events: none;
 }
 
