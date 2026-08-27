@@ -42,6 +42,10 @@ export default function AdminPaquetes() {
   };
 
   const handleSaveEdit = async (p) => {
+    if (Number.isNaN(editPorcentaje) || editPorcentaje < 0 || editPorcentaje > 90) {
+      alert("El descuento debe ser un número entre 0% y 90%");
+      return;
+    }
     try {
       await updateDescuento(p.id, { cantidadMinima: p.cantidad_minima, porcentaje: editPorcentaje });
       setEditingId(null);

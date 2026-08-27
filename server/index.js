@@ -372,7 +372,7 @@ app.post('/api/admin/descuentos', requireAuth, async (req, res) => {
   try {
     const pool = getPool();
     const { cantidadMinima, porcentaje } = req.body;
-    if (!cantidadMinima || porcentaje === undefined) {
+    if (!cantidadMinima || porcentaje === undefined || porcentaje === null || Number.isNaN(parseInt(porcentaje))) {
       return res.status(400).json({ error: 'Cantidad mínima y porcentaje son obligatorios' });
     }
     if (parseInt(cantidadMinima) < 1) {
@@ -399,7 +399,7 @@ app.put('/api/admin/descuentos/:id', requireAuth, async (req, res) => {
   try {
     const pool = getPool();
     const { cantidadMinima, porcentaje } = req.body;
-    if (!cantidadMinima || porcentaje === undefined) {
+    if (!cantidadMinima || porcentaje === undefined || porcentaje === null || Number.isNaN(parseInt(porcentaje))) {
       return res.status(400).json({ error: 'Cantidad mínima y porcentaje son obligatorios' });
     }
     if (parseInt(cantidadMinima) < 1) {

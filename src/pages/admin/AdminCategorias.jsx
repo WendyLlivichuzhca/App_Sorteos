@@ -46,8 +46,12 @@ export default function AdminCategorias() {
   };
 
   const handleSaveEdit = async (c) => {
+    if (!editLabel.trim()) {
+      alert("El nombre de la categoría no puede quedar vacío");
+      return;
+    }
     try {
-      await updateCategoria(c.id, { nombre: editLabel, slug: c.slug, icono: c.icono });
+      await updateCategoria(c.id, { nombre: editLabel.trim(), slug: c.slug, icono: c.icono });
       setEditingId(null);
       cargarCategorias();
     } catch (err) {

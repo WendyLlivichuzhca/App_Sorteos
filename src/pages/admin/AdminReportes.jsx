@@ -22,7 +22,7 @@ export default function AdminReportes() {
       ["Sorteo", "Boletos Vendidos", "Total Boletos", "% Cumplido", "Ingresos Recaudados"],
       ...reporte.porSorteo.map((s) => [s.nombre, s.vendidos, s.total, `${s.porcentaje}%`, s.ingresos.toFixed(2)]),
     ];
-    const csv = filas.map((f) => f.map((v) => `"${v}"`).join(",")).join("\n");
+    const csv = filas.map((f) => f.map((v) => `"${String(v).replace(/"/g, '""')}"`).join(",")).join("\n");
     const blob = new Blob([csv], { type: "text/csv;charset=utf-8" });
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
