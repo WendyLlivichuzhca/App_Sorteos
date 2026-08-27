@@ -379,6 +379,10 @@ app.post('/api/admin/descuentos', requireAuth, async (req, res) => {
     if (parseInt(porcentaje) < 0 || parseInt(porcentaje) > 90) {
       return res.status(400).json({ error: 'El descuento debe estar entre 0% y 90%' });
     }
+    const [dup] = await pool.query('SELECT 1 FROM descuentos_volumen WHERE cantidad_minima = ?', [parseInt(cantidadMinima)]);
+    if (dup.length > 0) {
+      return res.status(400).json({ error: 'Ya existe un tramo con esa misma cantidad mínima' });
+    }
     const [result] = await pool.query(
       'INSERT INTO descuentos_volumen (cantidad_minima, porcentaje) VALUES (?, ?)',
       [parseInt(cantidadMinima), parseInt(porcentaje)]
@@ -398,6 +402,13 @@ app.put('/api/admin/descuentos/:id', requireAuth, async (req, res) => {
     }
     if (parseInt(porcentaje) < 0 || parseInt(porcentaje) > 90) {
       return res.status(400).json({ error: 'El descuento debe estar entre 0% y 90%' });
+    }
+    const [dup] = await pool.query(
+      'SELECT 1 FROM descuentos_volumen WHERE cantidad_minima = ? AND id != ?',
+      [parseInt(cantidadMinima), req.params.id]
+    );
+    if (dup.length > 0) {
+      return res.status(400).json({ error: 'Ya existe un tramo con esa misma cantidad mínima' });
     }
     await pool.query(
       'UPDATE descuentos_volumen SET cantidad_minima = ?, porcentaje = ? WHERE id = ?',
