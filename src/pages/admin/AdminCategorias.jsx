@@ -1,10 +1,12 @@
 import { useEffect, useState } from "react";
 import AdminLayout from "../../components/admin/AdminLayout.jsx";
-import { getCategorias, createCategoria, updateCategoria, deleteCategoria } from "../../services/api.js";
+import Icon from "../../icons/Icon.jsx";
+import { getCategorias, createCategoria, updateCategoria, deleteCategoria, getSorteos } from "../../services/api.js";
 import styles from "./AdminSorteos.module.css";
 
 export default function AdminCategorias() {
   const [cats, setCats] = useState([]);
+  const [sorteos, setSorteos] = useState([]);
   const [loading, setLoading] = useState(true);
   const [newLabel, setNewLabel] = useState("");
   const [editingId, setEditingId] = useState(null);
@@ -20,6 +22,9 @@ export default function AdminCategorias() {
 
   useEffect(() => {
     cargarCategorias();
+    getSorteos()
+      .then(setSorteos)
+      .catch((err) => console.error("Error cargando sorteos:", err));
   }, []);
 
   const handleAdd = async (e) => {
@@ -60,8 +65,37 @@ export default function AdminCategorias() {
     }
   };
 
+  const conteoPorCategoria = cats.map((c) => ({
+    ...c,
+    total: sorteos.filter((s) => s.categoria === c.slug).length,
+  }));
+  const masUsada = conteoPorCategoria.reduce((max, c) => (c.total > (max?.total || 0) ? c : max), null);
+  const sinUso = conteoPorCategoria.filter((c) => c.total === 0).length;
+
+  const kpis = [
+    { label: "Total Categorías", value: cats.length, subtitle: "Categorías creadas", icon: "dots", color: "purple" },
+    { label: "Sorteos Creados", value: sorteos.length, subtitle: "En todas las categorías", icon: "ticket", color: "green" },
+    { label: "Más Usada", value: masUsada ? masUsada.nombre : "—", subtitle: masUsada ? `${masUsada.total} sorteos` : "Todavía ninguna", icon: "award", color: "blue" },
+    { label: "Sin Sorteos", value: sinUso, subtitle: "Categorías sin usar", icon: "box", color: "orange" },
+  ];
+
   return (
     <AdminLayout title="Gestión de Categorías" subtitle="Crea, edita y elimina categorías (Carros, Ropa, Tecnología, Casas, Motos)">
+      <div className={styles.kpiGrid}>
+        {kpis.map((k) => (
+          <div key={k.label} className={styles.kpiCard}>
+            <div className={`${styles.kpiIconWrap} ${styles[k.color]}`}>
+              <Icon name={k.icon} size={19} />
+            </div>
+            <div>
+              <span className={styles.kpiLabel}>{k.label}</span>
+              <strong className={styles.kpiValue}>{k.value}</strong>
+              <span className={styles.kpiSubtitle}>{k.subtitle}</span>
+            </div>
+          </div>
+        ))}
+      </div>
+
       <div style={{ display: "grid", gridTemplateColumns: "1fr 340px", gap: "24px" }}>
         <div className={styles.tableCard}>
           <table className={styles.table}>
