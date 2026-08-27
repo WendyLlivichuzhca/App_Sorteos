@@ -68,21 +68,14 @@ export default function AdminConfiguracion() {
 
   if (loading) {
     return (
-      <AdminLayout title="Configuración General">
+      <AdminLayout title="Configuración General" subtitle="Configura métodos de pago, redes sociales, datos de la empresa y políticas">
         <p>Cargando configuración...</p>
       </AdminLayout>
     );
   }
 
   return (
-    <AdminLayout title="Configuración General">
-      <div className={styles.topRow}>
-        <div>
-          <h2>Ajustes Globales de la Plataforma</h2>
-          <p>Configura métodos de pago, redes sociales, datos de la empresa y políticas</p>
-        </div>
-      </div>
-
+    <AdminLayout title="Configuración General" subtitle="Configura métodos de pago, redes sociales, datos de la empresa y políticas">
       {saved && (
         <div style={{ background: "#dcf5e3", color: "#16a34a", padding: "12px 18px", borderRadius: "10px", fontWeight: "700", marginBottom: "20px" }}>
           ✅ Cambios guardados con éxito en la plataforma.
@@ -92,7 +85,7 @@ export default function AdminConfiguracion() {
       <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "24px" }}>
         {/* Formulario Datos Empresa & Redes */}
         <div className={styles.tableCard} style={{ padding: "24px" }}>
-          <h3 style={{ fontSize: "16px", fontWeight: "800", marginBottom: "16px" }}>Empresa & Redes Sociales</h3>
+          <h3 style={{ fontSize: "13.5px", fontWeight: "800", marginBottom: "16px" }}>Empresa & Redes Sociales</h3>
           <form onSubmit={handleSave} className={styles.form} style={{ padding: 0 }}>
             <div className={styles.formGroup}>
               <label>Nombre Comercial de la Empresa</label>
@@ -160,7 +153,7 @@ export default function AdminConfiguracion() {
         <div style={{ display: "flex", flexDirection: "column", gap: "24px" }}>
           {/* Métodos de Pago Activos */}
           <div className={styles.tableCard} style={{ padding: "24px" }}>
-            <h3 style={{ fontSize: "16px", fontWeight: "800", marginBottom: "14px" }}>Métodos de Pago Aceptados</h3>
+            <h3 style={{ fontSize: "13.5px", fontWeight: "800", marginBottom: "14px" }}>Métodos de Pago Aceptados</h3>
             <p style={{ fontSize: "13px", color: "#6b6880", marginBottom: "16px" }}>Activa o desactiva las pasarelas visibles para el cliente</p>
 
             <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
@@ -194,7 +187,7 @@ export default function AdminConfiguracion() {
 
           {/* Políticas & Términos */}
           <div className={styles.tableCard} style={{ padding: "24px" }}>
-            <h3 style={{ fontSize: "16px", fontWeight: "800", marginBottom: "14px" }}>Políticas y Preguntas Frecuentes</h3>
+            <h3 style={{ fontSize: "13.5px", fontWeight: "800", marginBottom: "14px" }}>Políticas y Preguntas Frecuentes</h3>
 
             <div className={styles.formGroup} style={{ marginBottom: "14px" }}>
               <label>Políticas de Privacidad y Sorteos</label>

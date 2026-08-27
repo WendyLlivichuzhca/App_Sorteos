@@ -42,15 +42,9 @@ export default function AdminUsuarios() {
   };
 
   return (
-    <AdminLayout title="Mi Cuenta">
-      <div className={styles.topRow}>
-        <div>
-          <h2>Mi Cuenta de Administrador</h2>
-          <p>Este sistema usa un único administrador. Cambia tu usuario o contraseña aquí.</p>
-        </div>
-      </div>
-
-      <div className={styles.tableCard} style={{ padding: "24px", maxWidth: "480px" }}>
+    <AdminLayout title="Mi Cuenta" subtitle="Este sistema usa un único administrador. Cambia tu usuario o contraseña aquí.">
+      <div className={styles.tableCard} style={{ padding: "20px", maxWidth: "440px" }}>
+        <h3 style={{ fontSize: "13.5px", fontWeight: "800", color: "#17152b", marginBottom: "14px" }}>Editar Credenciales</h3>
         <form onSubmit={handleSubmit} className={styles.form} style={{ padding: 0 }}>
           <div className={styles.formGroup}>
             <label>Nombre de Usuario</label>

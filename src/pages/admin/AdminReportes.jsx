@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import AdminLayout from "../../components/admin/AdminLayout.jsx";
+import Icon from "../../icons/Icon.jsx";
 import { getAdminReportes } from "../../services/api.js";
 import { formatMoney } from "../../utils/format.js";
 import styles from "./AdminSorteos.module.css";
@@ -37,19 +38,22 @@ export default function AdminReportes() {
 
   if (loading) {
     return (
-      <AdminLayout title="Reportes y Estadísticas">
+      <AdminLayout title="Reportes y Estadísticas" subtitle="Exporta informes de rendimiento de sorteos y clientes frecuentes">
         <p>Cargando reportes...</p>
       </AdminLayout>
     );
   }
 
+  const kpis = [
+    { label: "Ingresos Mes Actual", value: formatMoney(reporte.ingresosMes), subtitle: "Recaudación aprobada", icon: "card", color: "green" },
+    { label: "Sorteo Más Vendido", value: reporte.sorteoMasVendido, subtitle: "Mayor demanda", icon: "award", color: "purple" },
+    { label: "Promedio por Cliente", value: formatMoney(reporte.promedioPorCliente), subtitle: "Gasto promedio", icon: "users", color: "blue" },
+  ];
+
   return (
-    <AdminLayout title="Reportes y Estadísticas">
+    <AdminLayout title="Reportes y Estadísticas" subtitle="Exporta informes de rendimiento de sorteos y clientes frecuentes">
       <div className={styles.topRow}>
-        <div>
-          <h2>Informes de Ventas e Ingresos</h2>
-          <p>Exporta informes de rendimiento de sorteos y clientes frecuentes</p>
-        </div>
+        <div />
         <div style={{ display: "flex", gap: "10px" }}>
           <button type="button" className={styles.createBtn} style={{ background: "#16a34a" }} onClick={exportarCSV}>
             📊 Exportar CSV
@@ -60,22 +64,28 @@ export default function AdminReportes() {
         </div>
       </div>
 
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: "20px", marginBottom: "24px" }}>
-        <div className={styles.tableCard} style={{ padding: "20px" }}>
-          <span style={{ fontSize: "12.5px", color: "#6b6880", fontWeight: "600" }}>Ingresos Mes Actual</span>
-          <strong style={{ display: "block", fontSize: "24px", color: "#17152b", marginTop: "6px" }}>{formatMoney(reporte.ingresosMes)}</strong>
-        </div>
-        <div className={styles.tableCard} style={{ padding: "20px" }}>
-          <span style={{ fontSize: "12.5px", color: "#6b6880", fontWeight: "600" }}>Sorteo Más Vendido</span>
-          <strong style={{ display: "block", fontSize: "20px", color: "#6d3cf5", marginTop: "6px" }}>{reporte.sorteoMasVendido}</strong>
-        </div>
-        <div className={styles.tableCard} style={{ padding: "20px" }}>
-          <span style={{ fontSize: "12.5px", color: "#6b6880", fontWeight: "600" }}>Promedio Venta por Cliente</span>
-          <strong style={{ display: "block", fontSize: "24px", color: "#17152b", marginTop: "6px" }}>{formatMoney(reporte.promedioPorCliente)}</strong>
-        </div>
+      <div className={styles.kpiGrid} style={{ gridTemplateColumns: "repeat(3, 1fr)" }}>
+        {kpis.map((k) => (
+          <div key={k.label} className={styles.kpiCard}>
+            <div className={`${styles.kpiIconWrap} ${styles[k.color]}`}>
+              <Icon name={k.icon} size={19} />
+            </div>
+            <div>
+              <span className={styles.kpiLabel}>{k.label}</span>
+              <strong className={styles.kpiValue}>{k.value}</strong>
+              <span className={styles.kpiSubtitle}>{k.subtitle}</span>
+            </div>
+          </div>
+        ))}
       </div>
 
       <div className={styles.tableCard}>
+        <div className={styles.tableCardHeader}>
+          <div>
+            <h3>Rendimiento por Sorteo</h3>
+            <p>Boletos vendidos e ingresos recaudados en cada sorteo</p>
+          </div>
+        </div>
         <table className={styles.table}>
           <thead>
             <tr>
