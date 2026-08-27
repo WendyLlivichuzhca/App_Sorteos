@@ -3,6 +3,7 @@
   min-height: 100vh;
   background: #f6f6fb;
   font-family: "Segoe UI", -apple-system, BlinkMacSystemFont, sans-serif;
+  zoom: 0.8;
 }
 
 .mainContent {
