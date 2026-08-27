@@ -4,12 +4,16 @@ import Icon from "../../icons/Icon.jsx";
 import { getSorteos, getBoletosAdmin } from "../../services/api.js";
 import styles from "./AdminSorteos.module.css";
 
+const POR_PAGINA = 30;
+
 export default function AdminBoletos() {
   const [sorteos, setSorteos] = useState([]);
   const [sorteoId, setSorteoId] = useState("");
   const [boletos, setBoletos] = useState([]);
   const [loading, setLoading] = useState(false);
   const [filter, setFilter] = useState("");
+  const [verDisponibles, setVerDisponibles] = useState(false);
+  const [pagina, setPagina] = useState(1);
 
   useEffect(() => {
     getSorteos()
@@ -29,13 +33,25 @@ export default function AdminBoletos() {
       .finally(() => setLoading(false));
   }, [sorteoId]);
 
+  useEffect(() => {
+    setPagina(1);
+  }, [sorteoId, filter, verDisponibles]);
+
   const cleanFilter = filter.replace(/^#/, "").trim().toLowerCase();
-  const filtered = boletos.filter(
+  const buscando = cleanFilter.length > 0;
+
+  const base = buscando || verDisponibles ? boletos : boletos.filter((b) => b.estado === "vendido" || b.estado === "reservado");
+
+  const filtered = base.filter(
     (b) =>
       b.numero.toLowerCase().includes(cleanFilter) ||
       (b.cliente_nombre || "").toLowerCase().includes(cleanFilter) ||
       (b.cliente_cedula || "").toLowerCase().includes(cleanFilter)
   );
+
+  const totalPaginas = Math.max(Math.ceil(filtered.length / POR_PAGINA), 1);
+  const paginaSegura = Math.min(pagina, totalPaginas);
+  const paginados = filtered.slice((paginaSegura - 1) * POR_PAGINA, paginaSegura * POR_PAGINA);
 
   const kpis = [
     { label: "Total Boletos", value: boletos.length, subtitle: "En este sorteo", icon: "ticket", color: "purple" },
@@ -75,14 +91,18 @@ export default function AdminBoletos() {
       </div>
 
       <div className={styles.tableCard}>
-        <div style={{ padding: "16px 18px", borderBottom: "1px solid #ecebf3" }}>
+        <div style={{ padding: "16px 18px", borderBottom: "1px solid #ecebf3", display: "flex", alignItems: "center", justifyContent: "space-between", gap: "14px", flexWrap: "wrap" }}>
           <input
             type="text"
             placeholder="🔍 Buscar por # boleto o cliente..."
             value={filter}
             onChange={(e) => setFilter(e.target.value)}
-            style={{ width: "100%", maxWidth: "400px", padding: "10px 14px", borderRadius: "10px", border: "1.5px solid #ecebf3" }}
+            style={{ flex: 1, minWidth: "220px", maxWidth: "400px", padding: "10px 14px", borderRadius: "10px", border: "1.5px solid #ecebf3", fontSize: "12px" }}
           />
+          <label style={{ display: "flex", alignItems: "center", gap: "7px", fontSize: "12px", fontWeight: 600, color: "#6b6880", cursor: "pointer", whiteSpace: "nowrap" }}>
+            <input type="checkbox" checked={verDisponibles} onChange={(e) => setVerDisponibles(e.target.checked)} />
+            Ver también los disponibles
+          </label>
         </div>
 
         <table className={styles.table}>
@@ -96,8 +116,10 @@ export default function AdminBoletos() {
           </thead>
           <tbody>
             {loading && <tr><td colSpan={4}>Cargando boletos...</td></tr>}
-            {!loading && filtered.length === 0 && <tr><td colSpan={4}>No hay boletos para mostrar.</td></tr>}
-            {filtered.map((b) => (
+            {!loading && filtered.length === 0 && (
+              <tr><td colSpan={4}>{verDisponibles || buscando ? "No hay boletos para mostrar." : "No hay boletos vendidos o reservados todavía. Activa \"Ver también los disponibles\" para ver el resto."}</td></tr>
+            )}
+            {paginados.map((b) => (
               <tr key={b.id}>
                 <td><strong style={{ color: "#6d3cf5" }}>#{b.numero}</strong></td>
                 <td><strong>{b.cliente_nombre || "Disponible"}</strong></td>
@@ -111,6 +133,37 @@ export default function AdminBoletos() {
             ))}
           </tbody>
         </table>
+
+        {filtered.length > 0 && (
+          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "14px 18px", borderTop: "1.5px solid #ecebf3" }}>
+            <span style={{ fontSize: "11.5px", color: "#6b6880" }}>
+              Mostrando {(paginaSegura - 1) * POR_PAGINA + 1}–{Math.min(paginaSegura * POR_PAGINA, filtered.length)} de {filtered.length}
+            </span>
+            <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+              <button
+                type="button"
+                className={styles.iconBtn}
+                disabled={paginaSegura <= 1}
+                onClick={() => setPagina(paginaSegura - 1)}
+                style={paginaSegura <= 1 ? { opacity: 0.4, cursor: "not-allowed" } : undefined}
+              >
+                ← Anterior
+              </button>
+              <span style={{ fontSize: "11.5px", fontWeight: 700, color: "#17152b" }}>
+                Página {paginaSegura} de {totalPaginas}
+              </span>
+              <button
+                type="button"
+                className={styles.iconBtn}
+                disabled={paginaSegura >= totalPaginas}
+                onClick={() => setPagina(paginaSegura + 1)}
+                style={paginaSegura >= totalPaginas ? { opacity: 0.4, cursor: "not-allowed" } : undefined}
+              >
+                Siguiente →
+              </button>
+            </div>
+          </div>
+        )}
       </div>
     </AdminLayout>
   );
