@@ -1023,6 +1023,9 @@ app.put('/api/admin/account', requireAuth, async (req, res) => {
     if (!passwordActual || !passwordNueva) {
       return res.status(400).json({ error: 'Ingresa tu contraseña actual y la nueva contraseña' });
     }
+    if (passwordNueva.length < 6) {
+      return res.status(400).json({ error: 'La nueva contraseña debe tener al menos 6 caracteres' });
+    }
 
     const [admins] = await pool.query('SELECT * FROM admins WHERE id = ?', [req.admin.id]);
     if (admins.length === 0) return res.status(404).json({ error: 'Administrador no encontrado' });
