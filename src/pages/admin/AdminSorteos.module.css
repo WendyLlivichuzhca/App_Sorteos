@@ -2,17 +2,17 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 24px;
+  margin-bottom: 18px;
 }
 
 .topRow h2 {
-  font-size: 20px;
+  font-size: 16.5px;
   font-weight: 800;
   color: #17152b;
 }
 
 .topRow p {
-  font-size: 13.5px;
+  font-size: 11.5px;
   color: #6b6880;
   margin-top: 2px;
 }
@@ -20,14 +20,14 @@
 .createBtn {
   display: inline-flex;
   align-items: center;
-  gap: 8px;
+  gap: 7px;
   background: linear-gradient(135deg, #7848f5, #5424e0);
   color: #ffffff;
   border: none;
-  padding: 11px 22px;
-  border-radius: 12px;
+  padding: 9px 18px;
+  border-radius: 10px;
   font-weight: 700;
-  font-size: 13.5px;
+  font-size: 11.5px;
   cursor: pointer;
   box-shadow: 0 4px 14px rgba(109, 60, 245, 0.35);
   transition: transform 0.15s ease;
@@ -40,7 +40,7 @@
 .tableCard {
   background: #ffffff;
   border: 1.5px solid #ecebf3;
-  border-radius: 16px;
+  border-radius: 14px;
   overflow: hidden;
   box-shadow: 0 4px 16px rgba(23, 21, 43, 0.04);
 }
@@ -49,35 +49,35 @@
   width: 100%;
   border-collapse: collapse;
   text-align: left;
-  font-size: 13.5px;
+  font-size: 11.5px;
 }
 
 .table th {
-  padding: 14px 18px;
+  padding: 11px 15px;
   font-weight: 700;
   color: #6b6880;
   background: #f8f7fc;
   border-bottom: 1.5px solid #ecebf3;
-  font-size: 12px;
+  font-size: 10px;
   text-transform: uppercase;
 }
 
 .table td {
-  padding: 16px 18px;
+  padding: 13px 15px;
   border-bottom: 1px solid #f3f2f8;
   color: #17152b;
 }
 
 .nameText {
-  font-size: 14.5px;
+  font-size: 12.5px;
 }
 
 .categoryBadge {
   background: #efe9fe;
   color: #6d3cf5;
-  font-size: 11.5px;
+  font-size: 10px;
   font-weight: 700;
-  padding: 4px 10px;
+  padding: 3px 8px;
   border-radius: 6px;
   text-transform: capitalize;
 }
@@ -86,14 +86,14 @@
   display: flex;
   flex-direction: column;
   gap: 4px;
-  font-size: 12px;
+  font-size: 10.5px;
   font-weight: 600;
   color: #6b6880;
 }
 
 .miniTrack {
-  width: 120px;
-  height: 6px;
+  width: 100px;
+  height: 5px;
   background: #ede9fe;
   border-radius: 999px;
   overflow: hidden;
@@ -106,9 +106,9 @@
 }
 
 .statusPill {
-  font-size: 10.5px;
+  font-size: 9px;
   font-weight: 800;
-  padding: 4px 10px;
+  padding: 3px 9px;
   border-radius: 6px;
 }
 
@@ -120,16 +120,16 @@
 .actionsCell {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 7px;
 }
 
 .iconBtn {
   background: #f8f7fc;
   border: 1px solid #ecebf3;
-  border-radius: 8px;
-  padding: 6px 10px;
+  border-radius: 7px;
+  padding: 5px 8px;
   cursor: pointer;
-  font-size: 14px;
+  font-size: 12px;
   transition: background 0.15s ease;
 }
 
@@ -152,9 +152,9 @@
 
 .modal {
   background: #ffffff;
-  border-radius: 20px;
+  border-radius: 17px;
   width: 100%;
-  max-width: 520px;
+  max-width: 460px;
   box-shadow: 0 20px 60px rgba(0,0,0,0.2);
   overflow: hidden;
   animation: modalIn 0.2s ease;
@@ -169,12 +169,12 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 20px 24px;
+  padding: 16px 20px;
   border-bottom: 1px solid #ecebf3;
 }
 
 .modalHeader h3 {
-  font-size: 18px;
+  font-size: 15px;
   font-weight: 800;
   color: #17152b;
 }
@@ -182,35 +182,35 @@
 .closeBtn {
   background: transparent;
   border: none;
-  font-size: 24px;
+  font-size: 20px;
   color: #9795a8;
   cursor: pointer;
 }
 
 .form {
-  padding: 24px;
+  padding: 20px;
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 13px;
 }
 
 .formGroup {
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 5px;
 }
 
 .formGroup label {
-  font-size: 13px;
+  font-size: 11px;
   font-weight: 700;
   color: #17152b;
 }
 
 .formGroup input, .formGroup select {
-  padding: 10px 14px;
-  border-radius: 10px;
+  padding: 8px 12px;
+  border-radius: 9px;
   border: 1.5px solid #ecebf3;
-  font-size: 14px;
+  font-size: 12px;
   outline: none;
 }
 
@@ -221,35 +221,37 @@
 .formRow {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 16px;
+  gap: 13px;
 }
 
 .modalFooter {
   display: flex;
   align-items: center;
   justify-content: flex-end;
-  gap: 12px;
-  margin-top: 10px;
-  padding-top: 16px;
+  gap: 10px;
+  margin-top: 8px;
+  padding-top: 13px;
   border-top: 1px solid #ecebf3;
 }
 
 .cancelBtn {
   background: #f4f3f8;
   border: none;
-  padding: 10px 18px;
-  border-radius: 10px;
+  padding: 8px 15px;
+  border-radius: 9px;
   font-weight: 600;
   color: #6b6880;
   cursor: pointer;
+  font-size: 12px;
 }
 
 .saveBtn {
   background: #6d3cf5;
   color: #ffffff;
   border: none;
-  padding: 10px 20px;
-  border-radius: 10px;
+  padding: 8px 17px;
+  border-radius: 9px;
   font-weight: 700;
   cursor: pointer;
+  font-size: 12px;
 }

@@ -1,5 +1,5 @@
 .sidebar {
-  width: 270px;
+  width: 220px;
   height: 100vh;
   position: sticky;
   top: 0;
@@ -15,15 +15,15 @@
 .brand {
   display: flex;
   align-items: center;
-  gap: 12px;
-  padding: 24px 20px;
+  gap: 10px;
+  padding: 18px 16px;
   border-bottom: 1.5px solid #ecebf3;
 }
 
 .logoBadge {
-  width: 40px;
-  height: 40px;
-  border-radius: 12px;
+  width: 34px;
+  height: 34px;
+  border-radius: 10px;
   background: linear-gradient(135deg, #7848f5, #5424e0);
   color: #ffffff;
   display: flex;
@@ -47,7 +47,7 @@
 }
 
 .brandTitle {
-  font-size: 14px;
+  font-size: 12.5px;
   font-weight: 800;
   letter-spacing: 0.3px;
   color: #17152b;
@@ -61,9 +61,9 @@
   display: inline-block;
   background: #efe9fe;
   color: #6d3cf5;
-  font-size: 9.5px;
+  font-size: 8.5px;
   font-weight: 800;
-  padding: 2px 7px;
+  padding: 2px 6px;
   border-radius: 4px;
   margin-top: 3px;
   width: fit-content;
@@ -73,10 +73,10 @@
 .menu {
   flex: 1;
   overflow-y: auto;
-  padding: 20px 14px;
+  padding: 16px 12px;
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: 16px;
   scrollbar-width: thin;
   scrollbar-color: #ecebf3 transparent;
 }
@@ -97,32 +97,32 @@
 .group {
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 5px;
 }
 
 .groupTitle {
-  font-size: 10px;
+  font-size: 9px;
   font-weight: 800;
   color: #9795a8;
   letter-spacing: 1px;
-  padding-left: 12px;
+  padding-left: 10px;
   margin-bottom: 2px;
 }
 
 .groupItems {
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 3px;
 }
 
 .item {
   display: flex;
   align-items: center;
-  gap: 12px;
-  padding: 10px 14px;
-  border-radius: 12px;
+  gap: 10px;
+  padding: 8px 12px;
+  border-radius: 10px;
   color: #6b6880;
-  font-size: 13.5px;
+  font-size: 12px;
   font-weight: 600;
   text-decoration: none;
   transition: all 0.15s ease;
@@ -139,8 +139,8 @@
 }
 
 .itemIcon {
-  width: 22px;
-  height: 22px;
+  width: 19px;
+  height: 19px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -148,28 +148,28 @@
 }
 
 .itemLabel {
-  font-size: 13.5px;
+  font-size: 12px;
 }
 
 .footer {
-  padding: 16px 14px;
+  padding: 14px 12px;
   border-top: 1.5px solid #ecebf3;
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-}
-
-.helpCard {
-  background: #f8f7fc;
-  border-radius: 14px;
-  padding: 14px 16px;
   display: flex;
   flex-direction: column;
   gap: 10px;
 }
 
+.helpCard {
+  background: #f8f7fc;
+  border-radius: 12px;
+  padding: 12px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
 .helpText {
-  font-size: 12.5px;
+  font-size: 11px;
   font-weight: 700;
   color: #17152b;
 }
@@ -178,13 +178,13 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 8px;
+  gap: 6px;
   width: 100%;
-  padding: 11px;
-  border-radius: 12px;
+  padding: 9px;
+  border-radius: 10px;
   background: #6d3cf5;
   color: #ffffff;
-  font-size: 13px;
+  font-size: 11.5px;
   font-weight: 700;
   text-decoration: none;
   transition: all 0.15s ease;
