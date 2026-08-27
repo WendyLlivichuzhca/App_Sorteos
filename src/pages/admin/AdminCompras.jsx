@@ -1,13 +1,18 @@
 import { useState, useEffect } from "react";
 import AdminLayout from "../../components/admin/AdminLayout.jsx";
+import Icon from "../../icons/Icon.jsx";
 import { getAdminCompras, updateEstadoCompra } from "../../services/api.js";
 import { formatMoney } from "../../utils/format.js";
 import styles from "./AdminSorteos.module.css";
+
+const POR_PAGINA = 30;
 
 export default function AdminCompras() {
   const [list, setList] = useState([]);
   const [loading, setLoading] = useState(true);
   const [selectedReceipt, setSelectedReceipt] = useState(null);
+  const [filtroEstado, setFiltroEstado] = useState("todos");
+  const [pagina, setPagina] = useState(1);
 
   const cargarCompras = () => {
     setLoading(true);
@@ -21,6 +26,10 @@ export default function AdminCompras() {
     cargarCompras();
   }, []);
 
+  useEffect(() => {
+    setPagina(1);
+  }, [filtroEstado]);
+
   const cambiarEstado = async (id, estado) => {
     try {
       await updateEstadoCompra(id, estado);
@@ -30,16 +39,52 @@ export default function AdminCompras() {
     }
   };
 
+  const kpis = [
+    { label: "Total Compras", value: list.length, subtitle: "Registradas", icon: "cart", color: "purple" },
+    { label: "Aprobadas", value: list.filter((c) => c.estado === "aprobado").length, subtitle: "Pagos confirmados", icon: "award", color: "green" },
+    { label: "Pendientes", value: list.filter((c) => c.estado === "pendiente").length, subtitle: "Por revisar", icon: "clock", color: "orange" },
+    { label: "Ingresos Aprobados", value: formatMoney(list.filter((c) => c.estado === "aprobado").reduce((acc, c) => acc + Number(c.total || 0), 0)), subtitle: "Recaudación real", icon: "card", color: "blue" },
+  ];
+
+  const listaFiltrada = filtroEstado === "todos" ? list : list.filter((c) => c.estado === filtroEstado);
+  const totalPaginas = Math.max(Math.ceil(listaFiltrada.length / POR_PAGINA), 1);
+  const paginaSegura = Math.min(pagina, totalPaginas);
+  const paginados = listaFiltrada.slice((paginaSegura - 1) * POR_PAGINA, paginaSegura * POR_PAGINA);
+
   return (
-    <AdminLayout title="Gestión de Compras y Pagos">
-      <div className={styles.topRow}>
-        <div>
-          <h2>Historial de Compras</h2>
-          <p>Revisa, aprueba, rechaza y confirma los pagos recibidos</p>
-        </div>
+    <AdminLayout title="Gestión de Compras y Pagos" subtitle="Revisa, aprueba, rechaza y confirma los pagos recibidos">
+      <div className={styles.kpiGrid}>
+        {kpis.map((k) => (
+          <div key={k.label} className={styles.kpiCard}>
+            <div className={`${styles.kpiIconWrap} ${styles[k.color]}`}>
+              <Icon name={k.icon} size={19} />
+            </div>
+            <div>
+              <span className={styles.kpiLabel}>{k.label}</span>
+              <strong className={styles.kpiValue}>{k.value}</strong>
+              <span className={styles.kpiSubtitle}>{k.subtitle}</span>
+            </div>
+          </div>
+        ))}
       </div>
 
       <div className={styles.tableCard}>
+        <div className={styles.tableCardHeader}>
+          <div>
+            <h3>Historial de Compras</h3>
+            <p>Todas las órdenes registradas en el sistema</p>
+          </div>
+          <select
+            className={styles.filterSelect}
+            value={filtroEstado}
+            onChange={(e) => setFiltroEstado(e.target.value)}
+          >
+            <option value="todos">Todos los estados</option>
+            <option value="pendiente">Pendiente</option>
+            <option value="aprobado">Aprobado</option>
+            <option value="rechazado">Rechazado</option>
+          </select>
+        </div>
         <table className={styles.table}>
           <thead>
             <tr>
@@ -57,12 +102,12 @@ export default function AdminCompras() {
             {loading && (
               <tr><td colSpan={8}>Cargando compras...</td></tr>
             )}
-            {!loading && list.length === 0 && (
-              <tr><td colSpan={8}>No hay compras registradas todavía.</td></tr>
+            {!loading && listaFiltrada.length === 0 && (
+              <tr><td colSpan={8}>No hay compras que coincidan con este filtro.</td></tr>
             )}
-            {list.map((c) => (
+            {paginados.map((c) => (
               <tr key={c.id}>
-                <td><strong>{c.codigo}</strong></td>
+                <td><strong style={{ color: "#6d3cf5" }}>{c.codigo}</strong></td>
                 <td>{c.comprador}</td>
                 <td>{c.sorteoNombre}</td>
                 <td>{c.boletos} boletos</td>
@@ -83,7 +128,7 @@ export default function AdminCompras() {
                           onClick={() => cambiarEstado(c.id, "aprobado")}
                           title="Aprobar compra"
                         >
-                          ✅ Aprobar
+                          ✅
                         </button>
                         <button
                           type="button"
@@ -91,7 +136,7 @@ export default function AdminCompras() {
                           onClick={() => cambiarEstado(c.id, "rechazado")}
                           title="Rechazar compra"
                         >
-                          ❌ Rechazar
+                          ❌
                         </button>
                       </>
                     )}
@@ -101,7 +146,7 @@ export default function AdminCompras() {
                       onClick={() => setSelectedReceipt(c)}
                       title="Ver Comprobante"
                     >
-                      📄 Ver
+                      📄
                     </button>
                   </div>
                 </td>
@@ -109,6 +154,37 @@ export default function AdminCompras() {
             ))}
           </tbody>
         </table>
+
+        {listaFiltrada.length > 0 && (
+          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "14px 18px", borderTop: "1.5px solid #ecebf3" }}>
+            <span style={{ fontSize: "11.5px", color: "#6b6880" }}>
+              Mostrando {(paginaSegura - 1) * POR_PAGINA + 1}–{Math.min(paginaSegura * POR_PAGINA, listaFiltrada.length)} de {listaFiltrada.length}
+            </span>
+            <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+              <button
+                type="button"
+                className={styles.iconBtn}
+                disabled={paginaSegura <= 1}
+                onClick={() => setPagina(paginaSegura - 1)}
+                style={paginaSegura <= 1 ? { opacity: 0.4, cursor: "not-allowed" } : undefined}
+              >
+                ← Anterior
+              </button>
+              <span style={{ fontSize: "11.5px", fontWeight: 700, color: "#17152b" }}>
+                Página {paginaSegura} de {totalPaginas}
+              </span>
+              <button
+                type="button"
+                className={styles.iconBtn}
+                disabled={paginaSegura >= totalPaginas}
+                onClick={() => setPagina(paginaSegura + 1)}
+                style={paginaSegura >= totalPaginas ? { opacity: 0.4, cursor: "not-allowed" } : undefined}
+              >
+                Siguiente →
+              </button>
+            </div>
+          </div>
+        )}
       </div>
 
       {selectedReceipt && (
