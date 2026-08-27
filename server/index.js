@@ -574,7 +574,7 @@ app.post('/api/compras/checkout', async (req, res) => {
   const sId = parseInt(sorteoId);
   const cant = parseInt(cantidad);
 
-  if (!sId || !cant || cant < 1 || !comprador || !comprador.cedula) {
+  if (!sId || !cant || cant < 1 || !comprador || !comprador.cedula || !comprador.nombre || !comprador.correo || !comprador.celular) {
     return res.status(400).json({ error: 'Faltan datos obligatorios para la compra' });
   }
 
