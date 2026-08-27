@@ -26,6 +26,7 @@ import AdminBoletos from "./pages/admin/AdminBoletos.jsx";
 import AdminCompras from "./pages/admin/AdminCompras.jsx";
 import AdminClientes from "./pages/admin/AdminClientes.jsx";
 import AdminGanadores from "./pages/admin/AdminGanadores.jsx";
+import AdminSorteoEnVivo from "./pages/admin/AdminSorteoEnVivo.jsx";
 import AdminReportes from "./pages/admin/AdminReportes.jsx";
 import AdminConfiguracion from "./pages/admin/AdminConfiguracion.jsx";
 import AdminUsuarios from "./pages/admin/AdminUsuarios.jsx";
@@ -71,6 +72,7 @@ export default function App() {
             <Route path="/admin/compras" element={<ProtectedRoute><AdminCompras /></ProtectedRoute>} />
             <Route path="/admin/clientes" element={<ProtectedRoute><AdminClientes /></ProtectedRoute>} />
             <Route path="/admin/ganadores" element={<ProtectedRoute><AdminGanadores /></ProtectedRoute>} />
+            <Route path="/admin/ganadores/en-vivo" element={<ProtectedRoute><AdminSorteoEnVivo /></ProtectedRoute>} />
             <Route path="/admin/reportes" element={<ProtectedRoute><AdminReportes /></ProtectedRoute>} />
             <Route path="/admin/configuracion" element={<ProtectedRoute><AdminConfiguracion /></ProtectedRoute>} />
             <Route path="/admin/administradores" element={<ProtectedRoute><AdminUsuarios /></ProtectedRoute>} />

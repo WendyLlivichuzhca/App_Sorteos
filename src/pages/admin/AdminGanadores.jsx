@@ -1,15 +1,14 @@
 import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 import AdminLayout from "../../components/admin/AdminLayout.jsx";
 import Icon from "../../icons/Icon.jsx";
-import { getSorteos, getGanadores, sortearGanador, actualizarGanador } from "../../services/api.js";
+import { getSorteos, getGanadores, actualizarGanador } from "../../services/api.js";
 import styles from "./AdminSorteos.module.css";
 
 export default function AdminGanadores() {
   const [sorteos, setSorteos] = useState([]);
   const [sorteoId, setSorteoId] = useState("");
   const [ganadores, setGanadores] = useState([]);
-  const [sorteando, setSorteando] = useState(false);
-  const [error, setError] = useState("");
 
   const cargarGanadores = () => {
     getGanadores().then(setGanadores).catch((err) => console.error("Error cargando ganadores:", err));
@@ -31,21 +30,6 @@ export default function AdminGanadores() {
     cargarGanadores();
   }, []);
 
-  const handleSortear = async () => {
-    if (!sorteoId) return;
-    setError("");
-    setSorteando(true);
-    try {
-      await sortearGanador(sorteoId);
-      cargarSorteos();
-      cargarGanadores();
-    } catch (err) {
-      setError(err.message || "No se pudo realizar el sorteo");
-    } finally {
-      setSorteando(false);
-    }
-  };
-
   const toggleEntregado = async (g) => {
     try {
       await actualizarGanador(g.id, { premioEntregado: !g.premio_entregado });
@@ -56,7 +40,6 @@ export default function AdminGanadores() {
   };
 
   const sorteoActual = sorteos.find((s) => String(s.id) === sorteoId);
-  const puedeSortear = sorteoActual && sorteoActual.estado !== "finalizado" && sorteoActual.vendidos > 0;
 
   const kpis = [
     { label: "Total Ganadores", value: ganadores.length, subtitle: "Sorteos con ganador", icon: "award", color: "purple" },
@@ -97,21 +80,15 @@ export default function AdminGanadores() {
             </option>
           ))}
         </select>
-        <button
-          type="button"
-          className={styles.createBtn}
-          onClick={handleSortear}
-          disabled={sorteando || !puedeSortear}
-        >
-          {sorteando ? "Sorteando..." : "🏆 Realizar Sorteo"}
-        </button>
+        <Link to={`/admin/ganadores/en-vivo?sorteo=${sorteoId}`} className={styles.createBtn} style={{ textDecoration: "none" }}>
+          🎉 Ir a Sorteo en Vivo
+        </Link>
         {sorteoActual?.estado === "finalizado" && (
           <span style={{ fontSize: "13px", color: "#9795a8" }}>Este sorteo ya tiene ganador.</span>
         )}
         {sorteoActual && sorteoActual.estado !== "finalizado" && !sorteoActual.vendidos && (
           <span style={{ fontSize: "13px", color: "#9795a8" }}>Este sorteo todavía no tiene boletos vendidos.</span>
         )}
-        {error && <span style={{ fontSize: "13px", color: "#ef4444" }}>⚠️ {error}</span>}
         </div>
       </div>
 
