@@ -21,7 +21,7 @@ export default function AdminGanadores() {
     getSorteos()
       .then((data) => {
         setSorteos(data);
-        const elegible = data.find((s) => s.estado !== "finalizado" && s.vendidos > 0);
+        const elegible = data.find((s) => s.estado !== "finalizado" && s.vendidos >= s.total);
         if (elegible) setSorteoId(String(elegible.id));
         else if (data.length > 0) setSorteoId(String(data[0].id));
       })
@@ -48,7 +48,7 @@ export default function AdminGanadores() {
     { label: "Total Ganadores", value: ganadores.length, subtitle: "Sorteos con ganador", icon: "award", color: "purple" },
     { label: "Premios Entregados", value: ganadores.filter((g) => g.premio_entregado).length, subtitle: "Ya entregados", icon: "box", color: "green" },
     { label: "Premios Pendientes", value: ganadores.filter((g) => !g.premio_entregado).length, subtitle: "Por entregar", icon: "clock", color: "orange" },
-    { label: "Sorteos por Sortear", value: sorteos.filter((s) => s.estado !== "finalizado" && s.vendidos > 0).length, subtitle: "Listos para sortear", icon: "ticket", color: "blue" },
+    { label: "Sorteos por Sortear", value: sorteos.filter((s) => s.estado !== "finalizado" && s.vendidos >= s.total).length, subtitle: "100% vendidos, listos", icon: "ticket", color: "blue" },
   ];
 
   return (

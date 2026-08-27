@@ -44,7 +44,7 @@ export default function AdminSorteoEnVivo() {
       .then((data) => {
         setSorteos(data);
         if (!sorteoId) {
-          const elegible = data.find((s) => s.estado !== "finalizado" && s.vendidos > 0);
+          const elegible = data.find((s) => s.estado !== "finalizado" && s.vendidos >= s.total);
           if (elegible) setSorteoId(String(elegible.id));
         }
       })
@@ -71,7 +71,8 @@ export default function AdminSorteoEnVivo() {
 
   const sorteoActual = sorteos.find((s) => String(s.id) === sorteoId);
   const lugarActual = lugares.find((l) => !l.boleto_numero);
-  const puedeSortear = Boolean(lugarActual) && vendidos.length > 0;
+  const vendidoTotal = Boolean(sorteoActual) && sorteoActual.vendidos >= sorteoActual.total;
+  const puedeSortear = Boolean(lugarActual) && vendidos.length > 0 && vendidoTotal;
 
   const iniciarSorteo = async () => {
     if (!puedeSortear || estado === "girando") return;
@@ -148,6 +149,11 @@ export default function AdminSorteoEnVivo() {
           )}
           {lugarActual && vendidos.length === 0 && (
             <p className={styles.aviso}>Este sorteo todavía no tiene boletos vendidos.</p>
+          )}
+          {lugarActual && vendidos.length > 0 && sorteoActual && !vendidoTotal && (
+            <p className={styles.aviso}>
+              Faltan {sorteoActual.total - sorteoActual.vendidos} boletos por vender. Debes vender el 100% antes de poder sortear.
+            </p>
           )}
           {error && <p className={styles.error}>⚠️ {error}</p>}
 

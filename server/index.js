@@ -1110,6 +1110,13 @@ app.post('/api/admin/lugares/:id/sortear', requireAuth, async (req, res) => {
     const [sorteos] = await pool.query('SELECT * FROM sorteos WHERE id = ?', [lugar.sorteo_id]);
     const sorteo = sorteos[0];
 
+    // No se puede sortear hasta que se hayan vendido todos los boletos del sorteo.
+    if (sorteo.vendidos < sorteo.total) {
+      return res.status(400).json({
+        error: `Todavía faltan ${sorteo.total - sorteo.vendidos} boletos por vender. Debes vender el 100% antes de sortear.`,
+      });
+    }
+
     // Un boleto que ya ganó otro lugar de este mismo sorteo no puede volver a ganar.
     const [candidatos] = await pool.query(
       `SELECT b.numero, b.cliente_id, c.nombre AS cliente_nombre
