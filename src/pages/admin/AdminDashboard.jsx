@@ -28,6 +28,27 @@ function construirRangoMeses(ventasMensuales) {
   return rango;
 }
 
+// Redondea hacia arriba a un número "bonito" (5, 10, 20, 25, 50, 100...) para usar como techo del eje.
+function techoBonito(valor) {
+  if (valor <= 0) return 5;
+  const magnitud = 10 ** Math.floor(Math.log10(valor));
+  const pasos = [1, 2, 2.5, 5, 10];
+  for (const p of pasos) {
+    const techo = p * magnitud;
+    if (techo >= valor) return techo;
+  }
+  return 10 * magnitud;
+}
+
+// Genera las marcas del eje (0 a techo) de arriba hacia abajo, para mostrarlas en el gráfico.
+function marcasEje(techo, cantidad = 5) {
+  const marcas = [];
+  for (let i = cantidad; i >= 0; i--) {
+    marcas.push(Math.round((techo / cantidad) * i));
+  }
+  return marcas;
+}
+
 // Genera los puntos de un mini-gráfico de línea (sparkline) a partir de una serie de números reales.
 function sparklinePoints(valores) {
   const max = Math.max(...valores, 1);
@@ -83,6 +104,10 @@ export default function AdminDashboard() {
   const mesMostrado = selectedMonth || mesActual;
   const maxVal = Math.max(...ventasMensuales.map((m) => m.ventas), 1);
   const maxIngresos = Math.max(...ventasMensuales.map((m) => m.ingresos), 1);
+  const techoVentas = techoBonito(maxVal);
+  const techoIngresos = techoBonito(maxIngresos);
+  const marcasVentas = marcasEje(techoVentas);
+  const marcasIngresos = marcasEje(techoIngresos);
 
   const kpis = [
     {
@@ -167,7 +192,17 @@ export default function AdminDashboard() {
           </div>
 
           {/* Renderizado del Gráfico de Barras */}
-          <div className={styles.barsContainer}>
+          <div className={styles.chartAxisRow}>
+            <div className={styles.axisCol}>
+              <span className={styles.axisTitle}>Boletos</span>
+              <div className={styles.axisTicks}>
+                {marcasVentas.map((v) => (
+                  <span key={v}>{v}</span>
+                ))}
+              </div>
+            </div>
+
+            <div className={styles.barsContainer}>
             <svg
               className={styles.lineOverlay}
               viewBox={`0 0 ${ventasMensuales.length * 100} 100`}
@@ -175,7 +210,7 @@ export default function AdminDashboard() {
             >
               <polyline
                 points={ventasMensuales
-                  .map((m, i) => `${(i + 0.5) * 100},${100 - (m.ingresos / maxIngresos) * 85}`)
+                  .map((m, i) => `${(i + 0.5) * 100},${100 - (m.ingresos / techoIngresos) * 100}`)
                   .join(" ")}
                 fill="none"
                 stroke="#16a34a"
@@ -188,7 +223,7 @@ export default function AdminDashboard() {
                 <circle
                   key={i}
                   cx={(i + 0.5) * 100}
-                  cy={100 - (m.ingresos / maxIngresos) * 85}
+                  cy={100 - (m.ingresos / techoIngresos) * 100}
                   r="4"
                   fill="#16a34a"
                   vectorEffect="non-scaling-stroke"
@@ -196,7 +231,7 @@ export default function AdminDashboard() {
               ))}
             </svg>
             {ventasMensuales.map((m, i) => {
-              const heightPercent = Math.round((m.ventas / maxVal) * 100);
+              const heightPercent = Math.round((m.ventas / techoVentas) * 100);
               const isSelected = mesMostrado === m || (!selectedMonth && m.isCurrent);
 
               return (
@@ -219,6 +254,16 @@ export default function AdminDashboard() {
                 </div>
               );
             })}
+            </div>
+
+            <div className={`${styles.axisCol} ${styles.axisColRight}`}>
+              <span className={styles.axisTitle}>Ingresos</span>
+              <div className={styles.axisTicks}>
+                {marcasIngresos.map((v) => (
+                  <span key={v}>{formatMoney(v)}</span>
+                ))}
+              </div>
+            </div>
           </div>
 
           <div className={styles.chartFooter}>
