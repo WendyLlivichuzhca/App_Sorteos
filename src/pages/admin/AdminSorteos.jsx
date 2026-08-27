@@ -100,12 +100,9 @@ export default function AdminSorteos() {
   const listaFiltrada = filtroEstado === "todos" ? list : list.filter((s) => s.estado === filtroEstado);
 
   return (
-    <AdminLayout title="Gestión de Sorteos">
+    <AdminLayout title="Gestión de Sorteos" subtitle="Administra y controla todos los sorteos de la plataforma">
       <div className={styles.topRow}>
-        <div>
-          <h2>Gestión de Sorteos</h2>
-          <p>Administra y controla todos los sorteos de la plataforma</p>
-        </div>
+        <div />
         <button type="button" className={styles.createBtn} onClick={handleOpenCreate}>
           <Icon name="plus" size={18} /> Crear Nuevo Sorteo
         </button>
