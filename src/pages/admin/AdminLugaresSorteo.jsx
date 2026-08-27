@@ -17,6 +17,7 @@ export default function AdminLugaresSorteo() {
   const [error, setError] = useState("");
   const [editingId, setEditingId] = useState(null);
   const [editPremio, setEditPremio] = useState("");
+  const [agregando, setAgregando] = useState(false);
 
   const cargar = () => {
     setLoading(true);
@@ -37,13 +38,16 @@ export default function AdminLugaresSorteo() {
   const handleAgregar = async (e) => {
     e.preventDefault();
     setError("");
-    if (!premio.trim()) return;
+    if (!premio.trim() || agregando) return;
+    setAgregando(true);
     try {
       await crearLugar(sorteoId, { premio: premio.trim() });
       setPremio("");
       cargar();
     } catch (err) {
       setError(err.message || "No se pudo crear el lugar");
+    } finally {
+      setAgregando(false);
     }
   };
 
@@ -212,8 +216,8 @@ export default function AdminLugaresSorteo() {
               />
             </div>
             {error && <span style={{ fontSize: "12px", color: "#ef4444" }}>⚠️ {error}</span>}
-            <button type="submit" className={styles.createBtn} style={{ justifyContent: "center" }}>
-              + Agregar Lugar
+            <button type="submit" className={styles.createBtn} style={{ justifyContent: "center" }} disabled={agregando}>
+              {agregando ? "Agregando..." : "+ Agregar Lugar"}
             </button>
           </form>
         </div>

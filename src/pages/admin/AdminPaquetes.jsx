@@ -11,6 +11,7 @@ export default function AdminPaquetes() {
   const [formData, setFormData] = useState({ cantidadMinima: 5, porcentaje: 10 });
   const [editingId, setEditingId] = useState(null);
   const [editPorcentaje, setEditPorcentaje] = useState(0);
+  const [creando, setCreando] = useState(false);
 
   const cargarDescuentos = () => {
     setLoading(true);
@@ -26,6 +27,8 @@ export default function AdminPaquetes() {
 
   const handleCreate = async (e) => {
     e.preventDefault();
+    if (creando) return;
+    setCreando(true);
     try {
       await createDescuento(formData);
       setShowModal(false);
@@ -33,6 +36,8 @@ export default function AdminPaquetes() {
       cargarDescuentos();
     } catch (err) {
       alert(err.message || "No se pudo crear el tramo de descuento");
+    } finally {
+      setCreando(false);
     }
   };
 
@@ -187,7 +192,7 @@ export default function AdminPaquetes() {
 
               <div className={styles.modalFooter}>
                 <button type="button" className={styles.cancelBtn} onClick={() => setShowModal(false)}>Cancelar</button>
-                <button type="submit" className={styles.saveBtn}>Guardar Tramo</button>
+                <button type="submit" className={styles.saveBtn} disabled={creando}>{creando ? "Guardando..." : "Guardar Tramo"}</button>
               </div>
             </form>
           </div>

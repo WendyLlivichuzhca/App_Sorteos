@@ -15,6 +15,7 @@ export default function AdminSorteos() {
   const [filtroEstado, setFiltroEstado] = useState("todos");
   const [showModal, setShowModal] = useState(false);
   const [editingItem, setEditingItem] = useState(null);
+  const [guardando, setGuardando] = useState(false);
   const [formData, setFormData] = useState({
     nombre: "",
     categoria: "autos",
@@ -64,6 +65,8 @@ export default function AdminSorteos() {
 
   const handleSave = async (e) => {
     e.preventDefault();
+    if (guardando) return;
+    setGuardando(true);
     try {
       const galeria = formData.imagenUrl
         ? [...formData.galeria, formData.imagenUrl]
@@ -81,6 +84,8 @@ export default function AdminSorteos() {
       }
     } catch (err) {
       alert(err.message || "No se pudo guardar el sorteo");
+    } finally {
+      setGuardando(false);
     }
   };
 
@@ -358,8 +363,8 @@ export default function AdminSorteos() {
                 <button type="button" className={styles.cancelBtn} onClick={() => setShowModal(false)}>
                   Cancelar
                 </button>
-                <button type="submit" className={styles.saveBtn}>
-                  Guardar Sorteo
+                <button type="submit" className={styles.saveBtn} disabled={guardando}>
+                  {guardando ? "Guardando..." : "Guardar Sorteo"}
                 </button>
               </div>
             </form>

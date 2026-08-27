@@ -11,6 +11,7 @@ export default function AdminCategorias() {
   const [newLabel, setNewLabel] = useState("");
   const [editingId, setEditingId] = useState(null);
   const [editLabel, setEditLabel] = useState("");
+  const [agregando, setAgregando] = useState(false);
 
   const cargarCategorias = () => {
     setLoading(true);
@@ -29,7 +30,8 @@ export default function AdminCategorias() {
 
   const handleAdd = async (e) => {
     e.preventDefault();
-    if (!newLabel.trim()) return;
+    if (!newLabel.trim() || agregando) return;
+    setAgregando(true);
     try {
       const slug = newLabel.trim().toLowerCase().replace(/\s+/g, "-");
       await createCategoria({ nombre: newLabel.trim(), slug, icono: "dots" });
@@ -37,6 +39,8 @@ export default function AdminCategorias() {
       cargarCategorias();
     } catch (err) {
       alert(err.message || "No se pudo crear la categoría");
+    } finally {
+      setAgregando(false);
     }
   };
 
@@ -160,8 +164,8 @@ export default function AdminCategorias() {
               onChange={(e) => setNewLabel(e.target.value)}
               style={{ padding: "8px 12px", borderRadius: "9px", border: "1.5px solid #ecebf3", fontSize: "12px" }}
             />
-            <button type="submit" className={styles.createBtn} style={{ justifyContent: "center" }}>
-              + Crear Categoría
+            <button type="submit" className={styles.createBtn} style={{ justifyContent: "center" }} disabled={agregando}>
+              {agregando ? "Creando..." : "+ Crear Categoría"}
             </button>
           </form>
         </div>

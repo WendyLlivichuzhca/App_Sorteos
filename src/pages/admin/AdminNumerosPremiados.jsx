@@ -13,6 +13,7 @@ export default function AdminNumerosPremiados() {
   const [numero, setNumero] = useState("");
   const [premio, setPremio] = useState("");
   const [error, setError] = useState("");
+  const [agregando, setAgregando] = useState(false);
   const [cantidadAzar, setCantidadAzar] = useState(10);
   const [generando, setGenerando] = useState(false);
   const [errorAzar, setErrorAzar] = useState("");
@@ -38,7 +39,8 @@ export default function AdminNumerosPremiados() {
   const handleAgregar = async (e) => {
     e.preventDefault();
     setError("");
-    if (!numero.trim() || !premio.trim()) return;
+    if (!numero.trim() || !premio.trim() || agregando) return;
+    setAgregando(true);
     try {
       await crearPremiado(sorteoId, { numero: numero.trim(), premio: premio.trim() });
       setNumero("");
@@ -46,6 +48,8 @@ export default function AdminNumerosPremiados() {
       cargar();
     } catch (err) {
       setError(err.message || "No se pudo crear el número premiado");
+    } finally {
+      setAgregando(false);
     }
   };
 
@@ -228,8 +232,8 @@ export default function AdminNumerosPremiados() {
                 />
               </div>
               {error && <span style={{ fontSize: "12px", color: "#ef4444" }}>⚠️ {error}</span>}
-              <button type="submit" className={styles.createBtn} style={{ justifyContent: "center" }}>
-                + Agregar Número
+              <button type="submit" className={styles.createBtn} style={{ justifyContent: "center" }} disabled={agregando}>
+                {agregando ? "Agregando..." : "+ Agregar Número"}
               </button>
             </form>
           </div>
