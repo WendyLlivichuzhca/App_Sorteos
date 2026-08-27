@@ -19,6 +19,7 @@
   align-items: center;
   gap: 10px;
   padding: 0 16px;
+  border-bottom: 1.5px solid #ecebf3;
 }
 
 .logoBadge {
