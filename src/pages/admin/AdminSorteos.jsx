@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import AdminLayout from "../../components/admin/AdminLayout.jsx";
 import Icon from "../../icons/Icon.jsx";
+import PremioImage from "../../components/PremioImage.jsx";
 import { getSorteos, createSorteo, updateSorteo, deleteSorteo, getCategorias } from "../../services/api.js";
 import { formatMoney } from "../../utils/format.js";
 import styles from "./AdminSorteos.module.css";
@@ -9,6 +10,7 @@ export default function AdminSorteos() {
   const [list, setList] = useState([]);
   const [categorias, setCategorias] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [filtroEstado, setFiltroEstado] = useState("todos");
   const [showModal, setShowModal] = useState(false);
   const [editingItem, setEditingItem] = useState(null);
   const [formData, setFormData] = useState({
@@ -88,19 +90,60 @@ export default function AdminSorteos() {
     }
   };
 
+  const kpis = [
+    { label: "Total Sorteos", value: list.length, subtitle: "Sorteos creados", icon: "ticket", color: "purple" },
+    { label: "Activos", value: list.filter((s) => s.estado === "activo").length, subtitle: "En progreso", icon: "chart", color: "green" },
+    { label: "Finalizados", value: list.filter((s) => s.estado === "finalizado").length, subtitle: "Completados", icon: "award", color: "blue" },
+    { label: "Participaciones", value: list.reduce((acc, s) => acc + (s.vendidos || 0), 0), subtitle: "Total registradas", icon: "users", color: "orange" },
+  ];
+
+  const listaFiltrada = filtroEstado === "todos" ? list : list.filter((s) => s.estado === filtroEstado);
+
   return (
     <AdminLayout title="Gestión de Sorteos">
       <div className={styles.topRow}>
         <div>
-          <h2>Todos los Sorteos</h2>
-          <p>Crea, edita, activa o finaliza tus sorteos</p>
+          <h2>Gestión de Sorteos</h2>
+          <p>Administra y controla todos los sorteos de la plataforma</p>
         </div>
         <button type="button" className={styles.createBtn} onClick={handleOpenCreate}>
           <Icon name="plus" size={18} /> Crear Nuevo Sorteo
         </button>
       </div>
 
+      <div className={styles.kpiGrid}>
+        {kpis.map((k) => (
+          <div key={k.label} className={styles.kpiCard}>
+            <div className={`${styles.kpiIconWrap} ${styles[k.color]}`}>
+              <Icon name={k.icon} size={19} />
+            </div>
+            <div>
+              <span className={styles.kpiLabel}>{k.label}</span>
+              <strong className={styles.kpiValue}>{k.value}</strong>
+              <span className={styles.kpiSubtitle}>{k.subtitle}</span>
+            </div>
+          </div>
+        ))}
+      </div>
+
       <div className={styles.tableCard}>
+        <div className={styles.tableCardHeader}>
+          <div>
+            <h3>Todos los Sorteos</h3>
+            <p>Crea, edita, activa o finaliza tus sorteos</p>
+          </div>
+          <select
+            className={styles.filterSelect}
+            value={filtroEstado}
+            onChange={(e) => setFiltroEstado(e.target.value)}
+          >
+            <option value="todos">Todos los estados</option>
+            <option value="activo">Activo</option>
+            <option value="proximamente">Próximamente</option>
+            <option value="agotado">Agotado</option>
+            <option value="finalizado">Finalizado</option>
+          </select>
+        </div>
         <table className={styles.table}>
           <thead>
             <tr>
@@ -116,13 +159,16 @@ export default function AdminSorteos() {
             {loading && (
               <tr><td colSpan={6}>Cargando sorteos...</td></tr>
             )}
-            {!loading && list.length === 0 && (
-              <tr><td colSpan={6}>No hay sorteos creados todavía.</td></tr>
+            {!loading && listaFiltrada.length === 0 && (
+              <tr><td colSpan={6}>No hay sorteos que coincidan con este filtro.</td></tr>
             )}
-            {list.map((s) => (
+            {listaFiltrada.map((s) => (
               <tr key={s.id}>
                 <td>
-                  <strong className={styles.nameText}>{s.nombre}</strong>
+                  <div className={styles.nameCell}>
+                    <PremioImage categoria={s.categoria} src={s.galeria?.[0]} className={styles.thumb} iconSize={18} />
+                    <strong className={styles.nameText}>{s.nombre}</strong>
+                  </div>
                 </td>
                 <td><span className={styles.categoryBadge}>{s.categoria}</span></td>
                 <td><strong>{formatMoney(s.precio)}</strong></td>
