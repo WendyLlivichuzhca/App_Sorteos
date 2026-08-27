@@ -214,6 +214,26 @@ app.put('/api/sorteos/:id', requireAuth, async (req, res) => {
   try {
     const pool = getPool();
     const { nombre, categoria, precio, total, estado, fechaSorteo, galeria } = req.body;
+    const nuevoTotal = parseInt(total);
+
+    const [sorteos] = await pool.query('SELECT * FROM sorteos WHERE id = ?', [req.params.id]);
+    if (sorteos.length === 0) return res.status(404).json({ error: 'Sorteo no encontrado' });
+    const sorteoActual = sorteos[0];
+
+    if (nuevoTotal !== sorteoActual.total) {
+      if (sorteoActual.vendidos > 0) {
+        return res.status(400).json({
+          error: 'No puedes cambiar la cantidad de boletos porque ya se vendieron algunos. Crea un sorteo nuevo si necesitas otra cantidad.',
+        });
+      }
+      // Todavía no hay ventas: es seguro regenerar los boletos con la nueva cantidad.
+      await pool.query('DELETE FROM boletos WHERE sorteo_id = ?', [req.params.id]);
+      await generarBoletosMySQL(req.params.id, nuevoTotal, 0);
+      await pool.query(
+        `DELETE FROM numeros_premiados WHERE sorteo_id = ? AND numero NOT IN (SELECT numero FROM boletos WHERE sorteo_id = ?)`,
+        [req.params.id, req.params.id]
+      );
+    }
 
     await pool.query(
       `UPDATE sorteos
@@ -223,7 +243,7 @@ app.put('/api/sorteos/:id', requireAuth, async (req, res) => {
         nombre,
         categoria,
         parseFloat(precio),
-        parseInt(total),
+        nuevoTotal,
         estado,
         fechaSorteo,
         JSON.stringify(galeria || []),
@@ -240,6 +260,12 @@ app.put('/api/sorteos/:id', requireAuth, async (req, res) => {
 app.delete('/api/sorteos/:id', requireAuth, async (req, res) => {
   try {
     const pool = getPool();
+    const [compras] = await pool.query('SELECT COUNT(*) AS count FROM compras WHERE sorteo_id = ?', [req.params.id]);
+    if (compras[0].count > 0) {
+      return res.status(400).json({
+        error: `Este sorteo tiene ${compras[0].count} compra(s) registrada(s) y no se puede eliminar (se perdería ese historial). Si ya no lo quieres visible, cambia su estado a "Finalizado" o "Agotado" en vez de borrarlo.`,
+      });
+    }
     await pool.query('DELETE FROM sorteos WHERE id = ?', [req.params.id]);
     res.json({ message: 'Sorteo eliminado de MySQL' });
   } catch (err) {
@@ -294,6 +320,12 @@ app.put('/api/categorias/:id', requireAuth, async (req, res) => {
 app.delete('/api/categorias/:id', requireAuth, async (req, res) => {
   try {
     const pool = getPool();
+    const [cat] = await pool.query('SELECT slug FROM categorias WHERE id = ?', [req.params.id]);
+    if (cat.length === 0) return res.status(404).json({ error: 'Categoría no encontrada' });
+    const [enUso] = await pool.query('SELECT COUNT(*) AS count FROM sorteos WHERE categoria = ?', [cat[0].slug]);
+    if (enUso[0].count > 0) {
+      return res.status(400).json({ error: `Esta categoría está siendo usada por ${enUso[0].count} sorteo(s) y no se puede eliminar. Cambia esos sorteos a otra categoría primero.` });
+    }
     await pool.query('DELETE FROM categorias WHERE id = ?', [req.params.id]);
     res.json({ message: 'Categoría eliminada' });
   } catch (err) {
@@ -321,6 +353,12 @@ app.post('/api/admin/descuentos', requireAuth, async (req, res) => {
     if (!cantidadMinima || porcentaje === undefined) {
       return res.status(400).json({ error: 'Cantidad mínima y porcentaje son obligatorios' });
     }
+    if (parseInt(cantidadMinima) < 1) {
+      return res.status(400).json({ error: 'La cantidad mínima debe ser al menos 1' });
+    }
+    if (parseInt(porcentaje) < 0 || parseInt(porcentaje) > 90) {
+      return res.status(400).json({ error: 'El descuento debe estar entre 0% y 90%' });
+    }
     const [result] = await pool.query(
       'INSERT INTO descuentos_volumen (cantidad_minima, porcentaje) VALUES (?, ?)',
       [parseInt(cantidadMinima), parseInt(porcentaje)]
@@ -335,6 +373,12 @@ app.put('/api/admin/descuentos/:id', requireAuth, async (req, res) => {
   try {
     const pool = getPool();
     const { cantidadMinima, porcentaje } = req.body;
+    if (parseInt(cantidadMinima) < 1) {
+      return res.status(400).json({ error: 'La cantidad mínima debe ser al menos 1' });
+    }
+    if (parseInt(porcentaje) < 0 || parseInt(porcentaje) > 90) {
+      return res.status(400).json({ error: 'El descuento debe estar entre 0% y 90%' });
+    }
     await pool.query(
       'UPDATE descuentos_volumen SET cantidad_minima = ?, porcentaje = ? WHERE id = ?',
       [parseInt(cantidadMinima), parseInt(porcentaje), req.params.id]
@@ -391,9 +435,24 @@ app.post('/api/admin/sorteos/:id/premiados', requireAuth, async (req, res) => {
     if (!numero || !premio) {
       return res.status(400).json({ error: 'Número y premio son obligatorios' });
     }
+
+    // Se normaliza el número al mismo formato (con ceros a la izquierda) que usan los
+    // boletos reales del sorteo, y se valida que exista de verdad — si no, ese número
+    // premiado nunca lo podría ganar nadie.
+    const [muestra] = await pool.query('SELECT numero FROM boletos WHERE sorteo_id = ? LIMIT 1', [req.params.id]);
+    if (muestra.length === 0) {
+      return res.status(400).json({ error: 'Este sorteo todavía no tiene boletos generados' });
+    }
+    const longitud = muestra[0].numero.length;
+    const numeroNormalizado = String(numero).trim().padStart(longitud, '0');
+    const [existe] = await pool.query('SELECT 1 FROM boletos WHERE sorteo_id = ? AND numero = ?', [req.params.id, numeroNormalizado]);
+    if (existe.length === 0) {
+      return res.status(400).json({ error: `El número ${numeroNormalizado} no existe en este sorteo` });
+    }
+
     const [result] = await pool.query(
       'INSERT INTO numeros_premiados (sorteo_id, numero, premio) VALUES (?, ?, ?)',
-      [req.params.id, String(numero).trim(), premio]
+      [req.params.id, numeroNormalizado, premio]
     );
     res.status(201).json({ id: result.insertId, message: 'Número premiado creado' });
   } catch (err) {
