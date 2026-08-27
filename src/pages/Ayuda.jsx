@@ -23,7 +23,7 @@ const faqs = [
   },
   {
     q: "¿Cuáles son los métodos de pago aceptados?",
-    a: "Aceptamos Tarjetas de Crédito/Débito (Visa, Mastercard, Diners, American Express, Discover) a través de PayPhone, y Transferencias bancarias directas.",
+    a: "Aceptamos Tarjetas de Crédito/Débito (Visa, Mastercard, Diners, American Express, Discover) y Transferencias bancarias directas.",
   },
 ];
 

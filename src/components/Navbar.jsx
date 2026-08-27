@@ -44,7 +44,7 @@ export default function Navbar({ variant = "full", step }) {
           <>
             <nav className={styles.nav}>
               <Link to="/sorteos">Sorteos</Link>
-              <a href="/#como-funciona">Cómo funciona</a>
+              <Link to="/como-funciona">Cómo funciona</Link>
               <Link to="/resultados">Resultados</Link>
               <Link to="/ayuda">Ayuda</Link>
             </nav>

@@ -1,0 +1,239 @@
+/* ══════════════════════════════════════════
+   HERO
+══════════════════════════════════════════ */
+.hero {
+  background: linear-gradient(160deg, #12093a 0%, #160b3e 30%, #1d1050 65%, #251360 100%);
+  padding: 56px 0 80px;
+}
+
+.heroInner {
+  text-align: center;
+  max-width: 620px;
+}
+
+.heroTag {
+  display: inline-block;
+  background: rgba(167, 139, 250, 0.18);
+  border: 1px solid rgba(167, 139, 250, 0.35);
+  color: #c4b5fd;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.3px;
+  padding: 6px 14px;
+  border-radius: 50px;
+}
+
+.heroInner h1 {
+  margin-top: 16px;
+  font-size: 36px;
+  font-weight: 800;
+  color: #ffffff;
+  letter-spacing: -0.6px;
+}
+
+.heroInner p {
+  margin-top: 10px;
+  font-size: 14.5px;
+  color: rgba(255, 255, 255, 0.6);
+  line-height: 1.6;
+}
+
+/* ══════════════════════════════════════════
+   TIMELINE DE PASOS
+══════════════════════════════════════════ */
+.wrap {
+  padding: 0 24px 90px;
+}
+
+.timeline {
+  max-width: 720px;
+  margin: -46px auto 0;
+  position: relative;
+  z-index: 2;
+}
+
+.pasoRow {
+  display: flex;
+  gap: 20px;
+}
+
+.pasoMarker {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+.pasoNumero {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #7848f5, #5424e0);
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 15px;
+  font-weight: 800;
+  box-shadow: 0 6px 18px rgba(109, 60, 245, 0.35);
+  flex-shrink: 0;
+}
+
+.pasoLinea {
+  width: 2px;
+  flex: 1;
+  min-height: 24px;
+  background: #e1def0;
+  margin: 4px 0;
+}
+
+.pasoCard {
+  flex: 1;
+  background: #ffffff;
+  border: 1.5px solid #ecebf3;
+  border-radius: 16px;
+  padding: 20px 22px;
+  margin-bottom: 20px;
+  display: flex;
+  gap: 16px;
+  align-items: flex-start;
+  box-shadow: 0 4px 16px rgba(23, 21, 43, 0.05);
+}
+
+.pasoIcon {
+  width: 44px;
+  height: 44px;
+  border-radius: 13px;
+  background: #efe9fe;
+  color: #6d3cf5;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.pasoCard h3 {
+  font-size: 16px;
+  font-weight: 700;
+  color: #17152b;
+}
+
+.pasoCard p {
+  margin-top: 5px;
+  font-size: 13.5px;
+  color: #6b6880;
+  line-height: 1.6;
+}
+
+/* ══════════════════════════════════════════
+   CONFIANZA
+══════════════════════════════════════════ */
+.confianzaGrid {
+  max-width: 900px;
+  margin: 44px auto 0;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+}
+
+.confianzaCard {
+  background: #f8f7fc;
+  border-radius: 16px;
+  padding: 20px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.confianzaIcon {
+  width: 42px;
+  height: 42px;
+  border-radius: 12px;
+  background: #ffffff;
+  color: #6d3cf5;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.confianzaCard h3 {
+  font-size: 14px;
+  font-weight: 700;
+  color: #17152b;
+}
+
+.confianzaCard p {
+  margin-top: 3px;
+  font-size: 12.5px;
+  color: #6b6880;
+  line-height: 1.4;
+}
+
+/* ══════════════════════════════════════════
+   CTA FINAL
+══════════════════════════════════════════ */
+.ctaBox {
+  max-width: 720px;
+  margin: 50px auto 0;
+  text-align: center;
+  background: linear-gradient(135deg, #7848f5, #5424e0);
+  border-radius: 22px;
+  padding: 40px 24px;
+}
+
+.ctaBox h2 {
+  font-size: 24px;
+  font-weight: 800;
+  color: #ffffff;
+}
+
+.ctaBox p {
+  margin-top: 8px;
+  font-size: 14px;
+  color: rgba(255, 255, 255, 0.75);
+}
+
+.ctaBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 20px;
+  background: #ffffff;
+  color: #5424e0;
+  border: none;
+  border-radius: 50px;
+  padding: 12px 26px;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  font-family: inherit;
+  transition: transform 0.18s ease, box-shadow 0.18s ease;
+}
+
+.ctaBtn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.2);
+}
+
+/* ══════════════════════════════════════════
+   RESPONSIVE
+══════════════════════════════════════════ */
+@media (max-width: 860px) {
+  .confianzaGrid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 640px) {
+  .heroInner h1 {
+    font-size: 28px;
+  }
+  .pasoRow {
+    gap: 12px;
+  }
+  .pasoCard {
+    flex-direction: column;
+    padding: 18px;
+  }
+}

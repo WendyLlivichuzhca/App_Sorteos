@@ -32,7 +32,7 @@ export default function Footer() {
         <div className={styles.col}>
           <h4>Plataforma</h4>
           <Link to="/sorteos">Sorteos</Link>
-          <a href="/#como-funciona">Cómo funciona</a>
+          <Link to="/como-funciona">Cómo funciona</Link>
           <Link to="/resultados">Resultados</Link>
         </div>
 

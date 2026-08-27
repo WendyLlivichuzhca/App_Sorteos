@@ -13,13 +13,6 @@ const features = [
   { icon: "users", title: "Ganadores reales", text: "Miles de personas ya han ganado" },
 ];
 
-const pasos = [
-  { icon: "ticket", titulo: "Elige tu sorteo", texto: "Explora los sorteos activos y escoge el premio que más te guste." },
-  { icon: "box", titulo: "Selecciona tus boletos", texto: "Elige un paquete o la cantidad exacta que quieras." },
-  { icon: "card", titulo: "Realiza tu pago", texto: "Paga por transferencia bancaria o con tarjeta de crédito/débito, como prefieras." },
-  { icon: "award", titulo: "¡Espera el sorteo!", texto: "Te avisamos si ganaste. Todo transparente y verificado." },
-];
-
 export default function Landing() {
   const navigate = useNavigate();
   const [destacados, setDestacados] = useState([]);
@@ -102,23 +95,6 @@ export default function Landing() {
                 <h3>{f.title}</h3>
                 <p>{f.text}</p>
               </div>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      {/* ── CÓMO FUNCIONA ── */}
-      <section className={`container ${styles.comoFuncionaSection}`} id="como-funciona">
-        <h2>¿Cómo funciona?</h2>
-        <div className={styles.pasos}>
-          {pasos.map((p, i) => (
-            <div key={p.titulo} className={styles.paso}>
-              <span className={styles.pasoNumero}>{i + 1}</span>
-              <span className={styles.pasoIcon}>
-                <Icon name={p.icon} size={22} strokeWidth={1.6} />
-              </span>
-              <h3>{p.titulo}</h3>
-              <p>{p.texto}</p>
             </div>
           ))}
         </div>
