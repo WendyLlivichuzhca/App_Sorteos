@@ -37,7 +37,7 @@ const PROVINCIAS_ECUADOR = [
 
 export default function Checkout() {
   const navigate = useNavigate();
-  const { seleccion, comprador, setComprador, metodoPago, setMetodoPago, confirmarCompra } = useApp();
+  const { seleccion, comprador, metodoPago, setMetodoPago, confirmarCompra } = useApp();
 
   const [form, setForm] = useState(
     comprador || {
@@ -133,10 +133,9 @@ export default function Checkout() {
       ...form,
       nombre: `${form.nombres.trim()} ${form.apellidos.trim()}`,
     };
-    setComprador(compradorFinal);
 
     try {
-      const compra = await confirmarCompra(comprobanteFile);
+      const compra = await confirmarCompra(compradorFinal, comprobanteFile);
 
       if (metodoPago === "payphone" || metodoPago === "tarjeta") {
         // Métodos respaldados por PayPhone: se redirige a su pasarela real de pago.
@@ -324,7 +323,7 @@ export default function Checkout() {
               </div>
               <div className={styles.pedidoTableBody}>
                 <div className={styles.productoText}>
-                  <strong>{sorteo.nombre}</strong> | Actividad #{sorteo.id}
+                  <strong>{sorteo.nombre}</strong> | Sorteo #{sorteo.id}
                 </div>
                 <div className={styles.colMult}>× {paquete.boletos}</div>
                 <div className={styles.colPrice}>{formatMoney(paquete.precio)}</div>

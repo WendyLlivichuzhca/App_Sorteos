@@ -11,13 +11,14 @@ export function AppProvider({ children }) {
 
   const elegirPaquete = (sorteo, paquete) => setSeleccion({ sorteo, paquete });
 
-  const confirmarCompra = async (comprobanteFile) => {
-    if (!seleccion || !comprador) return null;
+  const confirmarCompra = async (compradorFinal, comprobanteFile) => {
+    if (!seleccion || !compradorFinal) return null;
+    setComprador(compradorFinal);
 
     const data = await realizarCheckout({
       sorteoId: seleccion.sorteo.id,
       cantidad: seleccion.paquete.boletos,
-      comprador,
+      comprador: compradorFinal,
       metodoPago,
     });
 
@@ -38,7 +39,7 @@ export function AppProvider({ children }) {
       fecha: new Date().toISOString(),
       sorteo: seleccion.sorteo,
       paquete: seleccion.paquete,
-      comprador,
+      comprador: compradorFinal,
       metodoPago,
     };
     setUltimaCompra(compra);
