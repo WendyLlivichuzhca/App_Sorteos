@@ -1,8 +1,11 @@
 import { useEffect, useState } from "react";
 import AdminLayout from "../../components/admin/AdminLayout.jsx";
+import Icon from "../../icons/Icon.jsx";
 import { getAdminClientes, getClienteHistorial, toggleBloqueoCliente } from "../../services/api.js";
 import { formatMoney } from "../../utils/format.js";
 import styles from "./AdminSorteos.module.css";
+
+const POR_PAGINA = 30;
 
 export default function AdminClientes() {
   const [list, setList] = useState([]);
@@ -11,6 +14,7 @@ export default function AdminClientes() {
   const [selectedClient, setSelectedClient] = useState(null);
   const [historial, setHistorial] = useState([]);
   const [historialLoading, setHistorialLoading] = useState(false);
+  const [pagina, setPagina] = useState(1);
 
   const cargarClientes = () => {
     setLoading(true);
@@ -23,6 +27,10 @@ export default function AdminClientes() {
   useEffect(() => {
     cargarClientes();
   }, []);
+
+  useEffect(() => {
+    setPagina(1);
+  }, [query]);
 
   const toggleBloqueo = async (c) => {
     try {
@@ -54,13 +62,32 @@ export default function AdminClientes() {
       c.cedula.includes(query)
   );
 
+  const totalPaginas = Math.max(Math.ceil(filtered.length / POR_PAGINA), 1);
+  const paginaSegura = Math.min(pagina, totalPaginas);
+  const paginados = filtered.slice((paginaSegura - 1) * POR_PAGINA, paginaSegura * POR_PAGINA);
+
+  const kpis = [
+    { label: "Total Clientes", value: list.length, subtitle: "Registrados", icon: "users", color: "purple" },
+    { label: "Activos", value: list.filter((c) => !c.bloqueado).length, subtitle: "Sin restricción", icon: "award", color: "green" },
+    { label: "Bloqueados", value: list.filter((c) => c.bloqueado).length, subtitle: "Con acceso restringido", icon: "shield", color: "orange" },
+    { label: "Total Gastado", value: formatMoney(list.reduce((acc, c) => acc + Number(c.total_gastado || 0), 0)), subtitle: "Entre todos los clientes", icon: "card", color: "blue" },
+  ];
+
   return (
-    <AdminLayout title="Gestión de Clientes">
-      <div className={styles.topRow}>
-        <div>
-          <h2>Directorio de Clientes</h2>
-          <p>Revisa el historial de compras de los compradores y gestiona bloqueos</p>
-        </div>
+    <AdminLayout title="Gestión de Clientes" subtitle="Revisa el historial de compras de los compradores y gestiona bloqueos">
+      <div className={styles.kpiGrid}>
+        {kpis.map((k) => (
+          <div key={k.label} className={styles.kpiCard}>
+            <div className={`${styles.kpiIconWrap} ${styles[k.color]}`}>
+              <Icon name={k.icon} size={19} />
+            </div>
+            <div>
+              <span className={styles.kpiLabel}>{k.label}</span>
+              <strong className={styles.kpiValue}>{k.value}</strong>
+              <span className={styles.kpiSubtitle}>{k.subtitle}</span>
+            </div>
+          </div>
+        ))}
       </div>
 
       <div className={styles.tableCard}>
@@ -90,14 +117,14 @@ export default function AdminClientes() {
           <tbody>
             {loading && <tr><td colSpan={8}>Cargando clientes...</td></tr>}
             {!loading && filtered.length === 0 && <tr><td colSpan={8}>No hay clientes registrados todavía.</td></tr>}
-            {filtered.map((c) => (
+            {paginados.map((c) => (
               <tr key={c.id}>
                 <td><strong>{c.nombre}</strong></td>
                 <td>{c.correo}</td>
                 <td>{c.celular}</td>
                 <td>{c.cedula}</td>
                 <td>{c.compras} compras</td>
-                <td>{formatMoney(c.total_gastado)}</td>
+                <td><strong>{formatMoney(c.total_gastado)}</strong></td>
                 <td>
                   <span className={`${styles.statusPill} ${c.bloqueado ? styles.finalizado : styles.activo}`}>
                     {c.bloqueado ? "BLOQUEADO" : "ACTIVO"}
@@ -105,11 +132,11 @@ export default function AdminClientes() {
                 </td>
                 <td>
                   <div className={styles.actionsCell}>
-                    <button type="button" className={styles.iconBtn} onClick={() => verHistorial(c)}>
-                      📜 Historial
+                    <button type="button" className={styles.iconBtn} onClick={() => verHistorial(c)} title="Ver historial">
+                      📜
                     </button>
-                    <button type="button" className={styles.iconBtn} onClick={() => toggleBloqueo(c)}>
-                      {c.bloqueado ? "🔓 Desbloquear" : "🚫 Bloquear"}
+                    <button type="button" className={styles.iconBtn} onClick={() => toggleBloqueo(c)} title={c.bloqueado ? "Desbloquear" : "Bloquear"}>
+                      {c.bloqueado ? "🔓" : "🚫"}
                     </button>
                   </div>
                 </td>
@@ -117,6 +144,37 @@ export default function AdminClientes() {
             ))}
           </tbody>
         </table>
+
+        {filtered.length > 0 && (
+          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "14px 18px", borderTop: "1.5px solid #ecebf3" }}>
+            <span style={{ fontSize: "11.5px", color: "#6b6880" }}>
+              Mostrando {(paginaSegura - 1) * POR_PAGINA + 1}–{Math.min(paginaSegura * POR_PAGINA, filtered.length)} de {filtered.length}
+            </span>
+            <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+              <button
+                type="button"
+                className={styles.iconBtn}
+                disabled={paginaSegura <= 1}
+                onClick={() => setPagina(paginaSegura - 1)}
+                style={paginaSegura <= 1 ? { opacity: 0.4, cursor: "not-allowed" } : undefined}
+              >
+                ← Anterior
+              </button>
+              <span style={{ fontSize: "11.5px", fontWeight: 700, color: "#17152b" }}>
+                Página {paginaSegura} de {totalPaginas}
+              </span>
+              <button
+                type="button"
+                className={styles.iconBtn}
+                disabled={paginaSegura >= totalPaginas}
+                onClick={() => setPagina(paginaSegura + 1)}
+                style={paginaSegura >= totalPaginas ? { opacity: 0.4, cursor: "not-allowed" } : undefined}
+              >
+                Siguiente →
+              </button>
+            </div>
+          </div>
+        )}
       </div>
 
       {selectedClient && (
