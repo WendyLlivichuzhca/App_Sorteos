@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import AdminLayout from "../../components/admin/AdminLayout.jsx";
+import Icon from "../../icons/Icon.jsx";
 import { getDescuentos, createDescuento, updateDescuento, deleteDescuento } from "../../services/api.js";
 import styles from "./AdminSorteos.module.css";
 
@@ -60,19 +61,40 @@ export default function AdminPaquetes() {
     }
   };
 
+  const porcentajes = list.map((p) => p.porcentaje);
+  const cantidades = list.map((p) => p.cantidad_minima);
+  const kpis = [
+    { label: "Total Tramos", value: list.length, subtitle: "Tramos configurados", icon: "box", color: "purple" },
+    { label: "Desde", value: list.length ? `${Math.min(...cantidades)}+` : "—", subtitle: "Boletos mínimos", icon: "ticket", color: "orange" },
+    { label: "Descuento Mínimo", value: list.length ? `${Math.min(...porcentajes)}%` : "—", subtitle: "El más bajo", icon: "chart", color: "green" },
+    { label: "Descuento Máximo", value: list.length ? `${Math.max(...porcentajes)}%` : "—", subtitle: "El más alto", icon: "award", color: "blue" },
+  ];
+
   return (
-    <AdminLayout title="Descuentos por Volumen">
+    <AdminLayout
+      title="Descuentos por Volumen"
+      subtitle="Estos tramos son los que realmente usa el checkout: si un cliente compra desde la cantidad mínima, se le aplica automáticamente el porcentaje de descuento."
+    >
       <div className={styles.topRow}>
-        <div>
-          <h2>Descuentos por Cantidad de Boletos</h2>
-          <p>
-            Estos tramos son los que realmente usa el checkout: si un cliente compra desde la cantidad mínima,
-            se le aplica automáticamente el porcentaje de descuento.
-          </p>
-        </div>
+        <div />
         <button type="button" className={styles.createBtn} onClick={() => setShowModal(true)}>
-          📦 Crear Nuevo Tramo
+          <Icon name="plus" size={18} /> Crear Nuevo Tramo
         </button>
+      </div>
+
+      <div className={styles.kpiGrid}>
+        {kpis.map((k) => (
+          <div key={k.label} className={styles.kpiCard}>
+            <div className={`${styles.kpiIconWrap} ${styles[k.color]}`}>
+              <Icon name={k.icon} size={19} />
+            </div>
+            <div>
+              <span className={styles.kpiLabel}>{k.label}</span>
+              <strong className={styles.kpiValue}>{k.value}</strong>
+              <span className={styles.kpiSubtitle}>{k.subtitle}</span>
+            </div>
+          </div>
+        ))}
       </div>
 
       <div className={styles.tableCard}>
@@ -107,16 +129,16 @@ export default function AdminPaquetes() {
                 <td>
                   <div className={styles.actionsCell}>
                     {editingId === p.id ? (
-                      <button type="button" className={styles.iconBtn} onClick={() => handleSaveEdit(p)}>
-                        💾 Guardar
+                      <button type="button" className={styles.iconBtn} onClick={() => handleSaveEdit(p)} title="Guardar">
+                        💾
                       </button>
                     ) : (
-                      <button type="button" className={styles.iconBtn} onClick={() => handleStartEdit(p)}>
-                        ✏️ Editar
+                      <button type="button" className={styles.iconBtn} onClick={() => handleStartEdit(p)} title="Editar">
+                        ✏️
                       </button>
                     )}
-                    <button type="button" className={styles.iconBtn} onClick={() => handleDelete(p.id)}>
-                      🗑️ Eliminar
+                    <button type="button" className={styles.iconBtn} onClick={() => handleDelete(p.id)} title="Eliminar">
+                      🗑️
                     </button>
                   </div>
                 </td>
