@@ -18,6 +18,8 @@ export default function AdminNumerosPremiados() {
   const [premioAzar, setPremioAzar] = useState("");
   const [generando, setGenerando] = useState(false);
   const [errorAzar, setErrorAzar] = useState("");
+  const [editingId, setEditingId] = useState(null);
+  const [editPremio, setEditPremio] = useState("");
 
   const cargar = () => {
     setLoading(true);
@@ -46,6 +48,21 @@ export default function AdminNumerosPremiados() {
       cargar();
     } catch (err) {
       setError(err.message || "No se pudo crear el número premiado");
+    }
+  };
+
+  const handleStartEdit = (p) => {
+    setEditingId(p.id);
+    setEditPremio(p.premio);
+  };
+
+  const handleSaveEdit = async (p) => {
+    try {
+      await actualizarPremiado(p.id, { premio: editPremio.trim() || p.premio });
+      setEditingId(null);
+      cargar();
+    } catch (err) {
+      alert(err.message || "No se pudo actualizar el premio");
     }
   };
 
@@ -142,7 +159,18 @@ export default function AdminNumerosPremiados() {
               {list.map((p) => (
                 <tr key={p.id}>
                   <td><strong style={{ color: "#6d3cf5" }}>#{p.numero}</strong></td>
-                  <td>{p.premio}</td>
+                  <td>
+                    {editingId === p.id ? (
+                      <input
+                        type="text"
+                        value={editPremio}
+                        onChange={(e) => setEditPremio(e.target.value)}
+                        style={{ padding: "6px 10px", borderRadius: "8px", border: "1.5px solid #6d3cf5", fontSize: "12px" }}
+                      />
+                    ) : (
+                      p.premio
+                    )}
+                  </td>
                   <td>{p.cliente_nombre || "—"}</td>
                   <td>
                     {p.entregado ? (
@@ -155,6 +183,15 @@ export default function AdminNumerosPremiados() {
                   </td>
                   <td>
                     <div className={styles.actionsCell}>
+                      {editingId === p.id ? (
+                        <button type="button" className={styles.iconBtn} onClick={() => handleSaveEdit(p)} title="Guardar">
+                          💾
+                        </button>
+                      ) : (
+                        <button type="button" className={styles.iconBtn} onClick={() => handleStartEdit(p)} title="Editar premio">
+                          ✏️
+                        </button>
+                      )}
                       {p.ganado ? (
                         <button type="button" className={styles.iconBtn} onClick={() => toggleEntregado(p)} title={p.entregado ? "Marcar como pendiente" : "Marcar como entregado"}>
                           {p.entregado ? "↩️" : "✅"}
@@ -203,7 +240,7 @@ export default function AdminNumerosPremiados() {
           <div className={styles.tableCard} style={{ padding: "18px" }}>
             <h3 style={{ fontSize: "13.5px", fontWeight: "800", color: "#17152b" }}>🎲 Generar al Azar</h3>
             <p style={{ fontSize: "11.5px", color: "#6b6880", marginTop: "4px" }}>
-              Elige números reales de este sorteo al azar, todos con el mismo premio.
+              Elige números reales de este sorteo al azar. Después puedes editar el premio de cada uno con el ✏️ de la tabla, si quieres que no todos valgan lo mismo.
             </p>
             <form onSubmit={handleGenerarAzar} style={{ marginTop: "14px", display: "flex", flexDirection: "column", gap: "12px" }}>
               <div className={styles.formGroup}>
