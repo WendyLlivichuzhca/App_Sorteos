@@ -3,7 +3,7 @@
   height: 100vh;
   position: sticky;
   top: 0;
-  background: linear-gradient(180deg, #7848f5 0%, #5c2fe0 100%);
+  background: #6d3cf5;
   color: #ffffff;
   display: flex;
   flex-direction: column;
