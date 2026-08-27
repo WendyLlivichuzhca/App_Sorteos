@@ -61,14 +61,7 @@ export default function AdminCategorias() {
   };
 
   return (
-    <AdminLayout title="Gestión de Categorías">
-      <div className={styles.topRow}>
-        <div>
-          <h2>Categorías de Sorteos</h2>
-          <p>Crea, edita y elimina categorías (Carros, Ropa, Tecnología, Casas, Motos)</p>
-        </div>
-      </div>
-
+    <AdminLayout title="Gestión de Categorías" subtitle="Crea, edita y elimina categorías (Carros, Ropa, Tecnología, Casas, Motos)">
       <div style={{ display: "grid", gridTemplateColumns: "1fr 340px", gap: "24px" }}>
         <div className={styles.tableCard}>
           <table className={styles.table}>
@@ -91,7 +84,7 @@ export default function AdminCategorias() {
                         type="text"
                         value={editLabel}
                         onChange={(e) => setEditLabel(e.target.value)}
-                        style={{ padding: "6px 10px", borderRadius: "6px", border: "1.5px solid #6d3cf5" }}
+                        style={{ padding: "6px 10px", borderRadius: "8px", border: "1.5px solid #6d3cf5", fontSize: "12px" }}
                       />
                     ) : (
                       <strong>{c.nombre}</strong>
@@ -100,16 +93,16 @@ export default function AdminCategorias() {
                   <td>
                     <div className={styles.actionsCell}>
                       {editingId === c.id ? (
-                        <button type="button" className={styles.iconBtn} onClick={() => handleSaveEdit(c)}>
-                          💾 Guardar
+                        <button type="button" className={styles.iconBtn} onClick={() => handleSaveEdit(c)} title="Guardar">
+                          💾
                         </button>
                       ) : (
-                        <button type="button" className={styles.iconBtn} onClick={() => handleStartEdit(c)}>
-                          ✏️ Editar
+                        <button type="button" className={styles.iconBtn} onClick={() => handleStartEdit(c)} title="Editar">
+                          ✏️
                         </button>
                       )}
-                      <button type="button" className={styles.iconBtn} onClick={() => handleDelete(c.id)}>
-                        🗑️ Eliminar
+                      <button type="button" className={styles.iconBtn} onClick={() => handleDelete(c.id)} title="Eliminar">
+                        🗑️
                       </button>
                     </div>
                   </td>
@@ -119,15 +112,15 @@ export default function AdminCategorias() {
           </table>
         </div>
 
-        <div className={styles.tableCard} style={{ padding: "20px" }}>
-          <h3 style={{ fontSize: "16px", fontWeight: "800" }}>Crear Nueva Categoría</h3>
-          <form onSubmit={handleAdd} style={{ marginTop: "16px", display: "flex", flexDirection: "column", gap: "12px" }}>
+        <div className={styles.tableCard} style={{ padding: "18px" }}>
+          <h3 style={{ fontSize: "13.5px", fontWeight: "800", color: "#17152b" }}>Crear Nueva Categoría</h3>
+          <form onSubmit={handleAdd} style={{ marginTop: "14px", display: "flex", flexDirection: "column", gap: "12px" }}>
             <input
               type="text"
               placeholder="Nombre (Ej: Casas, Viajes)"
               value={newLabel}
               onChange={(e) => setNewLabel(e.target.value)}
-              style={{ padding: "10px", borderRadius: "8px", border: "1.5px solid #ecebf3" }}
+              style={{ padding: "8px 12px", borderRadius: "9px", border: "1.5px solid #ecebf3", fontSize: "12px" }}
             />
             <button type="submit" className={styles.createBtn} style={{ justifyContent: "center" }}>
               + Crear Categoría
