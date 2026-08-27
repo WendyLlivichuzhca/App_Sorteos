@@ -706,6 +706,13 @@ app.post('/api/compras/:id/comprobante', upload.single('comprobante'), async (re
   try {
     const pool = getPool();
     if (!req.file) return res.status(400).json({ error: 'No se subió ningún archivo' });
+
+    const [compras] = await pool.query('SELECT id FROM compras WHERE id = ?', [req.params.id]);
+    if (compras.length === 0) {
+      fs.unlink(req.file.path, () => {});
+      return res.status(404).json({ error: 'Compra no encontrada' });
+    }
+
     const fileUrl = `/uploads/${req.file.filename}`;
 
     await pool.query('UPDATE compras SET comprobante_url = ? WHERE id = ?', [fileUrl, req.params.id]);
