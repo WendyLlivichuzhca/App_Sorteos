@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import AdminLayout from "../../components/admin/AdminLayout.jsx";
 import Icon from "../../icons/Icon.jsx";
-import { getSorteoById, getPremiadosAdmin, crearPremiado, actualizarPremiado, eliminarPremiado } from "../../services/api.js";
+import { getSorteoById, getPremiadosAdmin, crearPremiado, actualizarPremiado, eliminarPremiado, generarPremiadosAlAzar } from "../../services/api.js";
 import styles from "./AdminSorteos.module.css";
 
 export default function AdminNumerosPremiados() {
@@ -14,6 +14,10 @@ export default function AdminNumerosPremiados() {
   const [numero, setNumero] = useState("");
   const [premio, setPremio] = useState("");
   const [error, setError] = useState("");
+  const [cantidadAzar, setCantidadAzar] = useState(10);
+  const [premioAzar, setPremioAzar] = useState("");
+  const [generando, setGenerando] = useState(false);
+  const [errorAzar, setErrorAzar] = useState("");
 
   const cargar = () => {
     setLoading(true);
@@ -51,6 +55,22 @@ export default function AdminNumerosPremiados() {
       cargar();
     } catch (err) {
       alert(err.message || "No se pudo actualizar");
+    }
+  };
+
+  const handleGenerarAzar = async (e) => {
+    e.preventDefault();
+    setErrorAzar("");
+    if (!cantidadAzar || cantidadAzar < 1 || !premioAzar.trim()) return;
+    setGenerando(true);
+    try {
+      await generarPremiadosAlAzar(sorteoId, { cantidad: cantidadAzar, premio: premioAzar.trim() });
+      setPremioAzar("");
+      cargar();
+    } catch (err) {
+      setErrorAzar(err.message || "No se pudieron generar los números");
+    } finally {
+      setGenerando(false);
     }
   };
 
@@ -151,32 +171,65 @@ export default function AdminNumerosPremiados() {
           </table>
         </div>
 
-        <div className={styles.tableCard} style={{ padding: "18px", alignSelf: "start" }}>
-          <h3 style={{ fontSize: "13.5px", fontWeight: "800", color: "#17152b" }}>Agregar Número Premiado</h3>
-          <form onSubmit={handleAgregar} style={{ marginTop: "14px", display: "flex", flexDirection: "column", gap: "12px" }}>
-            <div className={styles.formGroup}>
-              <label>Número de boleto</label>
-              <input
-                type="text"
-                placeholder="Ej: 00472"
-                value={numero}
-                onChange={(e) => setNumero(e.target.value)}
-              />
-            </div>
-            <div className={styles.formGroup}>
-              <label>Premio</label>
-              <input
-                type="text"
-                placeholder="Ej: $20 en efectivo"
-                value={premio}
-                onChange={(e) => setPremio(e.target.value)}
-              />
-            </div>
-            {error && <span style={{ fontSize: "12px", color: "#ef4444" }}>⚠️ {error}</span>}
-            <button type="submit" className={styles.createBtn} style={{ justifyContent: "center" }}>
-              + Agregar Número
-            </button>
-          </form>
+        <div style={{ display: "flex", flexDirection: "column", gap: "18px", alignSelf: "start" }}>
+          <div className={styles.tableCard} style={{ padding: "18px" }}>
+            <h3 style={{ fontSize: "13.5px", fontWeight: "800", color: "#17152b" }}>Agregar Número Premiado</h3>
+            <form onSubmit={handleAgregar} style={{ marginTop: "14px", display: "flex", flexDirection: "column", gap: "12px" }}>
+              <div className={styles.formGroup}>
+                <label>Número de boleto</label>
+                <input
+                  type="text"
+                  placeholder="Ej: 00472"
+                  value={numero}
+                  onChange={(e) => setNumero(e.target.value)}
+                />
+              </div>
+              <div className={styles.formGroup}>
+                <label>Premio</label>
+                <input
+                  type="text"
+                  placeholder="Ej: $20 en efectivo"
+                  value={premio}
+                  onChange={(e) => setPremio(e.target.value)}
+                />
+              </div>
+              {error && <span style={{ fontSize: "12px", color: "#ef4444" }}>⚠️ {error}</span>}
+              <button type="submit" className={styles.createBtn} style={{ justifyContent: "center" }}>
+                + Agregar Número
+              </button>
+            </form>
+          </div>
+
+          <div className={styles.tableCard} style={{ padding: "18px" }}>
+            <h3 style={{ fontSize: "13.5px", fontWeight: "800", color: "#17152b" }}>🎲 Generar al Azar</h3>
+            <p style={{ fontSize: "11.5px", color: "#6b6880", marginTop: "4px" }}>
+              Elige números reales de este sorteo al azar, todos con el mismo premio.
+            </p>
+            <form onSubmit={handleGenerarAzar} style={{ marginTop: "14px", display: "flex", flexDirection: "column", gap: "12px" }}>
+              <div className={styles.formGroup}>
+                <label>Cantidad de números</label>
+                <input
+                  type="number"
+                  min="1"
+                  value={cantidadAzar}
+                  onChange={(e) => setCantidadAzar(parseInt(e.target.value, 10) || "")}
+                />
+              </div>
+              <div className={styles.formGroup}>
+                <label>Premio para todos</label>
+                <input
+                  type="text"
+                  placeholder="Ej: $20 en efectivo"
+                  value={premioAzar}
+                  onChange={(e) => setPremioAzar(e.target.value)}
+                />
+              </div>
+              {errorAzar && <span style={{ fontSize: "12px", color: "#ef4444" }}>⚠️ {errorAzar}</span>}
+              <button type="submit" className={styles.createBtn} style={{ justifyContent: "center" }} disabled={generando}>
+                {generando ? "Generando..." : "🎲 Generar Números"}
+              </button>
+            </form>
+          </div>
         </div>
       </div>
     </AdminLayout>

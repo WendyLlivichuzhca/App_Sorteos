@@ -396,6 +396,46 @@ app.post('/api/admin/sorteos/:id/premiados', requireAuth, async (req, res) => {
   }
 });
 
+app.post('/api/admin/sorteos/:id/premiados/generar', requireAuth, async (req, res) => {
+  try {
+    const pool = getPool();
+    const sorteoId = req.params.id;
+    const cantidad = parseInt(req.body.cantidad, 10);
+    const premio = (req.body.premio || '').trim();
+    if (!cantidad || cantidad < 1) {
+      return res.status(400).json({ error: 'La cantidad debe ser mayor a 0' });
+    }
+    if (!premio) {
+      return res.status(400).json({ error: 'El premio es obligatorio' });
+    }
+
+    // Elige números reales del sorteo (existen de verdad como boletos) que todavía
+    // no estén registrados como premiados, para que siempre sean números válidos.
+    const [disponibles] = await pool.query(
+      `SELECT b.numero FROM boletos b
+       WHERE b.sorteo_id = ?
+       AND b.numero NOT IN (SELECT numero FROM numeros_premiados WHERE sorteo_id = ?)
+       ORDER BY RAND() LIMIT ?`,
+      [sorteoId, sorteoId, cantidad]
+    );
+
+    if (disponibles.length === 0) {
+      return res.status(400).json({ error: 'No hay números disponibles para elegir (puede que ya estén todos registrados como premiados)' });
+    }
+
+    const values = disponibles.map((b) => [sorteoId, b.numero, premio]);
+    await pool.query('INSERT INTO numeros_premiados (sorteo_id, numero, premio) VALUES ?', [values]);
+
+    res.status(201).json({
+      creados: values.length,
+      numeros: disponibles.map((b) => b.numero),
+      message: `${values.length} números premiados generados`,
+    });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
 app.put('/api/admin/premiados/:id', requireAuth, async (req, res) => {
   try {
     const pool = getPool();

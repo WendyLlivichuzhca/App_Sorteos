@@ -156,6 +156,9 @@ export const getPremiadosAdmin = (sorteoId) => fetchApi(`/admin/sorteos/${sorteo
 export const crearPremiado = (sorteoId, data) =>
   fetchApi(`/admin/sorteos/${sorteoId}/premiados`, { method: 'POST', body: JSON.stringify(data) });
 
+export const generarPremiadosAlAzar = (sorteoId, data) =>
+  fetchApi(`/admin/sorteos/${sorteoId}/premiados/generar`, { method: 'POST', body: JSON.stringify(data) });
+
 export const actualizarPremiado = (id, data) =>
   fetchApi(`/admin/premiados/${id}`, { method: 'PUT', body: JSON.stringify(data) });
 
