@@ -44,7 +44,11 @@ export default function AdminSidebar() {
 
   useEffect(() => {
     getConfiguracion()
-      .then((config) => setNombreEmpresa(config.nombre_empresa || "El Trébol de Gaya"))
+      .then((config) => {
+        const nombre = config.nombre_empresa || "El Trébol de Gaya";
+        setNombreEmpresa(nombre);
+        document.title = `${nombre} - Panel Admin`;
+      })
       .catch((err) => console.error("Error cargando configuración:", err));
   }, []);
 
