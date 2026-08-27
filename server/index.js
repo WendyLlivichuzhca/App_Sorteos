@@ -327,12 +327,14 @@ app.put('/api/categorias/:id', requireAuth, async (req, res) => {
   try {
     const pool = getPool();
     const { nombre, slug, icono } = req.body;
+    if (!nombre || !slug) return res.status(400).json({ error: 'Nombre y slug son obligatorios' });
     await pool.query(
       'UPDATE categorias SET nombre = ?, slug = ?, icono = ? WHERE id = ?',
       [nombre, slug, icono || 'award', req.params.id]
     );
     res.json({ message: 'Categoría actualizada' });
   } catch (err) {
+    if (err.code === 'ER_DUP_ENTRY') return res.status(409).json({ error: 'Ya existe una categoría con ese slug' });
     res.status(500).json({ error: err.message });
   }
 });
@@ -397,6 +399,9 @@ app.put('/api/admin/descuentos/:id', requireAuth, async (req, res) => {
   try {
     const pool = getPool();
     const { cantidadMinima, porcentaje } = req.body;
+    if (!cantidadMinima || porcentaje === undefined) {
+      return res.status(400).json({ error: 'Cantidad mínima y porcentaje son obligatorios' });
+    }
     if (parseInt(cantidadMinima) < 1) {
       return res.status(400).json({ error: 'La cantidad mínima debe ser al menos 1' });
     }
@@ -576,6 +581,9 @@ app.post('/api/compras/checkout', async (req, res) => {
 
   if (!sId || !cant || cant < 1 || !comprador || !comprador.cedula || !comprador.nombre || !comprador.correo || !comprador.celular) {
     return res.status(400).json({ error: 'Faltan datos obligatorios para la compra' });
+  }
+  if (!/^\S+@\S+\.\S+$/.test(comprador.correo)) {
+    return res.status(400).json({ error: 'Ingresa un correo electrónico válido' });
   }
 
   const conn = await pool.getConnection();
@@ -1033,6 +1041,13 @@ app.put('/api/admin/configuracion', requireAuth, async (req, res) => {
       nombreEmpresa, whatsapp, correo, facebook, instagram, tiktok,
       colorTema, politicas, faqTexto, metodosPago, instruccionesPago,
     } = req.body;
+
+    if (!nombreEmpresa || !nombreEmpresa.trim()) {
+      return res.status(400).json({ error: 'El nombre de la empresa es obligatorio' });
+    }
+    if (!correo || !correo.trim()) {
+      return res.status(400).json({ error: 'El correo electrónico es obligatorio' });
+    }
 
     await pool.query(
       `UPDATE configuracion SET
