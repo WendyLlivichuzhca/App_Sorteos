@@ -14,7 +14,7 @@ const confettiColors = ["#1F8A5A", "#e63950", "#f5a623", "#16a34a", "#2f6df5"];
 export default function PayphoneConfirmacion() {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
-  const [estado, setEstado] = useState("cargando"); // cargando | aprobado | rechazado | error
+  const [estado, setEstado] = useState("cargando"); // cargando | aprobado | rechazado | revisar | error
   const [resultado, setResultado] = useState(null);
   const [error, setError] = useState("");
 
@@ -31,7 +31,9 @@ export default function PayphoneConfirmacion() {
     confirmarPagoPayphone(id, clientTransactionId)
       .then((data) => {
         setResultado(data.compra);
-        setEstado(data.aprobado ? "aprobado" : "rechazado");
+        if (data.aprobado) setEstado("aprobado");
+        else if (data.revisarManualmente) setEstado("revisar");
+        else setEstado("rechazado");
       })
       .catch((err) => {
         setEstado("error");
@@ -48,6 +50,26 @@ export default function PayphoneConfirmacion() {
           <div className={styles.card}>
             <h1>Confirmando tu pago...</h1>
             <p className={styles.subtitle}>Un momento, estamos verificando tu pago con PayPhone.</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (estado === "revisar") {
+    return (
+      <div className="page">
+        <Navbar variant="cart" />
+        <div className={`container ${styles.wrap}`}>
+          <div className={styles.card}>
+            <h1>Tu pago se procesó, pero necesitamos revisarlo</h1>
+            <p className={styles.subtitle}>
+              PayPhone confirmó tu cobro correctamente, pero tu orden ya no estaba disponible en nuestro sistema para asignarte los boletos automáticamente.
+              Por favor contáctanos con tu código de orden <strong>{resultado?.codigo}</strong> y lo resolvemos enseguida — no vuelvas a intentar pagar de nuevo.
+            </p>
+            <button type="button" className="btn btn-primary btn-block" onClick={() => navigate("/ayuda")}>
+              Ir a Ayuda / Contacto
+            </button>
           </div>
         </div>
       </div>

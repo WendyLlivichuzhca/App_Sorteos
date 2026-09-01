@@ -925,15 +925,33 @@ app.post('/api/compras/payphone/confirmar', async (req, res) => {
       );
     }
 
-    const aprobado = confirmRes.ok && confirmData.transactionStatus === 'Approved' && montoCoincide && codigoCoincide;
-    if (aprobado) {
-      await aprobarCompra(pool, compra.id);
-    } else {
+    const pagoValido = confirmRes.ok && confirmData.transactionStatus === 'Approved' && montoCoincide && codigoCoincide;
+    let aprobado = false;
+    let revisarManualmente = false;
+    if (pagoValido) {
+      if (compra.estado === 'pendiente') {
+        await aprobarCompra(pool, compra.id);
+        aprobado = true;
+      } else {
+        revisarManualmente = true;
+        // El pago es real y valido, pero esta compra ya no esta "pendiente"
+        // (ya se habia marcado aprobada o rechazada antes, por ejemplo en un
+        // primer intento fallido). No se vuelve a aprobar automaticamente
+        // porque sus boletos originales pudieron haberse liberado y vendido
+        // a otra persona mientras tanto -- se deja un aviso claro para
+        // resolverlo a mano en vez de fingir un exito que no paso.
+        console.error(
+          `🚨 PayPhone confirmo un pago real para la compra ${compra.codigo}, pero esa compra ya estaba en estado "${compra.estado}" (no pendiente). ` +
+          `Revisar manualmente: el cliente probablemente pago sin recibir boletos. payphone_transaction_id=${id}`
+        );
+      }
+    } else if (compra.estado === 'pendiente') {
       await rechazarCompra(pool, compra.id, 'rechazado');
     }
 
     res.json({
       aprobado,
+      revisarManualmente,
       compra: {
         codigo: compra.codigo,
         sorteoNombre: compra.sorteo_nombre,
