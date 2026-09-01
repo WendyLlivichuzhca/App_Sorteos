@@ -232,6 +232,7 @@ export async function initDB() {
     `);
     await ensureColumn(pool, 'configuracion', 'instrucciones_pago', 'TEXT NULL');
     await ensureColumn(pool, 'configuracion', 'qr_pago', 'LONGTEXT NULL');
+    await ensureColumn(pool, 'configuracion', 'logo_url', 'LONGTEXT NULL');
 
     // Seed default data if empty
     const [cats] = await pool.query('SELECT COUNT(*) as count FROM categorias');

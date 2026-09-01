@@ -17,6 +17,7 @@ export default function Navbar({ variant = "full", step }) {
   const navigate = useNavigate();
   const dark = location.pathname === "/";
   const [nombreEmpresa, setNombreEmpresa] = useState(NOMBRE_POR_DEFECTO);
+  const [logoUrl, setLogoUrl] = useState("");
 
   const stepIndex = STEPS.findIndex((s) => s.id === step);
 
@@ -26,6 +27,7 @@ export default function Navbar({ variant = "full", step }) {
         const nombre = config.nombre_empresa || NOMBRE_POR_DEFECTO;
         setNombreEmpresa(nombre);
         document.title = nombre;
+        setLogoUrl(config.logo_url || "");
       })
       .catch((err) => console.error("Error cargando configuración:", err));
   }, []);
@@ -35,7 +37,7 @@ export default function Navbar({ variant = "full", step }) {
       <div className={`container ${styles.inner}`}>
         <Link to="/" className={styles.logo}>
           <span className={styles.logoIcon}>
-            <img src="/logo-icon.svg" alt="" className={styles.logoImg} />
+            <img src={logoUrl || "/logo-icon.svg"} alt="" className={styles.logoImg} />
           </span>
           {nombreEmpresa}
         </Link>
@@ -63,7 +65,7 @@ export default function Navbar({ variant = "full", step }) {
         {variant === "nav" && (
           <nav className={styles.nav}>
             <Link to="/sorteos">Sorteos</Link>
-            <a href="/#como-funciona">Cómo funciona</a>
+            <Link to="/como-funciona">Cómo funciona</Link>
             <Link to="/resultados">Resultados</Link>
             <Link to="/ayuda">Ayuda</Link>
           </nav>

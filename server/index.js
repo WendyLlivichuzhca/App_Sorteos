@@ -1060,7 +1060,7 @@ app.put('/api/admin/configuracion', requireAuth, async (req, res) => {
     const pool = getPool();
     const {
       nombreEmpresa, whatsapp, correo, facebook, instagram, tiktok,
-      colorTema, politicas, faqTexto, metodosPago, instruccionesPago, qrPago,
+      colorTema, politicas, faqTexto, metodosPago, instruccionesPago, qrPago, logoUrl,
     } = req.body;
 
     if (!nombreEmpresa || !nombreEmpresa.trim()) {
@@ -1073,11 +1073,11 @@ app.put('/api/admin/configuracion', requireAuth, async (req, res) => {
     await pool.query(
       `UPDATE configuracion SET
         nombre_empresa = ?, whatsapp = ?, correo = ?, facebook = ?, instagram = ?, tiktok = ?,
-        color_tema = ?, politicas = ?, faq_texto = ?, metodos_pago = ?, instrucciones_pago = ?, qr_pago = ?
+        color_tema = ?, politicas = ?, faq_texto = ?, metodos_pago = ?, instrucciones_pago = ?, qr_pago = ?, logo_url = ?
        WHERE id = 1`,
       [
         nombreEmpresa, whatsapp, correo, facebook, instagram, tiktok,
-        colorTema, politicas, faqTexto, JSON.stringify(metodosPago || {}), instruccionesPago || '', qrPago || null,
+        colorTema, politicas, faqTexto, JSON.stringify(metodosPago || {}), instruccionesPago || '', qrPago || null, logoUrl || null,
       ]
     );
     res.json({ message: 'Configuración actualizada' });

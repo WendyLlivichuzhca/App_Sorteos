@@ -15,6 +15,7 @@ export default function Footer() {
   const correo = config?.correo || "soporte@eltreboldegaya.com";
   const whatsapp = config?.whatsapp?.replace(/\D/g, "") || "593999999999";
   const nombreEmpresa = config?.nombre_empresa || "El Trébol de Gaya";
+  const logoUrl = config?.logo_url || "/logo-icon.svg";
 
   return (
     <footer className={styles.footer}>
@@ -22,7 +23,7 @@ export default function Footer() {
         <div className={styles.brand}>
           <span className={styles.logo}>
             <span className={styles.logoIcon}>
-              <img src="/logo-icon.svg" alt="" className={styles.logoImg} />
+              <img src={logoUrl} alt="" className={styles.logoImg} />
             </span>
             {nombreEmpresa}
           </span>

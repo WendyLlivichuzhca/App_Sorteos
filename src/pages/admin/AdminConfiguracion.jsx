@@ -26,6 +26,7 @@ export default function AdminConfiguracion() {
     faqTexto: "",
     instruccionesPago: "",
     qrPago: "",
+    logoUrl: "",
   });
   const [metodos, setMetodos] = useState({});
 
@@ -44,6 +45,7 @@ export default function AdminConfiguracion() {
           faqTexto: data.faq_texto || "",
           instruccionesPago: data.instrucciones_pago || "",
           qrPago: data.qr_pago || "",
+          logoUrl: data.logo_url || "",
         });
         setMetodos(data.metodosPago || {});
       })
@@ -90,6 +92,43 @@ export default function AdminConfiguracion() {
         <div className={styles.tableCard} style={{ padding: "24px" }}>
           <h3 style={{ fontSize: "13.5px", fontWeight: "800", marginBottom: "16px" }}>Empresa & Redes Sociales</h3>
           <form onSubmit={handleSave} className={styles.form} style={{ padding: 0 }}>
+            <div className={styles.formGroup}>
+              <label>Logo de la Empresa</label>
+              <div style={{ display: "flex", alignItems: "center", gap: "12px", marginBottom: "8px" }}>
+                {config.logoUrl && (
+                  <>
+                    <img
+                      src={config.logoUrl}
+                      alt="Logo"
+                      style={{ width: "56px", height: "56px", objectFit: "contain", border: "1.5px solid #ecebf3", borderRadius: "10px", background: "#fff" }}
+                    />
+                    <button
+                      type="button"
+                      className={styles.iconBtn}
+                      onClick={() => setConfig({ ...config, logoUrl: "" })}
+                    >
+                      🗑️ Quitar logo
+                    </button>
+                  </>
+                )}
+              </div>
+              <input
+                type="file"
+                accept="image/*"
+                onChange={(e) => {
+                  const file = e.target.files[0];
+                  if (!file) return;
+                  const reader = new FileReader();
+                  reader.onloadend = () => setConfig((prev) => ({ ...prev, logoUrl: reader.result }));
+                  reader.readAsDataURL(file);
+                }}
+                style={{ fontSize: "13px" }}
+              />
+              <span style={{ fontSize: "11.5px", color: "#9795a8" }}>
+                Reemplaza el ícono que aparece junto al nombre de la empresa en todo el sitio. Si no subes uno, se usa el ícono por defecto.
+              </span>
+            </div>
+
             <div className={styles.formGroup}>
               <label>Nombre Comercial de la Empresa</label>
               <input

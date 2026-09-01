@@ -41,6 +41,7 @@ const menuGroups = [
 export default function AdminSidebar() {
   const location = useLocation();
   const [nombreEmpresa, setNombreEmpresa] = useState("El Trébol de Gaya");
+  const [logoUrl, setLogoUrl] = useState("");
 
   useEffect(() => {
     getConfiguracion()
@@ -48,6 +49,7 @@ export default function AdminSidebar() {
         const nombre = config.nombre_empresa || "El Trébol de Gaya";
         setNombreEmpresa(nombre);
         document.title = `${nombre} - Panel Admin`;
+        setLogoUrl(config.logo_url || "");
       })
       .catch((err) => console.error("Error cargando configuración:", err));
   }, []);
@@ -57,7 +59,7 @@ export default function AdminSidebar() {
       {/* Logo Header */}
       <div className={styles.brand}>
         <div className={styles.logoBadge}>
-          <img src="/logo-icon.svg" alt="" className={styles.logoImg} />
+          <img src={logoUrl || "/logo-icon.svg"} alt="" className={styles.logoImg} />
         </div>
         <div className={styles.logoInfo}>
           <span className={styles.brandTitle}>{nombreEmpresa}</span>
