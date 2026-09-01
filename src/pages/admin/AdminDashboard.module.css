@@ -7,18 +7,18 @@
 
 .kpiCard {
   position: relative;
-  background: #ffffff;
-  border: 1.5px solid #ecebf3;
+  background: #141B17;
+  border: 1.5px solid #26332C;
   border-radius: 14px;
   padding: 24px;
   overflow: hidden;
-  box-shadow: 0 4px 16px rgba(23, 21, 43, 0.04);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25);
   transition: transform 0.15s ease, box-shadow 0.15s ease;
 }
 
 .kpiCard:hover {
   transform: translateY(-2px);
-  box-shadow: 0 8px 24px rgba(31, 138, 90, 0.08);
+  box-shadow: 0 8px 24px rgba(31, 138, 90, 0.18);
 }
 
 .kpiTop {
@@ -31,18 +31,18 @@
   width: 36px;
   height: 36px;
   border-radius: 10px;
-  background: #E3F5EC;
-  color: #1F8A5A;
+  background: #15291E;
+  color: #34D399;
   display: flex;
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
 }
 
-.kpiIconWrap.purple { background: #E3F5EC; color: #1F8A5A; }
-.kpiIconWrap.green { background: #dcf5e3; color: #16a34a; }
-.kpiIconWrap.blue { background: #e0ebff; color: #2f6df5; }
-.kpiIconWrap.orange { background: #fdecd2; color: #ea8a1f; }
+.kpiIconWrap.purple { background: #15291E; color: #34D399; }
+.kpiIconWrap.green { background: #10301F; color: #4ADE80; }
+.kpiIconWrap.blue { background: #142236; color: #60A5FA; }
+.kpiIconWrap.orange { background: #3D2A10; color: #FBBF6A; }
 
 .kpiSpark {
   position: absolute;
@@ -58,13 +58,13 @@
   font-weight: 700;
   padding: 3px 8px;
   border-radius: 7px;
-  background: #f3f2f8;
-  color: #57536D;
+  background: #1B2420;
+  color: #A9B3AD;
 }
 
 .trendUp {
-  background: #dcf5e3;
-  color: #16a34a;
+  background: #10301F;
+  color: #4ADE80;
 }
 
 .kpiContent {
@@ -75,20 +75,20 @@
 
 .kpiLabel {
   font-size: 11.5px;
-  color: #57536D;
+  color: #A9B3AD;
   font-weight: 600;
 }
 
 .kpiValue {
   font-size: 21px;
   font-weight: 800;
-  color: #17152b;
+  color: #F2F5F3;
   margin-top: 2px;
 }
 
 .kpiSubtitle {
   font-size: 10.5px;
-  color: #7A7690;
+  color: #7E897F;
   margin-top: 2px;
 }
 
@@ -101,11 +101,11 @@
 }
 
 .chartCard, .topCard, .bottomCard {
-  background: #ffffff;
-  border: 1.5px solid #ecebf3;
+  background: #141B17;
+  border: 1.5px solid #26332C;
   border-radius: 15px;
   padding: 28px;
-  box-shadow: 0 4px 16px rgba(23, 21, 43, 0.04);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25);
 }
 
 .cardHeader {
@@ -118,12 +118,12 @@
 .cardHeader h3 {
   font-size: 14.5px;
   font-weight: 800;
-  color: #17152b;
+  color: #F2F5F3;
 }
 
 .cardHeader p {
   font-size: 11.5px;
-  color: #57536D;
+  color: #A9B3AD;
   margin-top: 2px;
 }
 
@@ -132,7 +132,7 @@
   align-items: center;
   gap: 13px;
   font-size: 11px;
-  color: #57536D;
+  color: #A9B3AD;
   font-weight: 600;
 }
 
@@ -150,7 +150,7 @@
 }
 
 .legendDot.green {
-  background: #16a34a;
+  background: #4ADE80;
 }
 
 /* Chart Bars Styles */
@@ -174,7 +174,7 @@
 .axisTitle {
   font-size: 9.5px;
   font-weight: 700;
-  color: #7A7690;
+  color: #7E897F;
   margin-bottom: 4px;
 }
 
@@ -185,7 +185,7 @@
   justify-content: space-between;
   padding: 17px 0 8px;
   font-size: 9.5px;
-  color: #7A7690;
+  color: #7E897F;
   font-weight: 600;
 }
 
@@ -202,7 +202,7 @@
   justify-content: space-between;
   gap: 10px;
   padding: 17px 8px 8px;
-  border-bottom: 1px solid #f3f2f8;
+  border-bottom: 1px solid #26332C;
 }
 
 .lineOverlay {
@@ -225,8 +225,8 @@
 .barTooltip {
   position: absolute;
   top: -30px;
-  background: #17152b;
-  color: #ffffff;
+  background: #0B0F0D;
+  color: #F2F5F3;
   padding: 3px 7px;
   border-radius: 6px;
   font-size: 9.5px;
@@ -250,7 +250,7 @@
   width: 100%;
   max-width: 27px;
   height: 100%;
-  background: #f4f3f8;
+  background: #1F2823;
   border-radius: 7px;
   display: flex;
   align-items: flex-end;
@@ -272,12 +272,12 @@
 .barLabel {
   font-size: 10.5px;
   font-weight: 700;
-  color: #57536D;
+  color: #A9B3AD;
   margin-top: 8px;
 }
 
 .barColActive .barLabel {
-  color: #1F8A5A;
+  color: #34D399;
 }
 
 .chartFooter {
@@ -291,15 +291,15 @@
   display: flex;
   gap: 16px;
   font-size: 11.5px;
-  color: #57536D;
+  color: #A9B3AD;
 }
 
 .accentText {
-  color: #1F8A5A;
+  color: #34D399;
 }
 
 .reportBtn, .linkSmall, .verTodosLink {
-  color: #1F8A5A;
+  color: #34D399;
   font-weight: 700;
   font-size: 11.5px;
   text-decoration: none;
@@ -326,12 +326,12 @@
 
 .topItemHead strong {
   font-size: 11.5px;
-  color: #17152b;
+  color: #F2F5F3;
 }
 
 .tagPill {
-  background: #E3F5EC;
-  color: #1F8A5A;
+  background: #15291E;
+  color: #34D399;
   font-size: 9.5px;
   font-weight: 700;
   padding: 2px 7px;
@@ -342,13 +342,13 @@
   display: flex;
   justify-content: space-between;
   font-size: 10.5px;
-  color: #57536D;
+  color: #A9B3AD;
 }
 
 .progressTrack {
   width: 100%;
   height: 6px;
-  background: #f4f3f8;
+  background: #1F2823;
   border-radius: 999px;
   overflow: hidden;
 }
@@ -399,9 +399,9 @@
 .table th {
   padding: 12px 14px;
   font-weight: 800;
-  color: #57536D;
-  background: #f8f7fc;
-  border-bottom: 1.5px solid #ecebf3;
+  color: #A9B3AD;
+  background: #101512;
+  border-bottom: 1.5px solid #26332C;
   font-size: 10px;
   letter-spacing: 0.5px;
   text-transform: uppercase;
@@ -412,21 +412,21 @@
 }
 
 .table tbody tr:nth-child(even) {
-  background: #fbfaff;
+  background: #11160F;
 }
 
 .table tbody tr:hover {
-  background: #EAF8F0;
+  background: #16281E;
 }
 
 .table td {
   padding: 14px 14px;
-  border-bottom: 1px solid #f3f2f8;
-  color: #17152b;
+  border-bottom: 1px solid #1F2823;
+  color: #E4E8E5;
 }
 
 .orderId {
-  color: #1F8A5A;
+  color: #34D399;
   font-weight: 700;
 }
 
@@ -440,8 +440,8 @@
   width: 27px;
   height: 27px;
   border-radius: 50%;
-  background: #E3F5EC;
-  color: #1F8A5A;
+  background: #15291E;
+  color: #34D399;
   font-weight: 800;
   font-size: 10.5px;
   display: flex;
@@ -451,8 +451,8 @@
 }
 
 .categoryBadge {
-  background: #f4f3f8;
-  color: #57536D;
+  background: #1B2420;
+  color: #A9B3AD;
   font-size: 10px;
   font-weight: 700;
   padding: 4px 10px;
@@ -460,7 +460,7 @@
 }
 
 .priceText {
-  color: #1F8A5A;
+  color: #34D399;
   font-size: 12.5px;
   font-weight: 700;
 }
@@ -485,17 +485,17 @@
 }
 
 .aprobado {
-  background: #dcf5e3;
-  color: #16a34a;
+  background: #10301F;
+  color: #4ADE80;
 }
 
 .pendiente {
-  background: #fdecd2;
-  color: #ea8a1f;
+  background: #3D2A10;
+  color: #FBBF6A;
 }
 
 .dateCol {
-  color: #7A7690;
+  color: #7E897F;
   font-size: 10.5px;
 }
 

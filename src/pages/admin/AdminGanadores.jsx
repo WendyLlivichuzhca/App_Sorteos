@@ -69,7 +69,7 @@ export default function AdminGanadores() {
       </div>
 
       <div className={styles.tableCard} style={{ padding: "18px" }}>
-        <h3 style={{ fontSize: "13.5px", fontWeight: "800", color: "#17152b", marginBottom: "14px" }}>Realizar Sorteo</h3>
+        <h3 style={{ fontSize: "13.5px", fontWeight: "800", color: "#F2F5F3", marginBottom: "14px" }}>Realizar Sorteo</h3>
         <div style={{ display: "flex", gap: "12px", alignItems: "center", flexWrap: "wrap" }}>
         <select
           value={sorteoId}
@@ -87,16 +87,16 @@ export default function AdminGanadores() {
           🎉 Ir a Sorteo en Vivo
         </Link>
         {sorteoActual?.estado === "finalizado" && (
-          <span style={{ fontSize: "13px", color: "#7A7690" }}>Este sorteo ya tiene ganador.</span>
+          <span style={{ fontSize: "13px", color: "#7E897F" }}>Este sorteo ya tiene ganador.</span>
         )}
         {sorteoActual && sorteoActual.estado !== "finalizado" && !sorteoActual.vendidos && (
-          <span style={{ fontSize: "13px", color: "#7A7690" }}>Este sorteo todavía no tiene boletos vendidos.</span>
+          <span style={{ fontSize: "13px", color: "#7E897F" }}>Este sorteo todavía no tiene boletos vendidos.</span>
         )}
         </div>
       </div>
 
       <div className={styles.tableCard} style={{ marginTop: "16px" }}>
-        <div className={styles.tableCardHeader} style={{ borderBottom: "1.5px solid #ecebf3" }}>
+        <div className={styles.tableCardHeader} style={{ borderBottom: "1.5px solid #26332C" }}>
           <div>
             <h3>Historial de Ganadores</h3>
             <p>Ganadores sorteados y estado de entrega del premio</p>

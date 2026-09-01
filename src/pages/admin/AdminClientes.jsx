@@ -91,13 +91,13 @@ export default function AdminClientes() {
       </div>
 
       <div className={styles.tableCard}>
-        <div style={{ padding: "16px 18px", borderBottom: "1px solid #ecebf3" }}>
+        <div style={{ padding: "16px 18px", borderBottom: "1px solid #26332C" }}>
           <input
             type="text"
             placeholder="🔍 Buscar cliente por nombre, correo o cédula..."
             value={query}
             onChange={(e) => setQuery(e.target.value)}
-            style={{ width: "100%", maxWidth: "400px", padding: "10px 14px", borderRadius: "10px", border: "1.5px solid #ecebf3" }}
+            style={{ width: "100%", maxWidth: "400px", padding: "10px 14px", borderRadius: "10px", border: "1.5px solid #26332C", background: "#101512", color: "#E4E8E5" }}
           />
         </div>
 
@@ -146,8 +146,8 @@ export default function AdminClientes() {
         </table>
 
         {filtered.length > 0 && (
-          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "14px 18px", borderTop: "1.5px solid #ecebf3" }}>
-            <span style={{ fontSize: "11.5px", color: "#57536D" }}>
+          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "14px 18px", borderTop: "1.5px solid #26332C" }}>
+            <span style={{ fontSize: "11.5px", color: "#A9B3AD" }}>
               Mostrando {(paginaSegura - 1) * POR_PAGINA + 1}–{Math.min(paginaSegura * POR_PAGINA, filtered.length)} de {filtered.length}
             </span>
             <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
@@ -160,7 +160,7 @@ export default function AdminClientes() {
               >
                 ← Anterior
               </button>
-              <span style={{ fontSize: "11.5px", fontWeight: 700, color: "#17152b" }}>
+              <span style={{ fontSize: "11.5px", fontWeight: 700, color: "#F2F5F3" }}>
                 Página {paginaSegura} de {totalPaginas}
               </span>
               <button
@@ -187,13 +187,13 @@ export default function AdminClientes() {
             <div style={{ padding: "20px" }}>
               <p><strong>Cédula:</strong> {selectedClient.cedula}</p>
               <p style={{ marginTop: "4px" }}><strong>Correo:</strong> {selectedClient.correo}</p>
-              <div style={{ marginTop: "16px", background: "#f8f7fc", padding: "14px", borderRadius: "10px" }}>
+              <div style={{ marginTop: "16px", background: "#101512", padding: "14px", borderRadius: "10px" }}>
                 <p style={{ fontWeight: "700" }}>Sorteos Participados:</p>
                 {historialLoading && <p style={{ marginTop: "8px", fontSize: "13px" }}>Cargando...</p>}
                 {!historialLoading && historial.length === 0 && (
-                  <p style={{ marginTop: "8px", fontSize: "13px", color: "#57536D" }}>Sin compras registradas.</p>
+                  <p style={{ marginTop: "8px", fontSize: "13px", color: "#A9B3AD" }}>Sin compras registradas.</p>
                 )}
-                <ul style={{ marginTop: "8px", fontSize: "13px", color: "#57536D", lineHeight: "1.6" }}>
+                <ul style={{ marginTop: "8px", fontSize: "13px", color: "#A9B3AD", lineHeight: "1.6" }}>
                   {historial.map((h) => (
                     <li key={h.id}>
                       • {h.sorteoNombre} - {h.boletos} boletos ({formatMoney(h.total)}) — {h.estado}

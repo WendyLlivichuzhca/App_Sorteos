@@ -155,14 +155,14 @@ export default function AdminCategorias() {
         </div>
 
         <div className={styles.tableCard} style={{ padding: "18px" }}>
-          <h3 style={{ fontSize: "13.5px", fontWeight: "800", color: "#17152b" }}>Crear Nueva Categoría</h3>
+          <h3 style={{ fontSize: "13.5px", fontWeight: "800", color: "#F2F5F3" }}>Crear Nueva Categoría</h3>
           <form onSubmit={handleAdd} style={{ marginTop: "14px", display: "flex", flexDirection: "column", gap: "12px" }}>
             <input
               type="text"
               placeholder="Nombre (Ej: Casas, Viajes)"
               value={newLabel}
               onChange={(e) => setNewLabel(e.target.value)}
-              style={{ padding: "8px 12px", borderRadius: "9px", border: "1.5px solid #ecebf3", fontSize: "12px" }}
+              style={{ padding: "8px 12px", borderRadius: "9px", border: "1.5px solid #26332C", background: "#101512", color: "#E4E8E5", fontSize: "12px" }}
             />
             <button type="submit" className={styles.createBtn} style={{ justifyContent: "center" }} disabled={agregando}>
               {agregando ? "Creando..." : "+ Crear Categoría"}

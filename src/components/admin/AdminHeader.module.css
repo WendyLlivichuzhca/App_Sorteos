@@ -1,7 +1,7 @@
 .header {
   height: 78px;
-  background: #ffffff;
-  border-bottom: 1.5px solid #ecebf3;
+  background: #101512;
+  border-bottom: 1.5px solid #26332C;
   padding: 0 22px;
   display: flex;
   align-items: center;
@@ -14,12 +14,12 @@
 .title {
   font-size: 17px;
   font-weight: 800;
-  color: #17152b;
+  color: #F2F5F3;
 }
 
 .subtitle {
   font-size: 11.5px;
-  color: #57536D;
+  color: #A9B3AD;
   margin-top: 1px;
 }
 
@@ -39,15 +39,16 @@
   left: 12px;
   top: 50%;
   transform: translateY(-50%);
-  color: #7A7690;
+  color: #7E897F;
 }
 
 .search input {
   width: 100%;
   padding: 7px 10px 7px 32px;
   border-radius: 18px;
-  border: 1.5px solid #ecebf3;
-  background: #f8f7fc;
+  border: 1.5px solid #26332C;
+  background: #0B0F0D;
+  color: #E4E8E5;
   font-size: 12px;
   outline: none;
   transition: border-color 0.15s ease;
@@ -55,7 +56,7 @@
 
 .search input:focus {
   border-color: #1F8A5A;
-  background: #ffffff;
+  background: #141B17;
 }
 
 .publicLink {
@@ -83,7 +84,7 @@
   align-items: center;
   gap: 8px;
   padding-left: 13px;
-  border-left: 1px solid #ecebf3;
+  border-left: 1px solid #26332C;
 }
 
 .avatar {
@@ -108,10 +109,10 @@
 .userInfo strong {
   font-size: 11.5px;
   font-weight: 700;
-  color: #17152b;
+  color: #F2F5F3;
 }
 
 .userInfo span {
   font-size: 9.5px;
-  color: #57536D;
+  color: #A9B3AD;
 }

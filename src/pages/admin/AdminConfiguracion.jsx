@@ -82,7 +82,7 @@ export default function AdminConfiguracion() {
   return (
     <AdminLayout title="Configuración General" subtitle="Configura métodos de pago, redes sociales, datos de la empresa y políticas">
       {saved && (
-        <div style={{ background: "#dcf5e3", color: "#16a34a", padding: "12px 18px", borderRadius: "10px", fontWeight: "700", marginBottom: "20px" }}>
+        <div style={{ background: "#10301F", color: "#4ADE80", padding: "12px 18px", borderRadius: "10px", fontWeight: "700", marginBottom: "20px" }}>
           ✅ Cambios guardados con éxito en la plataforma.
         </div>
       )}
@@ -100,7 +100,7 @@ export default function AdminConfiguracion() {
                     <img
                       src={config.logoUrl}
                       alt="Logo"
-                      style={{ width: "56px", height: "56px", objectFit: "contain", border: "1.5px solid #ecebf3", borderRadius: "10px", background: "#fff" }}
+                      style={{ width: "56px", height: "56px", objectFit: "contain", border: "1.5px solid #26332C", borderRadius: "10px", background: "#fff" }}
                     />
                     <button
                       type="button"
@@ -127,7 +127,7 @@ export default function AdminConfiguracion() {
                 }}
                 style={{ fontSize: "13px" }}
               />
-              <span style={{ fontSize: "11.5px", color: "#7A7690" }}>
+              <span style={{ fontSize: "11.5px", color: "#7E897F" }}>
                 Reemplaza el ícono que aparece junto al nombre de la empresa en todo el sitio. Si no subes uno, se usa el ícono por defecto.
               </span>
             </div>
@@ -199,12 +199,12 @@ export default function AdminConfiguracion() {
           {/* Métodos de Pago Activos */}
           <div className={styles.tableCard} style={{ padding: "24px" }}>
             <h3 style={{ fontSize: "13.5px", fontWeight: "800", marginBottom: "14px" }}>Métodos de Pago Aceptados</h3>
-            <p style={{ fontSize: "13px", color: "#57536D", marginBottom: "16px" }}>Activa o desactiva las pasarelas visibles para el cliente</p>
+            <p style={{ fontSize: "13px", color: "#A9B3AD", marginBottom: "16px" }}>Activa o desactiva las pasarelas visibles para el cliente</p>
 
             <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
               {metodosPagoNombres.map((m) => (
-                <label key={m.key} style={{ display: "flex", alignItems: "center", justifyContent: "space-between", background: "#f8f7fc", padding: "12px 16px", borderRadius: "10px", cursor: "pointer" }}>
-                  <span style={{ fontSize: "13.5px", fontWeight: "600", color: "#17152b" }}>{m.name}</span>
+                <label key={m.key} style={{ display: "flex", alignItems: "center", justifyContent: "space-between", background: "#101512", padding: "12px 16px", borderRadius: "10px", cursor: "pointer" }}>
+                  <span style={{ fontSize: "13.5px", fontWeight: "600", color: "#F2F5F3" }}>{m.name}</span>
                   <input
                     type="checkbox"
                     checked={Boolean(metodos[m.key])}
@@ -222,9 +222,9 @@ export default function AdminConfiguracion() {
                 placeholder="Ej: Banco Pichincha, Cuenta de Ahorros N° 1234567890, a nombre de Wendy Llivichuzhca, cédula 1234567890. Envía tu comprobante por WhatsApp al +593 99 999 9999."
                 value={config.instruccionesPago}
                 onChange={(e) => setConfig({ ...config, instruccionesPago: e.target.value })}
-                style={{ padding: "10px", borderRadius: "10px", border: "1.5px solid #ecebf3", fontSize: "13px", outline: "none" }}
+                style={{ padding: "10px", borderRadius: "10px", border: "1.5px solid #26332C", background: "#101512", color: "#E4E8E5", fontSize: "13px", outline: "none" }}
               />
-              <span style={{ fontSize: "11.5px", color: "#7A7690" }}>
+              <span style={{ fontSize: "11.5px", color: "#7E897F" }}>
                 Escribe aquí tu número de cuenta, WhatsApp, o cualquier dato que el cliente necesite para pagarte.
               </span>
             </div>
@@ -236,7 +236,7 @@ export default function AdminConfiguracion() {
                   <img
                     src={config.qrPago}
                     alt="QR de pago"
-                    style={{ width: "90px", height: "90px", objectFit: "contain", border: "1.5px solid #ecebf3", borderRadius: "8px", background: "#fff" }}
+                    style={{ width: "90px", height: "90px", objectFit: "contain", border: "1.5px solid #26332C", borderRadius: "8px", background: "#fff" }}
                   />
                   <button
                     type="button"
@@ -262,7 +262,7 @@ export default function AdminConfiguracion() {
                 }}
                 style={{ fontSize: "13px" }}
               />
-              <span style={{ fontSize: "11.5px", color: "#7A7690" }}>
+              <span style={{ fontSize: "11.5px", color: "#7E897F" }}>
                 Se muestra al cliente cuando elige pagar con QR en el checkout.
               </span>
             </div>
@@ -278,7 +278,7 @@ export default function AdminConfiguracion() {
                 rows="3"
                 value={config.politicas}
                 onChange={(e) => setConfig({ ...config, politicas: e.target.value })}
-                style={{ padding: "10px", borderRadius: "10px", border: "1.5px solid #ecebf3", fontSize: "13px", outline: "none" }}
+                style={{ padding: "10px", borderRadius: "10px", border: "1.5px solid #26332C", background: "#101512", color: "#E4E8E5", fontSize: "13px", outline: "none" }}
               />
             </div>
 
@@ -288,7 +288,7 @@ export default function AdminConfiguracion() {
                 rows="3"
                 value={config.faqTexto}
                 onChange={(e) => setConfig({ ...config, faqTexto: e.target.value })}
-                style={{ padding: "10px", borderRadius: "10px", border: "1.5px solid #ecebf3", fontSize: "13px", outline: "none" }}
+                style={{ padding: "10px", borderRadius: "10px", border: "1.5px solid #26332C", background: "#101512", color: "#E4E8E5", fontSize: "13px", outline: "none" }}
               />
             </div>
           </div>

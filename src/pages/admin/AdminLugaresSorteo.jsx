@@ -162,7 +162,7 @@ export default function AdminLugaresSorteo() {
                     )}
                   </td>
                   <td>{l.cliente_nombre || "—"}</td>
-                  <td>{l.boleto_numero ? <strong style={{ color: "#1F8A5A" }}>#{l.boleto_numero}</strong> : "—"}</td>
+                  <td>{l.boleto_numero ? <strong style={{ color: "#34D399" }}>#{l.boleto_numero}</strong> : "—"}</td>
                   <td>
                     {l.entregado ? (
                       <span className={`${styles.statusPill} ${styles.activo}`}>ENTREGADO</span>
@@ -201,8 +201,8 @@ export default function AdminLugaresSorteo() {
         </div>
 
         <div className={styles.tableCard} style={{ padding: "18px", alignSelf: "start" }}>
-          <h3 style={{ fontSize: "13.5px", fontWeight: "800", color: "#17152b" }}>Agregar un Lugar</h3>
-          <p style={{ fontSize: "11.5px", color: "#57536D", marginTop: "4px" }}>
+          <h3 style={{ fontSize: "13.5px", fontWeight: "800", color: "#F2F5F3" }}>Agregar un Lugar</h3>
+          <p style={{ fontSize: "11.5px", color: "#A9B3AD", marginTop: "4px" }}>
             Por ejemplo, si ya tienes el 1er lugar (el premio principal), agrega aquí el 2do lugar con su propio premio.
           </p>
           <form onSubmit={handleAgregar} style={{ marginTop: "14px", display: "flex", flexDirection: "column", gap: "12px" }}>

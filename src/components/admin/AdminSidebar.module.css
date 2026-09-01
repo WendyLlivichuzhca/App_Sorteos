@@ -3,11 +3,11 @@
   height: 100vh;
   position: sticky;
   top: 0;
-  background: #ffffff;
-  color: #17152b;
+  background: #101512;
+  color: #F2F5F3;
   display: flex;
   flex-direction: column;
-  border-right: 1.5px solid #ecebf3;
+  border-right: 1.5px solid #26332C;
   flex-shrink: 0;
   z-index: 50;
 }
@@ -19,7 +19,7 @@
   align-items: center;
   gap: 10px;
   padding: 0 16px;
-  border-bottom: 1.5px solid #ecebf3;
+  border-bottom: 1.5px solid #26332C;
 }
 
 .logoBadge {
@@ -52,17 +52,17 @@
   font-size: 12.5px;
   font-weight: 800;
   letter-spacing: 0.3px;
-  color: #17152b;
+  color: #F2F5F3;
 }
 
 .accent {
-  color: #1F8A5A;
+  color: #34D399;
 }
 
 .adminBadge {
   display: inline-block;
-  background: #E3F5EC;
-  color: #1F8A5A;
+  background: #15291E;
+  color: #34D399;
   font-size: 8.5px;
   font-weight: 800;
   padding: 2px 6px;
@@ -80,7 +80,7 @@
   flex-direction: column;
   gap: 18px;
   scrollbar-width: thin;
-  scrollbar-color: #ecebf3 transparent;
+  scrollbar-color: #26332C transparent;
 }
 
 .menu::-webkit-scrollbar {
@@ -92,7 +92,7 @@
 }
 
 .menu::-webkit-scrollbar-thumb {
-  background: #ecebf3;
+  background: #26332C;
   border-radius: 999px;
 }
 
@@ -105,7 +105,7 @@
 .groupTitle {
   font-size: 9px;
   font-weight: 800;
-  color: #7A7690;
+  color: #7E897F;
   letter-spacing: 1px;
   padding-left: 10px;
   margin-bottom: 2px;
@@ -123,7 +123,7 @@
   gap: 12px;
   padding: 8px 10px;
   border-radius: 12px;
-  color: #57536D;
+  color: #A9B3AD;
   font-size: 12px;
   font-weight: 600;
   text-decoration: none;
@@ -131,26 +131,26 @@
 }
 
 .item:hover {
-  background: #f8f7fc;
-  color: #17152b;
+  background: #16281E;
+  color: #F2F5F3;
 }
 
 .item:hover .itemIcon {
-  background: #E3F5EC;
-  color: #1F8A5A;
+  background: #15291E;
+  color: #34D399;
 }
 
 .itemActive {
-  background: #E3F5EC !important;
-  color: #1F8A5A !important;
+  background: #15291E !important;
+  color: #34D399 !important;
 }
 
 .itemIcon {
   width: 32px;
   height: 32px;
   border-radius: 10px;
-  background: #f4f3f8;
-  color: #7A7690;
+  background: #1B2420;
+  color: #7E897F;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -167,4 +167,3 @@
 .itemLabel {
   font-size: 12px;
 }
-

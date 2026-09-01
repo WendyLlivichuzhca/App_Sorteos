@@ -264,14 +264,14 @@ export default function AdminSorteos() {
 
               <div className={styles.formGroup}>
                 <label>Galería de Fotos del Sorteo (Subir varias imágenes)</label>
-                <div style={{ background: "#f8f7fc", padding: "16px", borderRadius: "12px", border: "1.5px dashed #1F8A5A" }}>
+                <div style={{ background: "#101512", padding: "16px", borderRadius: "12px", border: "1.5px dashed #1F8A5A" }}>
                   <div style={{ display: "flex", flexWrap: "wrap", gap: "10px", marginBottom: "12px" }}>
                     {formData.galeria.map((imgSrc, idx) => (
                       <div key={idx} style={{ position: "relative" }}>
                         <img
                           src={imgSrc}
                           alt={`Foto ${idx + 1}`}
-                          style={{ width: "70px", height: "70px", borderRadius: "8px", objectFit: "cover", border: "1px solid #ecebf3" }}
+                          style={{ width: "70px", height: "70px", borderRadius: "8px", objectFit: "cover", border: "1px solid #26332C" }}
                         />
                         <button
                           type="button"
@@ -283,7 +283,7 @@ export default function AdminSorteos() {
                       </div>
                     ))}
                     {formData.galeria.length === 0 && (
-                      <span style={{ fontSize: "12px", color: "#7A7690" }}>No has añadido fotos aún.</span>
+                      <span style={{ fontSize: "12px", color: "#7E897F" }}>No has añadido fotos aún.</span>
                     )}
                   </div>
 
@@ -306,7 +306,7 @@ export default function AdminSorteos() {
                     }}
                     style={{ fontSize: "13px" }}
                   />
-                  <span style={{ display: "block", fontSize: "11px", color: "#57536D", marginTop: "6px" }}>
+                  <span style={{ display: "block", fontSize: "11px", color: "#A9B3AD", marginTop: "6px" }}>
                     Puedes seleccionar <strong>múltiples fotos a la vez</strong> desde tu computadora (Vista frontal, lateral, interior, etc.).
                   </span>
                 </div>

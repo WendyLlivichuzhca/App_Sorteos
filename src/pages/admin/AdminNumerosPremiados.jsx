@@ -159,7 +159,7 @@ export default function AdminNumerosPremiados() {
               )}
               {list.map((p) => (
                 <tr key={p.id}>
-                  <td><strong style={{ color: "#1F8A5A" }}>#{p.numero}</strong></td>
+                  <td><strong style={{ color: "#34D399" }}>#{p.numero}</strong></td>
                   <td>
                     {editingId === p.id ? (
                       <input
@@ -211,7 +211,7 @@ export default function AdminNumerosPremiados() {
 
         <div style={{ display: "flex", flexDirection: "column", gap: "18px", alignSelf: "start" }}>
           <div className={styles.tableCard} style={{ padding: "18px" }}>
-            <h3 style={{ fontSize: "13.5px", fontWeight: "800", color: "#17152b" }}>Agregar Número Premiado</h3>
+            <h3 style={{ fontSize: "13.5px", fontWeight: "800", color: "#F2F5F3" }}>Agregar Número Premiado</h3>
             <form onSubmit={handleAgregar} style={{ marginTop: "14px", display: "flex", flexDirection: "column", gap: "12px" }}>
               <div className={styles.formGroup}>
                 <label>Número de boleto</label>
@@ -239,8 +239,8 @@ export default function AdminNumerosPremiados() {
           </div>
 
           <div className={styles.tableCard} style={{ padding: "18px" }}>
-            <h3 style={{ fontSize: "13.5px", fontWeight: "800", color: "#17152b" }}>🎲 Generar al Azar</h3>
-            <p style={{ fontSize: "11.5px", color: "#57536D", marginTop: "4px" }}>
+            <h3 style={{ fontSize: "13.5px", fontWeight: "800", color: "#F2F5F3" }}>🎲 Generar al Azar</h3>
+            <p style={{ fontSize: "11.5px", color: "#A9B3AD", marginTop: "4px" }}>
               Elige números reales de este sorteo al azar. Después ponle el premio a cada uno con el ✏️ de la tabla.
             </p>
             <form onSubmit={handleGenerarAzar} style={{ marginTop: "14px", display: "flex", flexDirection: "column", gap: "12px" }}>

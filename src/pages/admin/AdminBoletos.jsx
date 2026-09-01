@@ -91,15 +91,15 @@ export default function AdminBoletos() {
       </div>
 
       <div className={styles.tableCard}>
-        <div style={{ padding: "16px 18px", borderBottom: "1px solid #ecebf3", display: "flex", alignItems: "center", justifyContent: "space-between", gap: "14px", flexWrap: "wrap" }}>
+        <div style={{ padding: "16px 18px", borderBottom: "1px solid #26332C", display: "flex", alignItems: "center", justifyContent: "space-between", gap: "14px", flexWrap: "wrap" }}>
           <input
             type="text"
             placeholder="🔍 Buscar por # boleto o cliente..."
             value={filter}
             onChange={(e) => setFilter(e.target.value)}
-            style={{ flex: 1, minWidth: "220px", maxWidth: "400px", padding: "10px 14px", borderRadius: "10px", border: "1.5px solid #ecebf3", fontSize: "12px" }}
+            style={{ flex: 1, minWidth: "220px", maxWidth: "400px", padding: "10px 14px", borderRadius: "10px", border: "1.5px solid #26332C", background: "#101512", color: "#E4E8E5", fontSize: "12px" }}
           />
-          <label style={{ display: "flex", alignItems: "center", gap: "7px", fontSize: "12px", fontWeight: 600, color: "#57536D", cursor: "pointer", whiteSpace: "nowrap" }}>
+          <label style={{ display: "flex", alignItems: "center", gap: "7px", fontSize: "12px", fontWeight: 600, color: "#A9B3AD", cursor: "pointer", whiteSpace: "nowrap" }}>
             <input type="checkbox" checked={verDisponibles} onChange={(e) => setVerDisponibles(e.target.checked)} />
             Ver también los disponibles
           </label>
@@ -121,7 +121,7 @@ export default function AdminBoletos() {
             )}
             {paginados.map((b) => (
               <tr key={b.id}>
-                <td><strong style={{ color: "#1F8A5A" }}>#{b.numero}</strong></td>
+                <td><strong style={{ color: "#34D399" }}>#{b.numero}</strong></td>
                 <td><strong>{b.cliente_nombre || "Disponible"}</strong></td>
                 <td>{b.cliente_cedula || "-"}</td>
                 <td>
@@ -135,8 +135,8 @@ export default function AdminBoletos() {
         </table>
 
         {filtered.length > 0 && (
-          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "14px 18px", borderTop: "1.5px solid #ecebf3" }}>
-            <span style={{ fontSize: "11.5px", color: "#57536D" }}>
+          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "14px 18px", borderTop: "1.5px solid #26332C" }}>
+            <span style={{ fontSize: "11.5px", color: "#A9B3AD" }}>
               Mostrando {(paginaSegura - 1) * POR_PAGINA + 1}–{Math.min(paginaSegura * POR_PAGINA, filtered.length)} de {filtered.length}
             </span>
             <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
@@ -149,7 +149,7 @@ export default function AdminBoletos() {
               >
                 ← Anterior
               </button>
-              <span style={{ fontSize: "11.5px", fontWeight: 700, color: "#17152b" }}>
+              <span style={{ fontSize: "11.5px", fontWeight: 700, color: "#F2F5F3" }}>
                 Página {paginaSegura} de {totalPaginas}
               </span>
               <button
