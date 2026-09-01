@@ -126,7 +126,7 @@ export default function AdminCategorias() {
                         type="text"
                         value={editLabel}
                         onChange={(e) => setEditLabel(e.target.value)}
-                        style={{ padding: "6px 10px", borderRadius: "8px", border: "1.5px solid #6d3cf5", fontSize: "12px" }}
+                        style={{ padding: "6px 10px", borderRadius: "8px", border: "1.5px solid #1F8A5A", fontSize: "12px" }}
                       />
                     ) : (
                       <strong>{c.nombre}</strong>

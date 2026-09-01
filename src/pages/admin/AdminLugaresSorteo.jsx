@@ -155,14 +155,14 @@ export default function AdminLugaresSorteo() {
                         type="text"
                         value={editPremio}
                         onChange={(e) => setEditPremio(e.target.value)}
-                        style={{ padding: "6px 10px", borderRadius: "8px", border: "1.5px solid #6d3cf5", fontSize: "12px" }}
+                        style={{ padding: "6px 10px", borderRadius: "8px", border: "1.5px solid #1F8A5A", fontSize: "12px" }}
                       />
                     ) : (
                       <strong>{l.premio}</strong>
                     )}
                   </td>
                   <td>{l.cliente_nombre || "—"}</td>
-                  <td>{l.boleto_numero ? <strong style={{ color: "#6d3cf5" }}>#{l.boleto_numero}</strong> : "—"}</td>
+                  <td>{l.boleto_numero ? <strong style={{ color: "#1F8A5A" }}>#{l.boleto_numero}</strong> : "—"}</td>
                   <td>
                     {l.entregado ? (
                       <span className={`${styles.statusPill} ${styles.activo}`}>ENTREGADO</span>

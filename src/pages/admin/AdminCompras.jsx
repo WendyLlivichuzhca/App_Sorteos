@@ -107,7 +107,7 @@ export default function AdminCompras() {
             )}
             {paginados.map((c) => (
               <tr key={c.id}>
-                <td><strong style={{ color: "#6d3cf5" }}>{c.codigo}</strong></td>
+                <td><strong style={{ color: "#1F8A5A" }}>{c.codigo}</strong></td>
                 <td>{c.comprador}</td>
                 <td>{c.sorteoNombre}</td>
                 <td>{c.boletos} boletos</td>
@@ -206,7 +206,7 @@ export default function AdminCompras() {
                   href={selectedReceipt.comprobante_url}
                   target="_blank"
                   rel="noreferrer"
-                  style={{ display: "block", marginTop: "16px", padding: "16px", background: "#f8f7fc", borderRadius: "10px", textAlign: "center", border: "1px dashed #6d3cf5", color: "#6d3cf5", fontWeight: 600 }}
+                  style={{ display: "block", marginTop: "16px", padding: "16px", background: "#f8f7fc", borderRadius: "10px", textAlign: "center", border: "1px dashed #1F8A5A", color: "#1F8A5A", fontWeight: 600 }}
                 >
                   Ver comprobante subido ↗
                 </a>

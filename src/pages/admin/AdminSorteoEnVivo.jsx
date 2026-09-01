@@ -4,7 +4,7 @@ import Icon from "../../icons/Icon.jsx";
 import { getSorteos, getBoletosAdmin, getLugaresAdmin, sortearLugar } from "../../services/api.js";
 import styles from "./AdminSorteoEnVivo.module.css";
 
-const confettiColors = ["#ffffff", "#f5c518", "#22d3ee", "#a78bfa", "#4ade80"];
+const confettiColors = ["#ffffff", "#f5c518", "#22d3ee", "#5FBE8E", "#4ade80"];
 const NOMBRES_LUGAR = ["1er Lugar", "2do Lugar", "3er Lugar", "4to Lugar", "5to Lugar"];
 const nombreLugar = (orden) => NOMBRES_LUGAR[orden - 1] || `${orden}° Lugar`;
 

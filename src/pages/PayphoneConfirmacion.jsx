@@ -6,7 +6,7 @@ import { confirmarPagoPayphone } from "../services/api.js";
 import { formatMoney } from "../utils/format.js";
 import styles from "./CompraExitosa.module.css";
 
-const confettiColors = ["#6d3cf5", "#e63950", "#f5a623", "#16a34a", "#2f6df5"];
+const confettiColors = ["#1F8A5A", "#e63950", "#f5a623", "#16a34a", "#2f6df5"];
 
 // Página de retorno de PayPhone: no depende de AppContext porque el estado en
 // memoria del navegador se pierde al ir y volver de un dominio externo. Toda la

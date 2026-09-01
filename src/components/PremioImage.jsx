@@ -11,12 +11,12 @@ const iconByCategoria = {
 };
 
 const gradientByCategoria = {
-  autos: "linear-gradient(135deg, #2c1a5e, #6d3cf5)",
+  autos: "linear-gradient(135deg, #1A4A2E, #1F8A5A)",
   motos: "linear-gradient(135deg, #3d1740, #e63950)",
   tecnologia: "linear-gradient(135deg, #101a3d, #2f6df5)",
   ropa: "linear-gradient(135deg, #1f3d2e, #22a35a)",
   hogar: "linear-gradient(135deg, #3d2a10, #e08a1f)",
-  mas: "linear-gradient(135deg, #241a3d, #8a5cf5)",
+  mas: "linear-gradient(135deg, #4A3A1A, #C9A961)",
 };
 
 export default function PremioImage({ categoria, src, className = "", iconSize = 46 }) {

@@ -2,7 +2,7 @@
    HERO
 ══════════════════════════════════════════ */
 .hero {
-  background: linear-gradient(160deg, #12093a 0%, #160b3e 30%, #1d1050 65%, #251360 100%);
+  background: linear-gradient(160deg, #0A1F14 0%, #0D2A1B 30%, #123D26 65%, #164A2F 100%);
   padding: 56px 0 80px;
 }
 
@@ -13,9 +13,9 @@
 
 .heroTag {
   display: inline-block;
-  background: rgba(167, 139, 250, 0.18);
-  border: 1px solid rgba(167, 139, 250, 0.35);
-  color: #c4b5fd;
+  background: rgba(95, 190, 142, 0.18);
+  border: 1px solid rgba(95, 190, 142, 0.35);
+  color: #9AD9BB;
   font-size: 12px;
   font-weight: 700;
   letter-spacing: 0.3px;
@@ -68,14 +68,14 @@
   width: 40px;
   height: 40px;
   border-radius: 50%;
-  background: linear-gradient(135deg, #7848f5, #5424e0);
+  background: linear-gradient(135deg, #22A06A, #146B45);
   color: #ffffff;
   display: flex;
   align-items: center;
   justify-content: center;
   font-size: 15px;
   font-weight: 800;
-  box-shadow: 0 6px 18px rgba(109, 60, 245, 0.35);
+  box-shadow: 0 6px 18px rgba(31, 138, 90, 0.35);
   flex-shrink: 0;
 }
 
@@ -83,7 +83,7 @@
   width: 2px;
   flex: 1;
   min-height: 24px;
-  background: #e1def0;
+  background: #D3EBDD;
   margin: 4px 0;
 }
 
@@ -104,8 +104,8 @@
   width: 44px;
   height: 44px;
   border-radius: 13px;
-  background: #efe9fe;
-  color: #6d3cf5;
+  background: #E3F5EC;
+  color: #1F8A5A;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -150,7 +150,7 @@
   height: 42px;
   border-radius: 12px;
   background: #ffffff;
-  color: #6d3cf5;
+  color: #1F8A5A;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -177,7 +177,7 @@
   max-width: 720px;
   margin: 50px auto 0;
   text-align: center;
-  background: linear-gradient(135deg, #7848f5, #5424e0);
+  background: linear-gradient(135deg, #22A06A, #146B45);
   border-radius: 22px;
   padding: 40px 24px;
 }
@@ -200,7 +200,7 @@
   gap: 8px;
   margin-top: 20px;
   background: #ffffff;
-  color: #5424e0;
+  color: #146B45;
   border: none;
   border-radius: 50px;
   padding: 12px 26px;

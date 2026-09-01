@@ -5,7 +5,7 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  background: radial-gradient(circle at 50% 0%, #6d3cf5 0%, #2c1a5e 70%, #17102f 100%);
+  background: radial-gradient(circle at 50% 0%, #1F8A5A 0%, #1A4A2E 70%, #0F2818 100%);
   color: #ffffff;
   text-align: center;
   padding: 40px 24px;
@@ -62,7 +62,7 @@
   font-weight: 800;
   letter-spacing: 2px;
   text-transform: uppercase;
-  color: #c4b5fd;
+  color: #9AD9BB;
 }
 
 .sorteoNombre, .sorteoNombreLight {
@@ -170,7 +170,7 @@
 
 .botonSortear {
   background: #ffffff;
-  color: #5c2fe0;
+  color: #178A55;
   border: none;
   padding: 18px 44px;
   border-radius: 999px;
@@ -247,7 +247,7 @@
   font-weight: 900;
   line-height: 1;
   letter-spacing: 2px;
-  text-shadow: 0 8px 40px rgba(109, 60, 245, 0.6);
+  text-shadow: 0 8px 40px rgba(31, 138, 90, 0.6);
 }
 
 .ganadorNombre {
@@ -283,12 +283,12 @@
 
 .botonPanel {
   background: #ffffff;
-  color: #5c2fe0;
+  color: #178A55;
   border-color: transparent;
 }
 
 .botonPanel:hover {
-  background: #f3ecff;
+  background: #EAF8F0;
 }
 
 @media (max-width: 560px) {

@@ -46,7 +46,7 @@
 .contactCard:hover {
   transform: translateY(-2px);
   box-shadow: 0 10px 24px rgba(23, 21, 43, 0.08);
-  border-color: #6d3cf5;
+  border-color: #1F8A5A;
 }
 
 .whatsappCard {
@@ -68,8 +68,8 @@
   width: 48px;
   height: 48px;
   border-radius: 14px;
-  background: #efe9fe;
-  color: #6d3cf5;
+  background: #E3F5EC;
+  color: #1F8A5A;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -124,8 +124,8 @@
 }
 
 .faqOpen {
-  border-color: #6d3cf5;
-  box-shadow: 0 4px 16px rgba(109, 60, 245, 0.08);
+  border-color: #1F8A5A;
+  box-shadow: 0 4px 16px rgba(31, 138, 90, 0.08);
 }
 
 .faqQuestion {
@@ -146,7 +146,7 @@
 .faqToggle {
   font-size: 20px;
   font-weight: 800;
-  color: #6d3cf5;
+  color: #1F8A5A;
 }
 
 .faqAnswer {
@@ -205,7 +205,7 @@
 }
 
 .socialBtn:hover {
-  background: #6d3cf5;
+  background: #1F8A5A;
   color: #ffffff;
 }
 

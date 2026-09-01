@@ -129,7 +129,7 @@ export default function AdminPaquetes() {
                       max="90"
                       value={editPorcentaje}
                       onChange={(e) => setEditPorcentaje(parseInt(e.target.value, 10))}
-                      style={{ width: "70px", padding: "6px 10px", borderRadius: "6px", border: "1.5px solid #6d3cf5" }}
+                      style={{ width: "70px", padding: "6px 10px", borderRadius: "6px", border: "1.5px solid #1F8A5A" }}
                     />
                   ) : (
                     <span className={styles.categoryBadge}>{p.porcentaje}% OFF</span>

@@ -58,7 +58,7 @@
 }
 
 .field input:focus {
-  border-color: var(--color-primary, #6d3cf5);
+  border-color: var(--color-primary, #1F8A5A);
 }
 
 .error {

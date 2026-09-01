@@ -159,14 +159,14 @@ export default function AdminNumerosPremiados() {
               )}
               {list.map((p) => (
                 <tr key={p.id}>
-                  <td><strong style={{ color: "#6d3cf5" }}>#{p.numero}</strong></td>
+                  <td><strong style={{ color: "#1F8A5A" }}>#{p.numero}</strong></td>
                   <td>
                     {editingId === p.id ? (
                       <input
                         type="text"
                         value={editPremio}
                         onChange={(e) => setEditPremio(e.target.value)}
-                        style={{ padding: "6px 10px", borderRadius: "8px", border: "1.5px solid #6d3cf5", fontSize: "12px" }}
+                        style={{ padding: "6px 10px", borderRadius: "8px", border: "1.5px solid #1F8A5A", fontSize: "12px" }}
                       />
                     ) : (
                       p.premio

@@ -159,7 +159,7 @@ export default function AdminDashboard() {
                 <polyline
                   points={k.sparkline}
                   fill="none"
-                  stroke={k.color === "green" ? "#16a34a" : "#6d3cf5"}
+                  stroke={k.color === "green" ? "#16a34a" : "#1F8A5A"}
                   strokeWidth="2.5"
                   strokeLinecap="round"
                   strokeLinejoin="round"

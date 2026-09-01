@@ -121,7 +121,7 @@ export default function AdminBoletos() {
             )}
             {paginados.map((b) => (
               <tr key={b.id}>
-                <td><strong style={{ color: "#6d3cf5" }}>#{b.numero}</strong></td>
+                <td><strong style={{ color: "#1F8A5A" }}>#{b.numero}</strong></td>
                 <td><strong>{b.cliente_nombre || "Disponible"}</strong></td>
                 <td>{b.cliente_cedula || "-"}</td>
                 <td>

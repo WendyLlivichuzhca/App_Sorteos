@@ -21,7 +21,7 @@ export default function AdminConfiguracion() {
     facebook: "",
     instagram: "",
     tiktok: "",
-    colorTema: "#6d3cf5",
+    colorTema: "#1F8A5A",
     politicas: "",
     faqTexto: "",
     instruccionesPago: "",
@@ -167,7 +167,7 @@ export default function AdminConfiguracion() {
                     type="checkbox"
                     checked={Boolean(metodos[m.key])}
                     onChange={() => toggleMetodo(m.key)}
-                    style={{ width: "18px", height: "18px", accentColor: "#6d3cf5" }}
+                    style={{ width: "18px", height: "18px", accentColor: "#1F8A5A" }}
                   />
                 </label>
               ))}

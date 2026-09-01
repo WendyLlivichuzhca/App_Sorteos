@@ -21,7 +21,7 @@
   display: inline-flex;
   align-items: center;
   gap: 7px;
-  background: linear-gradient(135deg, #7848f5, #5424e0);
+  background: linear-gradient(135deg, #22A06A, #146B45);
   color: #ffffff;
   border: none;
   padding: 9px 18px;
@@ -29,7 +29,7 @@
   font-weight: 700;
   font-size: 11.5px;
   cursor: pointer;
-  box-shadow: 0 4px 14px rgba(109, 60, 245, 0.35);
+  box-shadow: 0 4px 14px rgba(31, 138, 90, 0.35);
   transition: transform 0.15s ease;
 }
 
@@ -65,7 +65,7 @@
   flex-shrink: 0;
 }
 
-.kpiIconWrap.purple { background: #efe9fe; color: #6d3cf5; }
+.kpiIconWrap.purple { background: #E3F5EC; color: #1F8A5A; }
 .kpiIconWrap.green { background: #dcf5e3; color: #16a34a; }
 .kpiIconWrap.blue { background: #e0ebff; color: #2f6df5; }
 .kpiIconWrap.orange { background: #fdecd2; color: #ea8a1f; }
@@ -133,7 +133,7 @@
 }
 
 .filterSelect:focus {
-  border-color: #6d3cf5;
+  border-color: #1F8A5A;
 }
 
 .nameCell {
@@ -177,7 +177,7 @@
 }
 
 .table tbody tr:hover {
-  background: #f3f0fd;
+  background: #EAF8F0;
 }
 
 .table td {
@@ -192,14 +192,14 @@
 }
 
 .categoryBadge {
-  background: #efe9fe;
-  color: #6d3cf5;
+  background: #E3F5EC;
+  color: #1F8A5A;
   font-size: 10px;
   font-weight: 700;
   padding: 4px 10px;
   border-radius: 999px;
   text-transform: capitalize;
-  border: 1px solid #e3d9fb;
+  border: 1px solid #D6F0E1;
 }
 
 .progressCell {
@@ -214,14 +214,14 @@
 .miniTrack {
   width: 100px;
   height: 6px;
-  background: #ede9fe;
+  background: #E3F5EC;
   border-radius: 999px;
   overflow: hidden;
 }
 
 .miniFill {
   height: 100%;
-  background: linear-gradient(90deg, #9065f8, #6d3cf5);
+  background: linear-gradient(90deg, #2E9E68, #1F8A5A);
   border-radius: 999px;
 }
 
@@ -267,10 +267,10 @@
 }
 
 .iconBtn:hover {
-  background: #efe9fe;
-  border-color: #d9c9fc;
+  background: #E3F5EC;
+  border-color: #C3EAD3;
   transform: translateY(-1px);
-  box-shadow: 0 3px 8px rgba(109, 60, 245, 0.15);
+  box-shadow: 0 3px 8px rgba(31, 138, 90, 0.15);
 }
 
 /* Modal Overlay */
@@ -351,7 +351,7 @@
 }
 
 .formGroup input:focus, .formGroup select:focus {
-  border-color: #6d3cf5;
+  border-color: #1F8A5A;
 }
 
 .formRow {
@@ -382,7 +382,7 @@
 }
 
 .saveBtn {
-  background: #6d3cf5;
+  background: #1F8A5A;
   color: #ffffff;
   border: none;
   padding: 8px 17px;

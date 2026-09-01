@@ -8,7 +8,7 @@ import { getConfiguracion } from "../services/api.js";
 import { formatDate, formatMoney } from "../utils/format.js";
 import styles from "./CompraExitosa.module.css";
 
-const confettiColors = ["#6d3cf5", "#e63950", "#f5a623", "#16a34a", "#2f6df5"];
+const confettiColors = ["#1F8A5A", "#e63950", "#f5a623", "#16a34a", "#2f6df5"];
 
 export default function CompraExitosa() {
   const navigate = useNavigate();
@@ -154,7 +154,7 @@ Comprador: ${ultimaCompra.comprador.nombre}
               </p>
 
               {/* Carga de Comprobante en la Pantalla de Éxito */}
-              <div style={{ background: "#ffffff", border: "1px dashed #6d3cf5", borderRadius: "6px", padding: "14px", marginTop: "10px" }}>
+              <div style={{ background: "#ffffff", border: "1px dashed #1F8A5A", borderRadius: "6px", padding: "14px", marginTop: "10px" }}>
                 <strong style={{ display: "block", fontSize: "13px", color: "#1e293b", marginBottom: "6px" }}>
                   📤 Adjunta aquí tu comprobante de pago:
                 </strong>
@@ -205,7 +205,7 @@ Comprador: ${ultimaCompra.comprador.nombre}
                 Por favor, realiza el pago por el total e indica tu código de orden <strong>{ultimaCompra.codigo}</strong>.
               </p>
 
-              <div style={{ background: "#ffffff", border: "1px dashed #6d3cf5", borderRadius: "6px", padding: "14px", marginTop: "10px" }}>
+              <div style={{ background: "#ffffff", border: "1px dashed #1F8A5A", borderRadius: "6px", padding: "14px", marginTop: "10px" }}>
                 <strong style={{ display: "block", fontSize: "13px", color: "#1e293b", marginBottom: "6px" }}>
                   📤 Adjunta aquí tu comprobante de pago:
                 </strong>

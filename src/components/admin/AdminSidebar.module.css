@@ -26,12 +26,12 @@
   width: 34px;
   height: 34px;
   border-radius: 10px;
-  background: linear-gradient(135deg, #7848f5, #5424e0);
+  background: linear-gradient(135deg, #22A06A, #146B45);
   color: #ffffff;
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 4px 14px rgba(109, 60, 245, 0.35);
+  box-shadow: 0 4px 14px rgba(31, 138, 90, 0.35);
   flex-shrink: 0;
   overflow: hidden;
 }
@@ -56,13 +56,13 @@
 }
 
 .accent {
-  color: #6d3cf5;
+  color: #1F8A5A;
 }
 
 .adminBadge {
   display: inline-block;
-  background: #efe9fe;
-  color: #6d3cf5;
+  background: #E3F5EC;
+  color: #1F8A5A;
   font-size: 8.5px;
   font-weight: 800;
   padding: 2px 6px;
@@ -136,13 +136,13 @@
 }
 
 .item:hover .itemIcon {
-  background: #efe9fe;
-  color: #6d3cf5;
+  background: #E3F5EC;
+  color: #1F8A5A;
 }
 
 .itemActive {
-  background: #efe9fe !important;
-  color: #6d3cf5 !important;
+  background: #E3F5EC !important;
+  color: #1F8A5A !important;
 }
 
 .itemIcon {
@@ -159,9 +159,9 @@
 }
 
 .itemActive .itemIcon {
-  background: linear-gradient(135deg, #7848f5, #5424e0);
+  background: linear-gradient(135deg, #22A06A, #146B45);
   color: #ffffff;
-  box-shadow: 0 3px 10px rgba(109, 60, 245, 0.35);
+  box-shadow: 0 3px 10px rgba(31, 138, 90, 0.35);
 }
 
 .itemLabel {

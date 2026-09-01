@@ -6,11 +6,11 @@
   --color-text-muted: #6b6880;
   --color-text-soft: #9795a8;
 
-  --color-primary: #6d3cf5;
-  --color-primary-dark: #5424e0;
-  --color-primary-darker: #1a0f3d;
-  --color-primary-light: #efe9fe;
-  --color-primary-soft: #f2effe;
+  --color-primary: #1F8A5A;
+  --color-primary-dark: #146B45;
+  --color-primary-darker: #0A1F14;
+  --color-primary-light: #E3F5EC;
+  --color-primary-soft: #E9F7F0;
 
   --color-accent-red: #e63950;
 
@@ -19,9 +19,9 @@
   --color-warning: #ea8a1f;
   --color-warning-bg: #fdecd2;
 
-  --color-hero-from: #150a33;
-  --color-hero-via: #23124f;
-  --color-hero-to: #341a6b;
+  --color-hero-from: #0A1F14;
+  --color-hero-via: #123D26;
+  --color-hero-to: #1B5A38;
 
   --radius-sm: 8px;
   --radius-md: 14px;
@@ -117,11 +117,11 @@ h1, h2, h3, p {
 .btn-primary {
   background: linear-gradient(135deg, var(--color-primary), var(--color-primary-dark));
   color: #fff;
-  box-shadow: 0 8px 20px rgba(109, 60, 245, 0.28);
+  box-shadow: 0 8px 20px rgba(31, 138, 90, 0.28);
 }
 
 .btn-primary:hover {
-  box-shadow: 0 10px 26px rgba(109, 60, 245, 0.38);
+  box-shadow: 0 10px 26px rgba(31, 138, 90, 0.38);
 }
 
 .btn-primary:disabled {

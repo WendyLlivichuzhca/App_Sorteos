@@ -264,7 +264,7 @@ export default function AdminSorteos() {
 
               <div className={styles.formGroup}>
                 <label>Galería de Fotos del Sorteo (Subir varias imágenes)</label>
-                <div style={{ background: "#f8f7fc", padding: "16px", borderRadius: "12px", border: "1.5px dashed #6d3cf5" }}>
+                <div style={{ background: "#f8f7fc", padding: "16px", borderRadius: "12px", border: "1.5px dashed #1F8A5A" }}>
                   <div style={{ display: "flex", flexWrap: "wrap", gap: "10px", marginBottom: "12px" }}>
                     {formData.galeria.map((imgSrc, idx) => (
                       <div key={idx} style={{ position: "relative" }}>
