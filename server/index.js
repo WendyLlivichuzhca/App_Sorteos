@@ -729,9 +729,19 @@ app.get('/api/compras/buscar', async (req, res) => {
     const { cedula } = req.query;
     if (!cedula) return res.status(400).json({ error: 'Proporcione un número de cédula' });
 
-    const [compras] = await pool.query('SELECT * FROM compras WHERE cliente_cedula = ? ORDER BY id DESC', [cedula]);
+    // Este endpoint es publico y no exige que quien consulta sea dueño de la
+    // cedula, asi que solo se devuelve lo minimo necesario para "ver mis
+    // boletos" -- nunca el correo, celular ni el link del comprobante de otra
+    // persona, aunque alguien adivine o conozca su cedula.
+    const [compras] = await pool.query(
+      `SELECT id, codigo, sorteo_nombre, cantidad_boletos, total_pagado, estado, boletos_asignados
+       FROM compras WHERE cliente_cedula = ? ORDER BY id DESC`,
+      [cedula]
+    );
     const parsed = compras.map((c) => ({
-      ...c,
+      id: c.id,
+      codigo: c.codigo,
+      estado: c.estado,
       sorteoNombre: c.sorteo_nombre,
       totalPagado: parseFloat(c.total_pagado),
       cantidadBoletos: c.cantidad_boletos,
