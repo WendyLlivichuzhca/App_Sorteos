@@ -162,7 +162,7 @@ export default function AdminCompras() {
 
         {listaFiltrada.length > 0 && (
           <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "14px 18px", borderTop: "1.5px solid #ecebf3" }}>
-            <span style={{ fontSize: "11.5px", color: "#6b6880" }}>
+            <span style={{ fontSize: "11.5px", color: "#57536D" }}>
               Mostrando {(paginaSegura - 1) * POR_PAGINA + 1}–{Math.min(paginaSegura * POR_PAGINA, listaFiltrada.length)} de {listaFiltrada.length}
             </span>
             <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
@@ -216,7 +216,7 @@ export default function AdminCompras() {
                   Ver comprobante subido ↗
                 </a>
               ) : (
-                <div style={{ marginTop: "16px", padding: "16px", background: "#f8f7fc", borderRadius: "10px", textAlign: "center", border: "1px dashed #ecebf3", color: "#9795a8" }}>
+                <div style={{ marginTop: "16px", padding: "16px", background: "#f8f7fc", borderRadius: "10px", textAlign: "center", border: "1px dashed #ecebf3", color: "#7A7690" }}>
                   El cliente no subió comprobante
                 </div>
               )}

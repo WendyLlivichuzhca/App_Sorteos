@@ -127,7 +127,7 @@ export default function AdminConfiguracion() {
                 }}
                 style={{ fontSize: "13px" }}
               />
-              <span style={{ fontSize: "11.5px", color: "#9795a8" }}>
+              <span style={{ fontSize: "11.5px", color: "#7A7690" }}>
                 Reemplaza el ícono que aparece junto al nombre de la empresa en todo el sitio. Si no subes uno, se usa el ícono por defecto.
               </span>
             </div>
@@ -199,7 +199,7 @@ export default function AdminConfiguracion() {
           {/* Métodos de Pago Activos */}
           <div className={styles.tableCard} style={{ padding: "24px" }}>
             <h3 style={{ fontSize: "13.5px", fontWeight: "800", marginBottom: "14px" }}>Métodos de Pago Aceptados</h3>
-            <p style={{ fontSize: "13px", color: "#6b6880", marginBottom: "16px" }}>Activa o desactiva las pasarelas visibles para el cliente</p>
+            <p style={{ fontSize: "13px", color: "#57536D", marginBottom: "16px" }}>Activa o desactiva las pasarelas visibles para el cliente</p>
 
             <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
               {metodosPagoNombres.map((m) => (
@@ -224,7 +224,7 @@ export default function AdminConfiguracion() {
                 onChange={(e) => setConfig({ ...config, instruccionesPago: e.target.value })}
                 style={{ padding: "10px", borderRadius: "10px", border: "1.5px solid #ecebf3", fontSize: "13px", outline: "none" }}
               />
-              <span style={{ fontSize: "11.5px", color: "#9795a8" }}>
+              <span style={{ fontSize: "11.5px", color: "#7A7690" }}>
                 Escribe aquí tu número de cuenta, WhatsApp, o cualquier dato que el cliente necesite para pagarte.
               </span>
             </div>
@@ -262,7 +262,7 @@ export default function AdminConfiguracion() {
                 }}
                 style={{ fontSize: "13px" }}
               />
-              <span style={{ fontSize: "11.5px", color: "#9795a8" }}>
+              <span style={{ fontSize: "11.5px", color: "#7A7690" }}>
                 Se muestra al cliente cuando elige pagar con QR en el checkout.
               </span>
             </div>

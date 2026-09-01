@@ -99,7 +99,7 @@ export default function AdminBoletos() {
             onChange={(e) => setFilter(e.target.value)}
             style={{ flex: 1, minWidth: "220px", maxWidth: "400px", padding: "10px 14px", borderRadius: "10px", border: "1.5px solid #ecebf3", fontSize: "12px" }}
           />
-          <label style={{ display: "flex", alignItems: "center", gap: "7px", fontSize: "12px", fontWeight: 600, color: "#6b6880", cursor: "pointer", whiteSpace: "nowrap" }}>
+          <label style={{ display: "flex", alignItems: "center", gap: "7px", fontSize: "12px", fontWeight: 600, color: "#57536D", cursor: "pointer", whiteSpace: "nowrap" }}>
             <input type="checkbox" checked={verDisponibles} onChange={(e) => setVerDisponibles(e.target.checked)} />
             Ver también los disponibles
           </label>
@@ -136,7 +136,7 @@ export default function AdminBoletos() {
 
         {filtered.length > 0 && (
           <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "14px 18px", borderTop: "1.5px solid #ecebf3" }}>
-            <span style={{ fontSize: "11.5px", color: "#6b6880" }}>
+            <span style={{ fontSize: "11.5px", color: "#57536D" }}>
               Mostrando {(paginaSegura - 1) * POR_PAGINA + 1}–{Math.min(paginaSegura * POR_PAGINA, filtered.length)} de {filtered.length}
             </span>
             <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>

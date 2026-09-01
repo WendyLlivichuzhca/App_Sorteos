@@ -202,7 +202,7 @@ export default function AdminLugaresSorteo() {
 
         <div className={styles.tableCard} style={{ padding: "18px", alignSelf: "start" }}>
           <h3 style={{ fontSize: "13.5px", fontWeight: "800", color: "#17152b" }}>Agregar un Lugar</h3>
-          <p style={{ fontSize: "11.5px", color: "#6b6880", marginTop: "4px" }}>
+          <p style={{ fontSize: "11.5px", color: "#57536D", marginTop: "4px" }}>
             Por ejemplo, si ya tienes el 1er lugar (el premio principal), agrega aquí el 2do lugar con su propio premio.
           </p>
           <form onSubmit={handleAgregar} style={{ marginTop: "14px", display: "flex", flexDirection: "column", gap: "12px" }}>

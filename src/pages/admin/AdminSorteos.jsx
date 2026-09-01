@@ -283,7 +283,7 @@ export default function AdminSorteos() {
                       </div>
                     ))}
                     {formData.galeria.length === 0 && (
-                      <span style={{ fontSize: "12px", color: "#9795a8" }}>No has añadido fotos aún.</span>
+                      <span style={{ fontSize: "12px", color: "#7A7690" }}>No has añadido fotos aún.</span>
                     )}
                   </div>
 
@@ -306,7 +306,7 @@ export default function AdminSorteos() {
                     }}
                     style={{ fontSize: "13px" }}
                   />
-                  <span style={{ display: "block", fontSize: "11px", color: "#6b6880", marginTop: "6px" }}>
+                  <span style={{ display: "block", fontSize: "11px", color: "#57536D", marginTop: "6px" }}>
                     Puedes seleccionar <strong>múltiples fotos a la vez</strong> desde tu computadora (Vista frontal, lateral, interior, etc.).
                   </span>
                 </div>

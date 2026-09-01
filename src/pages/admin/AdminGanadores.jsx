@@ -87,10 +87,10 @@ export default function AdminGanadores() {
           🎉 Ir a Sorteo en Vivo
         </Link>
         {sorteoActual?.estado === "finalizado" && (
-          <span style={{ fontSize: "13px", color: "#9795a8" }}>Este sorteo ya tiene ganador.</span>
+          <span style={{ fontSize: "13px", color: "#7A7690" }}>Este sorteo ya tiene ganador.</span>
         )}
         {sorteoActual && sorteoActual.estado !== "finalizado" && !sorteoActual.vendidos && (
-          <span style={{ fontSize: "13px", color: "#9795a8" }}>Este sorteo todavía no tiene boletos vendidos.</span>
+          <span style={{ fontSize: "13px", color: "#7A7690" }}>Este sorteo todavía no tiene boletos vendidos.</span>
         )}
         </div>
       </div>

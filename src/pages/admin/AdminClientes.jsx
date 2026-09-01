@@ -147,7 +147,7 @@ export default function AdminClientes() {
 
         {filtered.length > 0 && (
           <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "14px 18px", borderTop: "1.5px solid #ecebf3" }}>
-            <span style={{ fontSize: "11.5px", color: "#6b6880" }}>
+            <span style={{ fontSize: "11.5px", color: "#57536D" }}>
               Mostrando {(paginaSegura - 1) * POR_PAGINA + 1}–{Math.min(paginaSegura * POR_PAGINA, filtered.length)} de {filtered.length}
             </span>
             <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
@@ -191,9 +191,9 @@ export default function AdminClientes() {
                 <p style={{ fontWeight: "700" }}>Sorteos Participados:</p>
                 {historialLoading && <p style={{ marginTop: "8px", fontSize: "13px" }}>Cargando...</p>}
                 {!historialLoading && historial.length === 0 && (
-                  <p style={{ marginTop: "8px", fontSize: "13px", color: "#6b6880" }}>Sin compras registradas.</p>
+                  <p style={{ marginTop: "8px", fontSize: "13px", color: "#57536D" }}>Sin compras registradas.</p>
                 )}
-                <ul style={{ marginTop: "8px", fontSize: "13px", color: "#6b6880", lineHeight: "1.6" }}>
+                <ul style={{ marginTop: "8px", fontSize: "13px", color: "#57536D", lineHeight: "1.6" }}>
                   {historial.map((h) => (
                     <li key={h.id}>
                       • {h.sorteoNombre} - {h.boletos} boletos ({formatMoney(h.total)}) — {h.estado}

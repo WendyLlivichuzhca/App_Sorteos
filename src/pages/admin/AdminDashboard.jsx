@@ -287,7 +287,7 @@ export default function AdminDashboard() {
           </div>
 
           <div className={styles.topList}>
-            {stats.topSorteos.length === 0 && <p style={{ fontSize: "13px", color: "#6b6880" }}>Todavía no hay sorteos.</p>}
+            {stats.topSorteos.length === 0 && <p style={{ fontSize: "13px", color: "#57536D" }}>Todavía no hay sorteos.</p>}
             {stats.topSorteos.map((s) => (
               <div key={s.nombre} className={styles.topItem}>
                 <div className={styles.topItemHead}>

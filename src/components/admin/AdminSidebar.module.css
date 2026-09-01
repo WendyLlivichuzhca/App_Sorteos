@@ -105,7 +105,7 @@
 .groupTitle {
   font-size: 9px;
   font-weight: 800;
-  color: #9795a8;
+  color: #7A7690;
   letter-spacing: 1px;
   padding-left: 10px;
   margin-bottom: 2px;
@@ -123,7 +123,7 @@
   gap: 12px;
   padding: 8px 10px;
   border-radius: 12px;
-  color: #6b6880;
+  color: #57536D;
   font-size: 12px;
   font-weight: 600;
   text-decoration: none;
@@ -150,7 +150,7 @@
   height: 32px;
   border-radius: 10px;
   background: #f4f3f8;
-  color: #9795a8;
+  color: #7A7690;
   display: flex;
   align-items: center;
   justify-content: center;
