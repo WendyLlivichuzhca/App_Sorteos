@@ -11,14 +11,14 @@
 .header h1 {
   font-size: 32px;
   font-weight: 800;
-  color: #17152b;
+  color: #F2F5F3;
   letter-spacing: -0.5px;
 }
 
 .subtitle {
   margin-top: 10px;
   font-size: 15px;
-  color: #57536D;
+  color: #A9B3AD;
   line-height: 1.6;
 }
 
@@ -26,25 +26,25 @@
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 20px;
-  background: #ffffff;
-  border: 1.5px solid #ecebf3;
+  background: #141B17;
+  border: 1.5px solid #26332C;
   border-radius: 16px;
   padding: 24px;
   margin-top: 32px;
   text-align: center;
-  box-shadow: 0 4px 20px rgba(23, 21, 43, 0.04);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
 }
 
 .stat strong {
   display: block;
   font-size: 24px;
   font-weight: 800;
-  color: #1F8A5A;
+  color: #34D399;
 }
 
 .stat span {
   font-size: 13px;
-  color: #57536D;
+  color: #A9B3AD;
   font-weight: 600;
   margin-top: 2px;
 }
@@ -53,7 +53,7 @@
   margin-top: 40px;
   font-size: 22px;
   font-weight: 800;
-  color: #17152b;
+  color: #F2F5F3;
 }
 
 .grid {
@@ -64,23 +64,23 @@
 }
 
 .card {
-  background: #ffffff;
-  border: 1.5px solid #ecebf3;
+  background: #141B17;
+  border: 1.5px solid #26332C;
   border-radius: 16px;
   overflow: hidden;
-  box-shadow: 0 4px 16px rgba(23, 21, 43, 0.04);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25);
   transition: transform 0.18s ease, box-shadow 0.18s ease;
 }
 
 .card:hover {
   transform: translateY(-3px);
-  box-shadow: 0 10px 30px rgba(23, 21, 43, 0.10);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
 }
 
 .imgWrap {
   position: relative;
   height: 190px;
-  background: #f8f7fc;
+  background: #101512;
 }
 
 .img {
@@ -115,20 +115,20 @@
 .category {
   font-size: 11px;
   font-weight: 800;
-  color: #1F8A5A;
+  color: #34D399;
   letter-spacing: 0.8px;
 }
 
 .body h3 {
   font-size: 17px;
   font-weight: 800;
-  color: #17152b;
+  color: #F2F5F3;
   margin-top: -4px;
 }
 
 .sorteoOrigen {
   font-size: 12px;
-  color: #57536D;
+  color: #A9B3AD;
   margin-top: -8px;
 }
 
@@ -136,7 +136,7 @@
   display: flex;
   align-items: center;
   gap: 12px;
-  background: #f8f7fc;
+  background: #101512;
   padding: 10px 14px;
   border-radius: 12px;
 }
@@ -145,8 +145,8 @@
   width: 36px;
   height: 36px;
   border-radius: 50%;
-  background: #E3F5EC;
-  color: #1F8A5A;
+  background: #15291E;
+  color: #34D399;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -157,20 +157,20 @@
   display: block;
   font-size: 14px;
   font-weight: 700;
-  color: #17152b;
+  color: #F2F5F3;
 }
 
 .winnnerCity {
   font-size: 12px;
-  color: #57536D;
+  color: #A9B3AD;
 }
 
 .ticketBox {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  border: 1.5px dashed #A8E0BF;
-  background: #F0FAF4;
+  border: 1.5px dashed #1F8A5A;
+  background: #10301F;
   padding: 10px 14px;
   border-radius: 12px;
 }
@@ -178,7 +178,7 @@
 .ticketLabel {
   font-size: 12.5px;
   font-weight: 600;
-  color: #57536D;
+  color: #A9B3AD;
 }
 
 .ticketBadge {
@@ -196,7 +196,7 @@
   align-items: center;
   gap: 6px;
   font-size: 12px;
-  color: #7A7690;
+  color: #7E897F;
   margin-top: 2px;
 }
 

@@ -89,23 +89,23 @@
 
 .pasoCard {
   flex: 1;
-  background: #ffffff;
-  border: 1.5px solid #ecebf3;
+  background: #141B17;
+  border: 1.5px solid #26332C;
   border-radius: 16px;
   padding: 20px 22px;
   margin-bottom: 20px;
   display: flex;
   gap: 16px;
   align-items: flex-start;
-  box-shadow: 0 4px 16px rgba(23, 21, 43, 0.05);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25);
 }
 
 .pasoIcon {
   width: 44px;
   height: 44px;
   border-radius: 13px;
-  background: #E3F5EC;
-  color: #1F8A5A;
+  background: #15291E;
+  color: #34D399;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -115,13 +115,13 @@
 .pasoCard h3 {
   font-size: 16px;
   font-weight: 700;
-  color: #17152b;
+  color: #F2F5F3;
 }
 
 .pasoCard p {
   margin-top: 5px;
   font-size: 13.5px;
-  color: #57536D;
+  color: #A9B3AD;
   line-height: 1.6;
 }
 
@@ -137,7 +137,8 @@
 }
 
 .confianzaCard {
-  background: #f8f7fc;
+  background: #141B17;
+  border: 1px solid #26332C;
   border-radius: 16px;
   padding: 20px;
   display: flex;
@@ -149,8 +150,8 @@
   width: 42px;
   height: 42px;
   border-radius: 12px;
-  background: #ffffff;
-  color: #1F8A5A;
+  background: #101512;
+  color: #34D399;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -160,13 +161,13 @@
 .confianzaCard h3 {
   font-size: 14px;
   font-weight: 700;
-  color: #17152b;
+  color: #F2F5F3;
 }
 
 .confianzaCard p {
   margin-top: 3px;
   font-size: 12.5px;
-  color: #57536D;
+  color: #A9B3AD;
   line-height: 1.4;
 }
 

@@ -11,14 +11,14 @@
 .header h1 {
   font-size: 32px;
   font-weight: 800;
-  color: #17152b;
+  color: #F2F5F3;
   letter-spacing: -0.5px;
 }
 
 .subtitle {
   margin-top: 10px;
   font-size: 15px;
-  color: #57536D;
+  color: #A9B3AD;
   line-height: 1.6;
 }
 
@@ -30,22 +30,22 @@
 }
 
 .contactCard {
-  background: #ffffff;
-  border: 1.5px solid #ecebf3;
+  background: #141B17;
+  border: 1.5px solid #26332C;
   border-radius: 16px;
   padding: 22px;
   display: flex;
   align-items: center;
   gap: 16px;
   text-decoration: none;
-  color: #17152b;
-  box-shadow: 0 4px 16px rgba(23, 21, 43, 0.04);
+  color: #F2F5F3;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25);
   transition: transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease;
 }
 
 .contactCard:hover {
   transform: translateY(-2px);
-  box-shadow: 0 10px 24px rgba(23, 21, 43, 0.08);
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.4);
   border-color: #1F8A5A;
 }
 
@@ -68,8 +68,8 @@
   width: 48px;
   height: 48px;
   border-radius: 14px;
-  background: #E3F5EC;
-  color: #1F8A5A;
+  background: #15291E;
+  color: #34D399;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -83,7 +83,7 @@
 
 .contactCard p {
   font-size: 13px;
-  color: #57536D;
+  color: #A9B3AD;
   margin-top: 2px;
 }
 
@@ -104,7 +104,7 @@
 .faqSection h2 {
   font-size: 24px;
   font-weight: 800;
-  color: #17152b;
+  color: #F2F5F3;
   text-align: center;
 }
 
@@ -116,8 +116,8 @@
 }
 
 .faqItem {
-  background: #ffffff;
-  border: 1.5px solid #ecebf3;
+  background: #141B17;
+  border: 1.5px solid #26332C;
   border-radius: 14px;
   overflow: hidden;
   transition: border-color 0.15s ease, box-shadow 0.15s ease;
@@ -125,7 +125,7 @@
 
 .faqOpen {
   border-color: #1F8A5A;
-  box-shadow: 0 4px 16px rgba(31, 138, 90, 0.08);
+  box-shadow: 0 4px 16px rgba(31, 138, 90, 0.18);
 }
 
 .faqQuestion {
@@ -138,7 +138,7 @@
   border: none;
   font-size: 15.5px;
   font-weight: 700;
-  color: #17152b;
+  color: #F2F5F3;
   text-align: left;
   cursor: pointer;
 }
@@ -146,15 +146,15 @@
 .faqToggle {
   font-size: 20px;
   font-weight: 800;
-  color: #1F8A5A;
+  color: #34D399;
 }
 
 .faqAnswer {
   padding: 0 22px 20px;
   font-size: 14px;
-  color: #57536D;
+  color: #A9B3AD;
   line-height: 1.6;
-  border-top: 1px solid #f3f2f8;
+  border-top: 1px solid #1F2823;
 }
 
 .faqAnswer p {
@@ -164,8 +164,8 @@
 .socialSection {
   margin-top: 60px;
   text-align: center;
-  background: #ffffff;
-  border: 1.5px solid #ecebf3;
+  background: #141B17;
+  border: 1.5px solid #26332C;
   border-radius: 20px;
   padding: 36px 24px;
 }
@@ -173,12 +173,12 @@
 .socialSection h2 {
   font-size: 22px;
   font-weight: 800;
-  color: #17152b;
+  color: #F2F5F3;
 }
 
 .socialSection p {
   font-size: 14px;
-  color: #57536D;
+  color: #A9B3AD;
   margin-top: 6px;
 }
 
@@ -196,8 +196,8 @@
   justify-content: center;
   padding: 10px 24px;
   border-radius: 12px;
-  background: #f3f2f8;
-  color: #17152b;
+  background: #1B2420;
+  color: #E4E8E5;
   font-weight: 700;
   font-size: 14px;
   text-decoration: none;

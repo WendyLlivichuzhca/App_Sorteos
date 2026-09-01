@@ -66,21 +66,21 @@ export default function ConsultarBoletos() {
               ) : (
                 <div className={styles.listaCompras}>
                   {compras.map((c) => (
-                    <div key={c.id} className={styles.compraCard} style={{ background: "#fff", padding: "16px", borderRadius: "12px", border: "1px solid #e0e0e0", marginBottom: "12px" }}>
-                      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "8px" }}>
-                        <span style={{ fontWeight: "700", color: "#1F8A5A" }}>{c.codigo}</span>
+                    <div key={c.id} className={styles.compraCard}>
+                      <div className={styles.compraHeader}>
+                        <span className={styles.compraCodigo}>{c.codigo}</span>
                         <Badge variant={c.estado === "aprobado" ? "activo" : c.estado === "pendiente" ? "proximamente" : "agotado"}>
                           {c.estado === "aprobado" ? "Aprobado / Boletos Activos" : c.estado === "pendiente" ? "Pendiente de Verificación" : "Rechazado"}
                         </Badge>
                       </div>
-                      <h4 style={{ margin: "4px 0", fontSize: "16px" }}>{c.sorteoNombre}</h4>
-                      <p style={{ fontSize: "13px", color: "#666" }}>Total pagado: {formatMoney(c.totalPagado)} ({c.cantidadBoletos} boletos)</p>
-                      
-                      <div style={{ marginTop: "10px", background: "#f8f7fc", padding: "10px", borderRadius: "8px" }}>
-                        <span style={{ fontSize: "12px", fontWeight: "600", display: "block", marginBottom: "6px" }}>Números de Boletos Asignados:</span>
-                        <div style={{ display: "flex", flexWrap: "wrap", gap: "6px" }}>
+                      <h4 className={styles.compraNombre}>{c.sorteoNombre}</h4>
+                      <p className={styles.compraMeta}>Total pagado: {formatMoney(c.totalPagado)} ({c.cantidadBoletos} boletos)</p>
+
+                      <div className={styles.boletosBox}>
+                        <span className={styles.boletosBoxLabel}>Números de Boletos Asignados:</span>
+                        <div className={styles.boletosChips}>
                           {(c.boletosAsignados || []).map((num, idx) => (
-                            <span key={idx} style={{ background: "#1F8A5A", color: "#fff", padding: "4px 10px", borderRadius: "6px", fontSize: "13px", fontWeight: "700" }}>
+                            <span key={idx} className={styles.boletoChip}>
                               #{num}
                             </span>
                           ))}
