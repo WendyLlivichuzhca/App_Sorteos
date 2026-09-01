@@ -7,6 +7,7 @@ const metodosPagoNombres = [
   { key: "transferencia", name: "Transferencia bancaria o depósito" },
   { key: "payphone", name: "Tarjeta con PayPhone" },
   { key: "tarjeta", name: "Tarjeta (Visa, Mastercard, Amex, Diners, Discover)" },
+  { key: "qr", name: "Pago con código QR (JEP Fácil)" },
 ];
 
 export default function AdminConfiguracion() {
@@ -24,6 +25,7 @@ export default function AdminConfiguracion() {
     politicas: "",
     faqTexto: "",
     instruccionesPago: "",
+    qrPago: "",
   });
   const [metodos, setMetodos] = useState({});
 
@@ -41,6 +43,7 @@ export default function AdminConfiguracion() {
           politicas: data.politicas || "",
           faqTexto: data.faq_texto || "",
           instruccionesPago: data.instrucciones_pago || "",
+          qrPago: data.qr_pago || "",
         });
         setMetodos(data.metodosPago || {});
       })
@@ -181,6 +184,41 @@ export default function AdminConfiguracion() {
               />
               <span style={{ fontSize: "11.5px", color: "#9795a8" }}>
                 Escribe aquí tu número de cuenta, WhatsApp, o cualquier dato que el cliente necesite para pagarte.
+              </span>
+            </div>
+
+            <div className={styles.formGroup} style={{ marginTop: "16px" }}>
+              <label>QR de Pago (JEP Fácil u otro código QR)</label>
+              {config.qrPago && (
+                <div style={{ display: "flex", alignItems: "center", gap: "12px", marginBottom: "10px" }}>
+                  <img
+                    src={config.qrPago}
+                    alt="QR de pago"
+                    style={{ width: "90px", height: "90px", objectFit: "contain", border: "1.5px solid #ecebf3", borderRadius: "8px", background: "#fff" }}
+                  />
+                  <button
+                    type="button"
+                    className={styles.iconBtn}
+                    onClick={() => setConfig({ ...config, qrPago: "" })}
+                  >
+                    🗑️ Quitar QR
+                  </button>
+                </div>
+              )}
+              <input
+                type="file"
+                accept="image/*"
+                onChange={(e) => {
+                  const file = e.target.files[0];
+                  if (!file) return;
+                  const reader = new FileReader();
+                  reader.onloadend = () => setConfig((prev) => ({ ...prev, qrPago: reader.result }));
+                  reader.readAsDataURL(file);
+                }}
+                style={{ fontSize: "13px" }}
+              />
+              <span style={{ fontSize: "11.5px", color: "#9795a8" }}>
+                Se muestra al cliente cuando elige pagar con QR en el checkout.
               </span>
             </div>
           </div>

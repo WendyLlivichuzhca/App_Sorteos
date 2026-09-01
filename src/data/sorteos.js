@@ -183,5 +183,6 @@ export const metodosPago = [
   { id: "transferencia", nombre: "Transferencia bancaria o depósito", icon: "bank" },
   { id: "payphone", nombre: "Pagar con tarjetas de crédito o débito Visa o Mastercard | Payphone", icon: "payphone" },
   { id: "tarjeta", nombre: "Pagar con tarjetas de crédito y débito Visa, Mastercard, Diners, American Express y Discover", icon: "card" },
+  { id: "qr", nombre: "Pago con código QR (JEP Fácil)", icon: "qr" },
   { id: "paypal", nombre: "Pagar con PayPal", icon: "paypal" },
 ];

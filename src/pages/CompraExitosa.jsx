@@ -15,6 +15,7 @@ export default function CompraExitosa() {
   const { ultimaCompra, reiniciarFlujo } = useApp();
   const [instruccionesPago, setInstruccionesPago] = useState("");
   const [whatsapp, setWhatsapp] = useState("");
+  const [qrPago, setQrPago] = useState("");
 
   useEffect(() => {
     if (!ultimaCompra) {
@@ -26,6 +27,7 @@ export default function CompraExitosa() {
       .then((config) => {
         setInstruccionesPago(config.instrucciones_pago || "");
         setWhatsapp(config.whatsapp || "");
+        setQrPago(config.qr_pago || "");
       })
       .catch((err) => console.error("Error cargando configuración:", err));
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -152,6 +154,57 @@ Comprador: ${ultimaCompra.comprador.nombre}
               </p>
 
               {/* Carga de Comprobante en la Pantalla de Éxito */}
+              <div style={{ background: "#ffffff", border: "1px dashed #6d3cf5", borderRadius: "6px", padding: "14px", marginTop: "10px" }}>
+                <strong style={{ display: "block", fontSize: "13px", color: "#1e293b", marginBottom: "6px" }}>
+                  📤 Adjunta aquí tu comprobante de pago:
+                </strong>
+                <input
+                  type="file"
+                  accept="image/*,application/pdf"
+                  onChange={async (e) => {
+                    const file = e.target.files[0];
+                    if (file && ultimaCompra.compraId) {
+                      try {
+                        const { subirComprobante } = await import("../services/api.js");
+                        await subirComprobante(ultimaCompra.compraId, file);
+                        alert("¡Comprobante subido con éxito! El administrador revisará tu pago.");
+                      } catch (err) {
+                        alert(err.message || "Error al subir comprobante");
+                      }
+                    }
+                  }}
+                  style={{ fontSize: "12.5px", width: "100%" }}
+                />
+              </div>
+            </div>
+          )}
+
+          {ultimaCompra.metodoPago === "qr" && (
+            <div style={{ margin: "20px 0", background: "#f8fafc", border: "1px dashed #cbd5e1", borderRadius: "8px", padding: "16px", textAlign: "left" }}>
+              <h4 style={{ fontSize: "14px", fontWeight: "800", color: "#0f172a", marginBottom: "10px" }}>
+                📱 Escanea el código QR para pagar con JEP Fácil:
+              </h4>
+
+              {qrPago ? (
+                <div style={{ textAlign: "center", marginBottom: "10px" }}>
+                  <img
+                    src={qrPago}
+                    alt="Código QR para pagar con JEP Fácil"
+                    style={{ width: "160px", height: "160px", objectFit: "contain", border: "1px solid #e2e8f0", borderRadius: "8px", background: "#fff" }}
+                  />
+                </div>
+              ) : (
+                <p style={{ fontSize: "12.5px", color: "#64748b" }}>
+                  {whatsapp
+                    ? <>Escríbenos por WhatsApp al <strong>{whatsapp}</strong> y te enviamos el código QR para tu pago.</>
+                    : "Por favor contáctanos para que te enviemos el código QR para tu pago."}
+                </p>
+              )}
+
+              <p style={{ fontSize: "12px", color: "#64748b", marginTop: "10px", marginBottom: "14px" }}>
+                Por favor, realiza el pago por el total e indica tu código de orden <strong>{ultimaCompra.codigo}</strong>.
+              </p>
+
               <div style={{ background: "#ffffff", border: "1px dashed #6d3cf5", borderRadius: "6px", padding: "14px", marginTop: "10px" }}>
                 <strong style={{ display: "block", fontSize: "13px", color: "#1e293b", marginBottom: "6px" }}>
                   📤 Adjunta aquí tu comprobante de pago:

@@ -60,7 +60,8 @@ export default function Checkout() {
   const [errores, setErrores] = useState({});
   const [errorGlobal, setErrorGlobal] = useState("");
   const [instruccionesPago, setInstruccionesPago] = useState("");
-  const [metodosHabilitados, setMetodosHabilitados] = useState({ transferencia: true, payphone: true, tarjeta: true });
+  const [qrPago, setQrPago] = useState("");
+  const [metodosHabilitados, setMetodosHabilitados] = useState({ transferencia: true, payphone: true, tarjeta: true, qr: false });
   const [aceptaTerminos, setAceptaTerminos] = useState(false);
 
   useEffect(() => {
@@ -70,11 +71,13 @@ export default function Checkout() {
     getConfiguracion()
       .then((config) => {
         setInstruccionesPago(config.instrucciones_pago || "");
+        setQrPago(config.qr_pago || "");
         const metodos = config.metodosPago || {};
         setMetodosHabilitados({
           transferencia: metodos.transferencia !== false,
           payphone: metodos.payphone !== false,
           tarjeta: metodos.tarjeta !== false,
+          qr: Boolean(metodos.qr && config.qr_pago),
         });
       })
       .catch((err) => console.error("Error cargando configuración:", err));
@@ -425,6 +428,36 @@ export default function Checkout() {
                   {metodoPago === "tarjeta" && (
                     <div className={styles.expandGrayBox}>
                       <p>Usa tus tarjetas de crédito y débito Visa, Mastercard, Diners, American Express o Discover.</p>
+                    </div>
+                  )}
+                </div>
+                )}
+
+                {/* Opción 4: Pagar con código QR (JEP Fácil) */}
+                {metodosHabilitados.qr && (
+                <div className={styles.metodoItem}>
+                  <label className={styles.radioLabel} onClick={() => setMetodoPago("qr")}>
+                    <input
+                      type="radio"
+                      name="metodo"
+                      checked={metodoPago === "qr"}
+                      onChange={() => setMetodoPago("qr")}
+                    />
+                    <span className={styles.radioText}>Pagar con código QR (JEP Fácil)</span>
+                  </label>
+
+                  {metodoPago === "qr" && (
+                    <div className={styles.expandGrayBox}>
+                      <p>
+                        Por favor, <strong>NO PROCEDAS SI NO ESTÁS SEGURO</strong> de que quieres realizar la compra. Escanea el código con tu app de JEP Fácil y realiza el pago. Tu pedido no se procesará hasta que se haya recibido el pago.
+                      </p>
+                      {qrPago && (
+                        <img
+                          src={qrPago}
+                          alt="Código QR para pagar con JEP Fácil"
+                          style={{ width: "150px", height: "150px", objectFit: "contain", marginTop: "12px", border: "1px solid #e2e8f0", borderRadius: "8px", background: "#fff" }}
+                        />
+                      )}
                     </div>
                   )}
                 </div>

@@ -231,6 +231,7 @@ export async function initDB() {
       ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
     `);
     await ensureColumn(pool, 'configuracion', 'instrucciones_pago', 'TEXT NULL');
+    await ensureColumn(pool, 'configuracion', 'qr_pago', 'LONGTEXT NULL');
 
     // Seed default data if empty
     const [cats] = await pool.query('SELECT COUNT(*) as count FROM categorias');
