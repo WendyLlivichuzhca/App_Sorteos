@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import AdminLayout from "../../components/admin/AdminLayout.jsx";
 import { getConfiguracion, updateConfiguracion } from "../../services/api.js";
+import { resizeImageToDataUrl } from "../../utils/imageResize.js";
 import styles from "./AdminSorteos.module.css";
 
 const metodosPagoNombres = [
@@ -114,12 +115,15 @@ export default function AdminConfiguracion() {
               <input
                 type="file"
                 accept="image/*"
-                onChange={(e) => {
+                onChange={async (e) => {
                   const file = e.target.files[0];
                   if (!file) return;
-                  const reader = new FileReader();
-                  reader.onloadend = () => setConfig((prev) => ({ ...prev, logoUrl: reader.result }));
-                  reader.readAsDataURL(file);
+                  try {
+                    const dataUrl = await resizeImageToDataUrl(file, 320);
+                    setConfig((prev) => ({ ...prev, logoUrl: dataUrl }));
+                  } catch (err) {
+                    alert(err.message || "No se pudo procesar la imagen");
+                  }
                 }}
                 style={{ fontSize: "13px" }}
               />
@@ -246,12 +250,15 @@ export default function AdminConfiguracion() {
               <input
                 type="file"
                 accept="image/*"
-                onChange={(e) => {
+                onChange={async (e) => {
                   const file = e.target.files[0];
                   if (!file) return;
-                  const reader = new FileReader();
-                  reader.onloadend = () => setConfig((prev) => ({ ...prev, qrPago: reader.result }));
-                  reader.readAsDataURL(file);
+                  try {
+                    const dataUrl = await resizeImageToDataUrl(file, 500);
+                    setConfig((prev) => ({ ...prev, qrPago: dataUrl }));
+                  } catch (err) {
+                    alert(err.message || "No se pudo procesar la imagen");
+                  }
                 }}
                 style={{ fontSize: "13px" }}
               />

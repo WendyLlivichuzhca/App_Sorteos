@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { getConfiguracion } from "../../services/api.js";
+import { setFavicon } from "../../utils/favicon.js";
 import Icon from "../../icons/Icon.jsx";
 import styles from "./AdminSidebar.module.css";
 
@@ -50,6 +51,7 @@ export default function AdminSidebar() {
         setNombreEmpresa(nombre);
         document.title = `${nombre} - Panel Admin`;
         setLogoUrl(config.logo_url || "");
+        setFavicon(config.logo_url);
       })
       .catch((err) => console.error("Error cargando configuración:", err));
   }, []);

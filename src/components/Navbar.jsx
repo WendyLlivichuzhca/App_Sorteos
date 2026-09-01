@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { getConfiguracion } from "../services/api.js";
+import { setFavicon } from "../utils/favicon.js";
 import Icon from "../icons/Icon.jsx";
 import styles from "./Navbar.module.css";
 
@@ -28,6 +29,7 @@ export default function Navbar({ variant = "full", step }) {
         setNombreEmpresa(nombre);
         document.title = nombre;
         setLogoUrl(config.logo_url || "");
+        setFavicon(config.logo_url);
       })
       .catch((err) => console.error("Error cargando configuración:", err));
   }, []);
