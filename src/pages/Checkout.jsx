@@ -61,11 +61,11 @@ export default function Checkout() {
   const [errorGlobal, setErrorGlobal] = useState("");
   const [instruccionesPago, setInstruccionesPago] = useState("");
   const [qrPago, setQrPago] = useState("");
-  const [metodosHabilitados, setMetodosHabilitados] = useState({ transferencia: true, payphone: true, tarjeta: true, qr: false });
+  const [metodosHabilitados, setMetodosHabilitados] = useState({ transferencia: true, payphone: true, qr: false });
   const [aceptaTerminos, setAceptaTerminos] = useState(false);
 
   useEffect(() => {
-    if (!metodoPago || metodoPago === "deuna" || metodoPago === "paypal") {
+    if (!metodoPago || metodoPago === "deuna" || metodoPago === "paypal" || metodoPago === "tarjeta") {
       setMetodoPago("transferencia");
     }
     getConfiguracion()
@@ -76,7 +76,6 @@ export default function Checkout() {
         setMetodosHabilitados({
           transferencia: metodos.transferencia !== false,
           payphone: metodos.payphone !== false,
-          tarjeta: metodos.tarjeta !== false,
           qr: Boolean(metodos.qr && config.qr_pago),
         });
       })
@@ -140,8 +139,8 @@ export default function Checkout() {
     try {
       const compra = await confirmarCompra(compradorFinal, comprobanteFile);
 
-      if (metodoPago === "payphone" || metodoPago === "tarjeta") {
-        // Métodos respaldados por PayPhone: se redirige a su pasarela real de pago.
+      if (metodoPago === "payphone") {
+        // Método respaldado por PayPhone: se redirige a su pasarela real de pago.
         const { payWithCard } = await iniciarPagoPayphone(compra.compraId);
         window.location.href = payWithCard;
         return;
@@ -156,7 +155,7 @@ export default function Checkout() {
   };
 
   const renderBotonPago = () => {
-    if (metodoPago === "tarjeta") {
+    if (metodoPago === "payphone") {
       return (
         <button type="submit" className={styles.blackBtn} disabled={procesando}>
           {procesando ? (
@@ -368,7 +367,7 @@ export default function Checkout() {
                 </div>
                 )}
 
-                {/* Opción 2: Pagar con tarjetas de crédito o débito Visa o Mastercard | Payphone */}
+                {/* Opción 2: Pagar con tarjeta de crédito o débito (Payphone) */}
                 {metodosHabilitados.payphone && (
                 <div className={styles.metodoItem}>
                   <label className={styles.radioLabel} onClick={() => setMetodoPago("payphone")}>
@@ -380,11 +379,12 @@ export default function Checkout() {
                     />
                     <div className={styles.radioTextContent}>
                       <span className={styles.radioText}>
-                        Pagar con tarjetas de crédito o débito Visa o Mastercard | Payphone
+                        Pagar con tarjeta de crédito o débito Visa, Mastercard, Diners o Discover
                       </span>
                       <div className={styles.badgesRow}>
                         <span className={styles.visaBadge}>VISA</span>
                         <span className={styles.masterBadge} />
+                        <span className={styles.dinersBadge}>Diners Club</span>
                         <span className={styles.discoverBadge}>DISCOVER</span>
                         <span className={styles.payphoneBadge}>payphone</span>
                       </div>
@@ -396,38 +396,6 @@ export default function Checkout() {
                       <p>
                         Usa tus tarjetas de crédito o débito Visa, Mastercard, Diners o Discover de cualquier banco del mundo y, si tienes la aplicación Payphone, utiliza tu saldo.
                       </p>
-                    </div>
-                  )}
-                </div>
-                )}
-
-                {/* Opción 3: Pagar con tarjetas de crédito y débito Visa, Mastercard, Diners, American Express y Discover */}
-                {metodosHabilitados.tarjeta && (
-                <div className={styles.metodoItem}>
-                  <label className={styles.radioLabel} onClick={() => setMetodoPago("tarjeta")}>
-                    <input
-                      type="radio"
-                      name="metodo"
-                      checked={metodoPago === "tarjeta"}
-                      onChange={() => setMetodoPago("tarjeta")}
-                    />
-                    <div className={styles.radioTextContent}>
-                      <span className={styles.radioText}>
-                        Pagar con tarjetas de crédito y débito Visa, Mastercard, Diners, American Express y Discover
-                      </span>
-                      <div className={styles.badgesRow}>
-                        <span className={styles.visaBadge}>VISA</span>
-                        <span className={styles.masterBadge} />
-                        <span className={styles.dinersBadge}>Diners Club</span>
-                        <span className={styles.amexBadge}>AMEX</span>
-                        <span className={styles.discoverBadge}>DISCOVER</span>
-                      </div>
-                    </div>
-                  </label>
-
-                  {metodoPago === "tarjeta" && (
-                    <div className={styles.expandGrayBox}>
-                      <p>Usa tus tarjetas de crédito y débito Visa, Mastercard, Diners, American Express o Discover.</p>
                     </div>
                   )}
                 </div>

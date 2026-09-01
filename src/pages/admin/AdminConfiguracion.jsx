@@ -5,8 +5,7 @@ import styles from "./AdminSorteos.module.css";
 
 const metodosPagoNombres = [
   { key: "transferencia", name: "Transferencia bancaria o depósito" },
-  { key: "payphone", name: "Tarjeta con PayPhone" },
-  { key: "tarjeta", name: "Tarjeta (Visa, Mastercard, Amex, Diners, Discover)" },
+  { key: "payphone", name: "Tarjeta de crédito o débito (Visa, Mastercard, Diners, Discover)" },
   { key: "qr", name: "Pago con código QR (JEP Fácil)" },
 ];
 
