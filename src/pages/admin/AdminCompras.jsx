@@ -30,9 +30,14 @@ export default function AdminCompras() {
     setPagina(1);
   }, [filtroEstado]);
 
-  const cambiarEstado = async (id, estado) => {
+  const cambiarEstado = async (compra, estado) => {
+    const mensaje =
+      estado === "aprobado"
+        ? `¿Confirmas que el pago de ${formatMoney(compra.total)} de "${compra.comprador}" (orden ${compra.codigo}) ya llegó a tu cuenta? Al aprobar, los boletos quedan marcados como vendidos.`
+        : `¿Seguro que quieres rechazar la orden ${compra.codigo} de "${compra.comprador}"? Sus boletos volverán a estar disponibles.`;
+    if (!window.confirm(mensaje)) return;
     try {
-      await updateEstadoCompra(id, estado);
+      await updateEstadoCompra(compra.id, estado);
       cargarCompras();
     } catch (err) {
       alert(err.message || "No se pudo actualizar el estado de la compra");
@@ -125,7 +130,7 @@ export default function AdminCompras() {
                         <button
                           type="button"
                           className={styles.iconBtn}
-                          onClick={() => cambiarEstado(c.id, "aprobado")}
+                          onClick={() => cambiarEstado(c, "aprobado")}
                           title="Aprobar compra"
                         >
                           ✅
@@ -133,7 +138,7 @@ export default function AdminCompras() {
                         <button
                           type="button"
                           className={styles.iconBtn}
-                          onClick={() => cambiarEstado(c.id, "rechazado")}
+                          onClick={() => cambiarEstado(c, "rechazado")}
                           title="Rechazar compra"
                         >
                           ❌
