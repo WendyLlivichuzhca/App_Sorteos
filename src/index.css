@@ -1,23 +1,23 @@
 :root {
-  --color-bg: #f6f6fb;
-  --color-surface: #ffffff;
-  --color-border: #ecebf3;
-  --color-text: #17152b;
-  --color-text-muted: #57536D;
-  --color-text-soft: #7A7690;
+  --color-bg: #0B0F0D;
+  --color-surface: #141B17;
+  --color-border: #26332C;
+  --color-text: #F2F5F3;
+  --color-text-muted: #A9B3AD;
+  --color-text-soft: #7E897F;
 
   --color-primary: #1F8A5A;
   --color-primary-dark: #146B45;
   --color-primary-darker: #0A1F14;
-  --color-primary-light: #E3F5EC;
-  --color-primary-soft: #E9F7F0;
+  --color-primary-light: #15291E;
+  --color-primary-soft: #122019;
 
   --color-accent-red: #e63950;
 
-  --color-success: #16a34a;
-  --color-success-bg: #dcf5e3;
-  --color-warning: #ea8a1f;
-  --color-warning-bg: #fdecd2;
+  --color-success: #34D399;
+  --color-success-bg: #10301F;
+  --color-warning: #f5a623;
+  --color-warning-bg: #3D2A10;
 
   --color-hero-from: #0A1F14;
   --color-hero-via: #123D26;
@@ -28,13 +28,13 @@
   --radius-lg: 20px;
   --radius-pill: 999px;
 
-  --shadow-card: 0 2px 10px rgba(23, 21, 43, 0.06);
-  --shadow-card-hover: 0 10px 30px rgba(23, 21, 43, 0.12);
-  --shadow-pop: 0 20px 60px rgba(23, 21, 43, 0.18);
+  --shadow-card: 0 2px 10px rgba(0, 0, 0, 0.25);
+  --shadow-card-hover: 0 10px 30px rgba(0, 0, 0, 0.4);
+  --shadow-pop: 0 20px 60px rgba(0, 0, 0, 0.55);
 
   --font-sans: "Segoe UI", -apple-system, BlinkMacSystemFont, "Helvetica Neue", Arial, sans-serif;
 
-  color-scheme: light;
+  color-scheme: dark;
 }
 
 * {

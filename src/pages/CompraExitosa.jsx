@@ -132,30 +132,30 @@ Comprador: ${ultimaCompra.comprador.nombre}
           </div>
 
           {ultimaCompra.metodoPago === "transferencia" && (
-            <div style={{ margin: "20px 0", background: "#f8fafc", border: "1px dashed #cbd5e1", borderRadius: "8px", padding: "16px", textAlign: "left" }}>
-              <h4 style={{ fontSize: "14px", fontWeight: "800", color: "#0f172a", marginBottom: "10px" }}>
+            <div style={{ margin: "20px 0", background: "#101512", border: "1px dashed #33403A", borderRadius: "8px", padding: "16px", textAlign: "left" }}>
+              <h4 style={{ fontSize: "14px", fontWeight: "800", color: "#F2F5F3", marginBottom: "10px" }}>
                 🏦 Cuentas Bancarias para Realizar tu Transferencia:
               </h4>
 
               {instruccionesPago ? (
-                <div style={{ background: "#ffffff", border: "1px solid #e2e8f0", borderRadius: "6px", padding: "10px 12px", marginBottom: "8px", whiteSpace: "pre-line", fontSize: "12.5px", color: "#0f172a" }}>
+                <div style={{ background: "#141B17", border: "1px solid #26332C", borderRadius: "6px", padding: "10px 12px", marginBottom: "8px", whiteSpace: "pre-line", fontSize: "12.5px", color: "#F2F5F3" }}>
                   {instruccionesPago}
                 </div>
               ) : (
-                <p style={{ fontSize: "12.5px", color: "#64748b" }}>
+                <p style={{ fontSize: "12.5px", color: "#8A948C" }}>
                   {whatsapp
                     ? <>Escríbenos por WhatsApp al <strong>{whatsapp}</strong> y te enviamos los datos de la cuenta para tu transferencia.</>
                     : "Por favor contáctanos para que te enviemos los datos de la cuenta para tu transferencia."}
                 </p>
               )}
 
-              <p style={{ fontSize: "12px", color: "#64748b", marginTop: "10px", marginBottom: "14px" }}>
+              <p style={{ fontSize: "12px", color: "#8A948C", marginTop: "10px", marginBottom: "14px" }}>
                 Por favor, realiza la transferencia por el total e indica tu código de orden <strong>{ultimaCompra.codigo}</strong>.
               </p>
 
               {/* Carga de Comprobante en la Pantalla de Éxito */}
-              <div style={{ background: "#ffffff", border: "1px dashed #1F8A5A", borderRadius: "6px", padding: "14px", marginTop: "10px" }}>
-                <strong style={{ display: "block", fontSize: "13px", color: "#1e293b", marginBottom: "6px" }}>
+              <div style={{ background: "#141B17", border: "1px dashed #1F8A5A", borderRadius: "6px", padding: "14px", marginTop: "10px" }}>
+                <strong style={{ display: "block", fontSize: "13px", color: "#F2F5F3", marginBottom: "6px" }}>
                   📤 Adjunta aquí tu comprobante de pago:
                 </strong>
                 <input
@@ -180,8 +180,8 @@ Comprador: ${ultimaCompra.comprador.nombre}
           )}
 
           {ultimaCompra.metodoPago === "qr" && (
-            <div style={{ margin: "20px 0", background: "#f8fafc", border: "1px dashed #cbd5e1", borderRadius: "8px", padding: "16px", textAlign: "left" }}>
-              <h4 style={{ fontSize: "14px", fontWeight: "800", color: "#0f172a", marginBottom: "10px" }}>
+            <div style={{ margin: "20px 0", background: "#101512", border: "1px dashed #33403A", borderRadius: "8px", padding: "16px", textAlign: "left" }}>
+              <h4 style={{ fontSize: "14px", fontWeight: "800", color: "#F2F5F3", marginBottom: "10px" }}>
                 📱 Escanea el código QR para pagar con JEP Fácil:
               </h4>
 
@@ -194,19 +194,19 @@ Comprador: ${ultimaCompra.comprador.nombre}
                   />
                 </div>
               ) : (
-                <p style={{ fontSize: "12.5px", color: "#64748b" }}>
+                <p style={{ fontSize: "12.5px", color: "#8A948C" }}>
                   {whatsapp
                     ? <>Escríbenos por WhatsApp al <strong>{whatsapp}</strong> y te enviamos el código QR para tu pago.</>
                     : "Por favor contáctanos para que te enviemos el código QR para tu pago."}
                 </p>
               )}
 
-              <p style={{ fontSize: "12px", color: "#64748b", marginTop: "10px", marginBottom: "14px" }}>
+              <p style={{ fontSize: "12px", color: "#8A948C", marginTop: "10px", marginBottom: "14px" }}>
                 Por favor, realiza el pago por el total e indica tu código de orden <strong>{ultimaCompra.codigo}</strong>.
               </p>
 
-              <div style={{ background: "#ffffff", border: "1px dashed #1F8A5A", borderRadius: "6px", padding: "14px", marginTop: "10px" }}>
-                <strong style={{ display: "block", fontSize: "13px", color: "#1e293b", marginBottom: "6px" }}>
+              <div style={{ background: "#141B17", border: "1px dashed #1F8A5A", borderRadius: "6px", padding: "14px", marginTop: "10px" }}>
+                <strong style={{ display: "block", fontSize: "13px", color: "#F2F5F3", marginBottom: "6px" }}>
                   📤 Adjunta aquí tu comprobante de pago:
                 </strong>
                 <input

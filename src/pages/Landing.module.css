@@ -213,10 +213,10 @@
 }
 
 .features {
-  background: #ffffff;
+  background: #141B17;
   border-radius: 16px;
-  box-shadow: 0 8px 36px rgba(23, 21, 43, 0.10);
-  border: 1px solid #eeecf6;
+  box-shadow: 0 8px 36px rgba(0, 0, 0, 0.35);
+  border: 1px solid #26332C;
   padding: 14px 0;
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -230,7 +230,7 @@
 }
 
 .featureSep {
-  border-left: 1px solid #ecebf3;
+  border-left: 1px solid #26332C;
 }
 
 .featureIcon {
@@ -240,21 +240,21 @@
   width: 40px;
   height: 40px;
   border-radius: 12px;
-  background: #E3F5EC;
-  color: #1F8A5A;
+  background: #15291E;
+  color: #34D399;
   flex-shrink: 0;
 }
 
 .feature h3 {
   font-size: 15px;
   font-weight: 700;
-  color: #17152b;
+  color: #F2F5F3;
 }
 
 .feature p {
   margin-top: 4px;
   font-size: 13px;
-  color: #57536D;
+  color: #A9B3AD;
   line-height: 1.5;
 }
 
@@ -268,7 +268,7 @@
 .categoriasSection h2 {
   font-size: 18px;
   font-weight: 800;
-  color: #17152b;
+  color: #F2F5F3;
 }
 
 .categorias {
@@ -283,19 +283,19 @@
   flex-direction: column;
   align-items: center;
   gap: 6px;
-  background: #ffffff;
-  border: 1.5px solid #ecebf3;
+  background: #141B17;
+  border: 1.5px solid #26332C;
   border-radius: 12px;
   padding: 12px 8px 10px;
   font-size: 11px;
   font-weight: 600;
-  color: #17152b;
+  color: #F2F5F3;
   text-decoration: none;
   transition: box-shadow 0.18s ease, transform 0.18s ease, border-color 0.18s ease;
 }
 
 .categoria:hover {
-  box-shadow: 0 6px 22px rgba(31, 138, 90, 0.13);
+  box-shadow: 0 6px 22px rgba(31, 138, 90, 0.25);
   transform: translateY(-3px);
   border-color: #1F8A5A;
 }
@@ -307,8 +307,8 @@
   width: 36px;
   height: 36px;
   border-radius: 10px;
-  background: #E9F7F0;
-  color: #1F8A5A;
+  background: #122019;
+  color: #34D399;
 }
 
 /* ══════════════════════════════════════════
@@ -327,11 +327,11 @@
 .destacadosHeader h2 {
   font-size: 22px;
   font-weight: 800;
-  color: #17152b;
+  color: #F2F5F3;
 }
 
 .verTodos {
-  color: #1F8A5A;
+  color: #34D399;
   font-weight: 600;
   font-size: 14px;
 }
@@ -346,16 +346,16 @@
 .destacadoCard {
   border-radius: 20px;
   overflow: hidden;
-  background: #ffffff;
-  border: 1px solid #ecebf3;
-  box-shadow: 0 2px 10px rgba(23, 21, 43, 0.06);
+  background: #141B17;
+  border: 1px solid #26332C;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.25);
   text-decoration: none;
   display: block;
   transition: box-shadow 0.18s ease, transform 0.18s ease;
 }
 
 .destacadoCard:hover {
-  box-shadow: 0 10px 32px rgba(23, 21, 43, 0.13);
+  box-shadow: 0 10px 32px rgba(0, 0, 0, 0.4);
   transform: translateY(-4px);
 }
 
@@ -370,7 +370,7 @@
 .destacadoBody h4 {
   font-size: 15px;
   font-weight: 700;
-  color: #17152b;
+  color: #F2F5F3;
 }
 
 .destacadoBody span {
@@ -397,7 +397,7 @@
 
 @media (max-width: 860px) {
   .features { grid-template-columns: 1fr; padding: 20px 0; }
-  .featureSep { border-left: none; border-top: 1px solid #ecebf3; }
+  .featureSep { border-left: none; border-top: 1px solid #26332C; }
   .destacadosGrid { grid-template-columns: 1fr; }
 }
 

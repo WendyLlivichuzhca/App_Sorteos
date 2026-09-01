@@ -5,13 +5,13 @@
 .wrap h1 {
   font-size: 28px;
   font-weight: 800;
-  color: #17152b;
+  color: #F2F5F3;
   letter-spacing: -0.4px;
 }
 
 .subtitle {
   margin-top: 4px;
-  color: #57536D;
+  color: #A9B3AD;
   font-size: 14.5px;
 }
 
@@ -26,7 +26,7 @@
   left: 16px;
   top: 50%;
   transform: translateY(-50%);
-  color: #7A7690;
+  color: #7E897F;
   pointer-events: none;
 }
 
@@ -34,10 +34,10 @@
   width: 100%;
   padding: 12px 16px 12px 42px;
   border-radius: 12px;
-  border: 1.5px solid #ecebf3;
-  background: #ffffff;
+  border: 1.5px solid #26332C;
+  background: #141B17;
   font-size: 14.5px;
-  color: #17152b;
+  color: #F2F5F3;
   outline: none;
   transition: border-color 0.15s ease;
 }
@@ -47,7 +47,7 @@
 }
 
 .searchBox input::placeholder {
-  color: #7A7690;
+  color: #7E897F;
 }
 
 .filtros {
@@ -59,8 +59,8 @@
 
 .filtro {
   border: none;
-  background: #f3f2f7;
-  color: #17152b;
+  background: #141B17;
+  color: #E4E8E5;
   font-weight: 600;
   font-size: 13.5px;
   padding: 9px 22px;
@@ -70,7 +70,7 @@
 }
 
 .filtro:hover {
-  background: #eae8f2;
+  background: #1B2420;
 }
 
 .filtroActivo, .filtroActivo:hover {
@@ -89,30 +89,30 @@
 .empty {
   grid-column: 1 / -1;
   text-align: center;
-  color: #7A7690;
+  color: #7E897F;
   padding: 60px 0;
 }
 
 .card {
-  background: #ffffff;
-  border: 1.5px solid #ecebf3;
+  background: #141B17;
+  border: 1.5px solid #26332C;
   border-radius: 14px;
   overflow: hidden;
-  box-shadow: 0 2px 12px rgba(23, 21, 43, 0.04);
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.25);
   transition: box-shadow 0.18s ease, transform 0.18s ease;
   display: flex;
   flex-direction: column;
 }
 
 .card:hover {
-  box-shadow: 0 8px 24px rgba(23, 21, 43, 0.08);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
   transform: translateY(-2px);
 }
 
 .imgWrap {
   position: relative;
   height: 170px;
-  background: #f8f7fc;
+  background: #101512;
 }
 
 .img {
@@ -136,12 +136,12 @@
   height: 30px;
   border-radius: 50%;
   border: none;
-  background: rgba(255, 255, 255, 0.95);
-  color: #57536D;
+  background: rgba(20, 27, 23, 0.9);
+  color: #C7CFC9;
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
   cursor: pointer;
   z-index: 2;
   transition: color 0.15s ease, transform 0.15s ease;
@@ -163,7 +163,7 @@
 .cardTitle {
   font-size: 15px;
   font-weight: 700;
-  color: #17152b;
+  color: #F2F5F3;
   display: flex;
   align-items: center;
   gap: 5px;
@@ -171,7 +171,7 @@
 }
 
 .verifiedBadge {
-  color: #1F8A5A;
+  color: #34D399;
   display: inline-flex;
   align-items: center;
 }
@@ -179,7 +179,7 @@
 .inicia {
   margin-top: 6px;
   font-size: 12.5px;
-  color: #57536D;
+  color: #A9B3AD;
   font-weight: 500;
 }
 
@@ -200,12 +200,12 @@
 .precio strong {
   font-size: 17px;
   font-weight: 800;
-  color: #17152b;
+  color: #F2F5F3;
 }
 
 .precio span {
   font-size: 10.5px;
-  color: #7A7690;
+  color: #7E897F;
   margin-top: 1px;
 }
 
@@ -235,8 +235,8 @@
   align-items: center;
   justify-content: center;
   width: 100%;
-  background: #f4f3f8;
-  color: #374151;
+  background: #1B2420;
+  color: #C7CFC9;
   font-weight: 700;
   font-size: 12.5px;
   padding: 9px 0;
@@ -247,7 +247,7 @@
 }
 
 .btnVerDetalles:hover {
-  background: #eae8f2;
+  background: #232E28;
 }
 
 .btnAgotado {
@@ -255,8 +255,8 @@
   align-items: center;
   justify-content: center;
   width: 100%;
-  background: #f3f4f6;
-  color: #9ca3af;
+  background: #141815;
+  color: #565F58;
   font-weight: 700;
   font-size: 12.5px;
   padding: 9px 0;
