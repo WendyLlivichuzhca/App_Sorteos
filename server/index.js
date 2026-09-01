@@ -859,7 +859,22 @@ app.post('/api/compras/payphone/confirmar', async (req, res) => {
 
     await pool.query('UPDATE compras SET payphone_transaction_id = ? WHERE id = ?', [String(id), compra.id]);
 
-    const aprobado = confirmRes.ok && confirmData.transactionStatus === 'Approved';
+    // No basta con que PayPhone diga "Approved": tambien hay que verificar que el
+    // monto y el codigo de orden que ELLOS confirman coinciden con esta compra.
+    // Sin esto, alguien podria pagar de verdad una compra barata y luego reusar
+    // ese id de transaccion aprobado contra el codigo de una compra mas cara sin
+    // haberla pagado, y el sistema la aprobaria igual.
+    const montoEsperado = Math.round(parseFloat(compra.total_pagado) * 100);
+    const montoCoincide = confirmData.amount === undefined || confirmData.amount === montoEsperado;
+    const codigoCoincide = confirmData.clientTransactionId === undefined || confirmData.clientTransactionId === compra.codigo;
+    if (!montoCoincide || !codigoCoincide) {
+      console.error(
+        `⚠️ PayPhone confirmo una transaccion pero el monto/codigo no coincide con la compra ${compra.codigo}. ` +
+        `Esperado: ${montoEsperado} centavos / ${compra.codigo}. Recibido: ${confirmData.amount} / ${confirmData.clientTransactionId}.`
+      );
+    }
+
+    const aprobado = confirmRes.ok && confirmData.transactionStatus === 'Approved' && montoCoincide && codigoCoincide;
     if (aprobado) {
       await aprobarCompra(pool, compra.id);
     } else {
