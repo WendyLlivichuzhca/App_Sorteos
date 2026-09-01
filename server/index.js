@@ -19,6 +19,11 @@ const __dirname = path.dirname(__filename);
 const app = express();
 const PORT = process.env.PORT || 5000;
 
+// Necesario para que req.ip refleje la IP real del cliente (no la del propio
+// nginx) cuando el servidor corre detras de un reverse proxy, para que el
+// limite de intentos de login funcione correctamente.
+app.set('trust proxy', 1);
+
 // Initialize MySQL / MariaDB Database
 await initDB();
 
@@ -95,6 +100,34 @@ async function rechazarCompra(pool, compraId, estadoFinal = 'rechazado') {
 // ==========================================
 // 0. AUTH
 // ==========================================
+
+// Limite de intentos de login: 5 intentos fallidos por IP+usuario bloquean
+// nuevos intentos de esa combinacion por 15 minutos. Es en memoria (no
+// sobrevive un reinicio del servidor) pero alcanza para frenar un intento de
+// adivinar la contraseña por fuerza bruta contra el panel admin.
+const intentosLogin = new Map();
+const LOGIN_MAX_INTENTOS = 5;
+const LOGIN_VENTANA_MS = 15 * 60 * 1000;
+
+function loginBloqueado(clave) {
+  const registro = intentosLogin.get(clave);
+  if (!registro) return false;
+  if (Date.now() - registro.desde > LOGIN_VENTANA_MS) {
+    intentosLogin.delete(clave);
+    return false;
+  }
+  return registro.fallos >= LOGIN_MAX_INTENTOS;
+}
+
+function registrarLoginFallido(clave) {
+  const registro = intentosLogin.get(clave);
+  if (!registro || Date.now() - registro.desde > LOGIN_VENTANA_MS) {
+    intentosLogin.set(clave, { fallos: 1, desde: Date.now() });
+  } else {
+    registro.fallos += 1;
+  }
+}
+
 app.post('/api/auth/login', async (req, res) => {
   try {
     const pool = getPool();
@@ -103,17 +136,25 @@ app.post('/api/auth/login', async (req, res) => {
       return res.status(400).json({ error: 'Usuario y contraseña son obligatorios' });
     }
 
+    const clave = `${req.ip}:${usuario}`;
+    if (loginBloqueado(clave)) {
+      return res.status(429).json({ error: 'Demasiados intentos fallidos. Espera 15 minutos e intenta de nuevo.' });
+    }
+
     const [admins] = await pool.query('SELECT * FROM admins WHERE usuario = ?', [usuario]);
     if (admins.length === 0) {
+      registrarLoginFallido(clave);
       return res.status(401).json({ error: 'Usuario o contraseña incorrectos' });
     }
 
     const admin = admins[0];
     const valido = await bcrypt.compare(password, admin.password_hash);
     if (!valido) {
+      registrarLoginFallido(clave);
       return res.status(401).json({ error: 'Usuario o contraseña incorrectos' });
     }
 
+    intentosLogin.delete(clave);
     const token = jwt.sign({ id: admin.id, usuario: admin.usuario }, process.env.JWT_SECRET, { expiresIn: '8h' });
     res.json({ token, admin: { id: admin.id, usuario: admin.usuario } });
   } catch (err) {
