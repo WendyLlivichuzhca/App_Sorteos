@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import Navbar from "../components/Navbar.jsx";
+import Footer from "../components/Footer.jsx";
 import Icon from "../icons/Icon.jsx";
 import { getConfiguracion } from "../services/api.js";
 import styles from "./Ayuda.module.css";
@@ -159,6 +160,8 @@ export default function Ayuda() {
           </div>
         </section>
       </div>
+
+      <Footer />
     </div>
   );
 }

@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import Navbar from "../components/Navbar.jsx";
+import Footer from "../components/Footer.jsx";
 import Icon from "../icons/Icon.jsx";
 import { getSorteos, getCategorias } from "../services/api.js";
 import PremioImage from "../components/PremioImage.jsx";
@@ -137,6 +138,8 @@ export default function Landing() {
           </div>
         </section>
       )}
+
+      <Footer />
     </div>
   );
 }

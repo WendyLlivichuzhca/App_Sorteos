@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import Navbar from "../components/Navbar.jsx";
+import Footer from "../components/Footer.jsx";
 import Icon from "../icons/Icon.jsx";
 import { useApp } from "../context/AppContext.jsx";
 import { metodosPago as todosLosMetodosPago } from "../data/sorteos.js";
@@ -598,6 +599,8 @@ export default function Checkout() {
           </div>
         </form>
       </div>
+
+      <Footer />
     </div>
   );
 }

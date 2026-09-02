@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import Navbar from "../components/Navbar.jsx";
+import Footer from "../components/Footer.jsx";
 import Badge from "../components/Badge.jsx";
 import PremioImage from "../components/PremioImage.jsx";
 import Icon from "../icons/Icon.jsx";
@@ -109,6 +110,8 @@ export default function ConsultarBoletos() {
           )}
         </div>
       </div>
+
+      <Footer />
     </div>
   );
 }

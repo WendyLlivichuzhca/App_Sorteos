@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import Navbar from "../components/Navbar.jsx";
+import Footer from "../components/Footer.jsx";
 import Badge from "../components/Badge.jsx";
 import StarRating from "../components/StarRating.jsx";
 import PremioImage from "../components/PremioImage.jsx";
@@ -174,6 +175,8 @@ export default function SorteoDetalle() {
           </div>
         )}
       </div>
+
+      <Footer />
     </div>
   );
 }

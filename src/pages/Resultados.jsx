@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import Navbar from "../components/Navbar.jsx";
+import Footer from "../components/Footer.jsx";
 import Icon from "../icons/Icon.jsx";
 import { getGanadores } from "../services/api.js";
 import PremioImage from "../components/PremioImage.jsx";
@@ -83,6 +84,8 @@ export default function Resultados() {
           ))}
         </div>
       </div>
+
+      <Footer />
     </div>
   );
 }

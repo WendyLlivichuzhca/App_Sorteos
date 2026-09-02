@@ -139,6 +139,7 @@ export default function Sorteos() {
         </div>
       </div>
 
+      <Footer />
     </div>
   );
 }

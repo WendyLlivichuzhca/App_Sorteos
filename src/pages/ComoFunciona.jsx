@@ -1,5 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import Navbar from "../components/Navbar.jsx";
+import Footer from "../components/Footer.jsx";
 import Icon from "../icons/Icon.jsx";
 import styles from "./ComoFunciona.module.css";
 
@@ -100,6 +101,8 @@ export default function ComoFunciona() {
           </button>
         </div>
       </div>
+
+      <Footer />
     </div>
   );
 }

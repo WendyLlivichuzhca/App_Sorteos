@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import Navbar from "../components/Navbar.jsx";
+import Footer from "../components/Footer.jsx";
 import Icon from "../icons/Icon.jsx";
 import { useApp } from "../context/AppContext.jsx";
 import { getSorteoById, getDescuentos } from "../services/api.js";
@@ -202,6 +203,8 @@ export default function Paquetes() {
           Continuar
         </button>
       </div>
+
+      <Footer />
     </div>
   );
 }
