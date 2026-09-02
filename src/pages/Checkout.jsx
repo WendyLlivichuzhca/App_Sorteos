@@ -6,6 +6,7 @@ import { useApp } from "../context/AppContext.jsx";
 import { metodosPago as todosLosMetodosPago } from "../data/sorteos.js";
 import { getConfiguracion, iniciarPagoPayphone } from "../services/api.js";
 import { formatMoney } from "../utils/format.js";
+import { validarDocumento } from "../utils/validarDocumento.js";
 import styles from "./Checkout.module.css";
 
 const PROVINCIAS_ECUADOR = [
@@ -102,7 +103,8 @@ export default function Checkout() {
 
   const validarFormulario = () => {
     const errs = {};
-    if (!form.cedula.trim()) errs.cedula = "Número de cédula o documento requerido";
+    const docValidado = validarDocumento(form.tipoDocumento, form.cedula);
+    if (!docValidado.valido) errs.cedula = docValidado.mensaje;
     if (!form.nombres.trim()) errs.nombres = "Ingresa tus nombres";
     if (!form.apellidos.trim()) errs.apellidos = "Ingresa tus apellidos";
     if (!/^\S+@\S+\.\S+$/.test(form.correo)) errs.correo = "Ingresa un correo válido";

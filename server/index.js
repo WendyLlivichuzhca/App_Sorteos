@@ -10,6 +10,7 @@ import { fileURLToPath } from 'url';
 import { initDB, getPool, generarBoletosMySQL } from './db.js';
 import { requireAuth } from './middleware/auth.js';
 import { calcularTotal } from './pricing.js';
+import { validarDocumento } from './validarDocumento.js';
 
 const PAYPHONE_API_BASE = 'https://pay.payphonetodoesposible.com';
 
@@ -639,6 +640,10 @@ app.post('/api/compras/checkout', async (req, res) => {
   }
   if (!/^\S+@\S+\.\S+$/.test(comprador.correo)) {
     return res.status(400).json({ error: 'Ingresa un correo electrónico válido' });
+  }
+  const docValidado = validarDocumento(comprador.tipoDocumento, comprador.cedula);
+  if (!docValidado.valido) {
+    return res.status(400).json({ error: docValidado.mensaje });
   }
 
   const conn = await pool.getConnection();
