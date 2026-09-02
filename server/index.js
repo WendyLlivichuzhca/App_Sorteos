@@ -11,6 +11,7 @@ import { initDB, getPool, generarBoletosMySQL } from './db.js';
 import { requireAuth } from './middleware/auth.js';
 import { calcularTotal } from './pricing.js';
 import { validarDocumento } from './validarDocumento.js';
+import { validarNombre } from './validarNombre.js';
 
 const PAYPHONE_API_BASE = 'https://pay.payphonetodoesposible.com';
 
@@ -644,6 +645,9 @@ app.post('/api/compras/checkout', async (req, res) => {
   const docValidado = validarDocumento(comprador.tipoDocumento, comprador.cedula);
   if (!docValidado.valido) {
     return res.status(400).json({ error: docValidado.mensaje });
+  }
+  if (!validarNombre(comprador.nombre)) {
+    return res.status(400).json({ error: 'Ingresa un nombre y apellido válidos (solo letras)' });
   }
 
   const conn = await pool.getConnection();

@@ -7,6 +7,7 @@ import { metodosPago as todosLosMetodosPago } from "../data/sorteos.js";
 import { getConfiguracion, iniciarPagoPayphone } from "../services/api.js";
 import { formatMoney } from "../utils/format.js";
 import { validarDocumento } from "../utils/validarDocumento.js";
+import { validarNombre, limpiarNombre } from "../utils/validarNombre.js";
 import styles from "./Checkout.module.css";
 
 const DOCUMENTO_INFO = {
@@ -106,13 +107,15 @@ export default function Checkout() {
   const { sorteo, paquete } = seleccion;
 
   const handleChange = (field) => (e) => setForm((f) => ({ ...f, [field]: e.target.value }));
+  const handleChangeNombre = (field) => (e) =>
+    setForm((f) => ({ ...f, [field]: limpiarNombre(e.target.value) }));
 
   const validarFormulario = () => {
     const errs = {};
     const docValidado = validarDocumento(form.tipoDocumento, form.cedula);
     if (!docValidado.valido) errs.cedula = docValidado.mensaje;
-    if (!form.nombres.trim()) errs.nombres = "Ingresa tus nombres";
-    if (!form.apellidos.trim()) errs.apellidos = "Ingresa tus apellidos";
+    if (!validarNombre(form.nombres)) errs.nombres = "Ingresa un nombre válido (solo letras, mínimo 2 caracteres)";
+    if (!validarNombre(form.apellidos)) errs.apellidos = "Ingresa un apellido válido (solo letras, mínimo 2 caracteres)";
     if (!/^\S+@\S+\.\S+$/.test(form.correo)) errs.correo = "Ingresa un correo válido";
     if (form.correo !== form.confirmarCorreo) errs.confirmarCorreo = "Los correos no coinciden";
     if (!form.celular.trim()) errs.celular = "Ingresa tu número de teléfono / celular";
@@ -225,7 +228,7 @@ export default function Checkout() {
                   type="text"
                   placeholder="Nombre"
                   value={form.nombres}
-                  onChange={handleChange("nombres")}
+                  onChange={handleChangeNombre("nombres")}
                   className={errores.nombres ? styles.inputError : ""}
                 />
                 {errores.nombres && <em>{errores.nombres}</em>}
@@ -237,7 +240,7 @@ export default function Checkout() {
                   type="text"
                   placeholder="Apellido"
                   value={form.apellidos}
-                  onChange={handleChange("apellidos")}
+                  onChange={handleChangeNombre("apellidos")}
                   className={errores.apellidos ? styles.inputError : ""}
                 />
                 {errores.apellidos && <em>{errores.apellidos}</em>}
