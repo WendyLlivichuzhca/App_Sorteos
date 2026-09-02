@@ -171,6 +171,18 @@ app.post('/api/auth/login', async (req, res) => {
 // ==========================================
 const ESTADOS_SORTEO_VALIDOS = ['activo', 'proximamente', 'agotado', 'finalizado'];
 
+// Endpoint publico: solo expone el total agregado de boletos vendidos,
+// sin ningun dato de ventas, clientes ni compras individuales.
+app.get('/api/estadisticas', async (req, res) => {
+  try {
+    const pool = getPool();
+    const [boletos] = await pool.query("SELECT COALESCE(SUM(vendidos), 0) as total FROM sorteos");
+    res.json({ boletosVendidos: parseInt(boletos[0].total) });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
 app.get('/api/sorteos', async (req, res) => {
   try {
     const pool = getPool();

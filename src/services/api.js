@@ -39,6 +39,8 @@ export async function fetchApi(endpoint, options = {}) {
   }
 }
 
+export const getEstadisticasPublicas = () => fetchApi('/estadisticas');
+
 // Sorteos API
 export const getSorteos = (categoria = 'todos', estado = 'todos') =>
   fetchApi(`/sorteos?categoria=${categoria}&estado=${estado}`);

@@ -1,10 +1,10 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import Navbar from "../components/Navbar.jsx";
 import Badge from "../components/Badge.jsx";
 import PremioImage from "../components/PremioImage.jsx";
 import Icon from "../icons/Icon.jsx";
-import { buscarBoletosPorCedula } from "../services/api.js";
+import { buscarBoletosPorCedula, getEstadisticasPublicas } from "../services/api.js";
 import { formatDate, formatMoney } from "../utils/format.js";
 import styles from "./ConsultarBoletos.module.css";
 
@@ -13,6 +13,13 @@ export default function ConsultarBoletos() {
   const [compras, setCompras] = useState([]);
   const [buscado, setBuscado] = useState(false);
   const [cargando, setCargando] = useState(false);
+  const [boletosVendidos, setBoletosVendidos] = useState(null);
+
+  useEffect(() => {
+    getEstadisticasPublicas()
+      .then((data) => setBoletosVendidos(data.boletosVendidos))
+      .catch((err) => console.error("Error cargando estadísticas:", err));
+  }, []);
 
   const handleBuscar = async (e) => {
     e.preventDefault();
@@ -41,6 +48,11 @@ export default function ConsultarBoletos() {
           </div>
           <h1>Consultar mis boletos</h1>
           <p className={styles.subtitle}>Ingresa tu número de cédula para consultar tus boletos asignados</p>
+          {boletosVendidos !== null && (
+            <p className={styles.statLine}>
+              <Icon name="badgeCheck" size={14} /> {boletosVendidos.toLocaleString("es-EC")} boletos vendidos en total
+            </p>
+          )}
 
           <form onSubmit={handleBuscar} className={styles.form}>
             <div className={styles.inputWrap}>
