@@ -9,6 +9,12 @@ import { formatMoney } from "../utils/format.js";
 import { validarDocumento } from "../utils/validarDocumento.js";
 import styles from "./Checkout.module.css";
 
+const DOCUMENTO_INFO = {
+  cedula: { etiqueta: "Número de Cédula", placeholder: "10 dígitos", maxLength: 10 },
+  ruc: { etiqueta: "Número de RUC", placeholder: "13 dígitos", maxLength: 13 },
+  pasaporte: { etiqueta: "Número de Pasaporte", placeholder: "", maxLength: 15 },
+};
+
 const PROVINCIAS_ECUADOR = [
   "Azuay",
   "Bolívar",
@@ -199,10 +205,11 @@ export default function Checkout() {
               </label>
 
               <label className={styles.field}>
-                <span>Número Cédula / Pasaporte *</span>
+                <span>{DOCUMENTO_INFO[form.tipoDocumento].etiqueta} *</span>
                 <input
                   type="text"
-                  placeholder=""
+                  placeholder={DOCUMENTO_INFO[form.tipoDocumento].placeholder}
+                  maxLength={DOCUMENTO_INFO[form.tipoDocumento].maxLength}
                   value={form.cedula}
                   onChange={handleChange("cedula")}
                   className={errores.cedula ? styles.inputError : ""}
