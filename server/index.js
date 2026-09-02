@@ -12,6 +12,7 @@ import { requireAuth } from './middleware/auth.js';
 import { calcularTotal } from './pricing.js';
 import { validarDocumento } from './validarDocumento.js';
 import { validarNombre } from './validarNombre.js';
+import { validarCorreo } from './validarCorreo.js';
 
 const PAYPHONE_API_BASE = 'https://pay.payphonetodoesposible.com';
 
@@ -639,8 +640,9 @@ app.post('/api/compras/checkout', async (req, res) => {
   if (!sId || !cant || cant < 1 || !comprador || !comprador.cedula || !comprador.nombre || !comprador.correo || !comprador.celular) {
     return res.status(400).json({ error: 'Faltan datos obligatorios para la compra' });
   }
-  if (!/^\S+@\S+\.\S+$/.test(comprador.correo)) {
-    return res.status(400).json({ error: 'Ingresa un correo electrónico válido' });
+  const correoValidado = validarCorreo(comprador.correo);
+  if (!correoValidado.valido) {
+    return res.status(400).json({ error: correoValidado.mensaje });
   }
   const docValidado = validarDocumento(comprador.tipoDocumento, comprador.cedula);
   if (!docValidado.valido) {

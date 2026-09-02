@@ -8,6 +8,7 @@ import { getConfiguracion, iniciarPagoPayphone } from "../services/api.js";
 import { formatMoney } from "../utils/format.js";
 import { validarDocumento } from "../utils/validarDocumento.js";
 import { validarNombre, limpiarNombre } from "../utils/validarNombre.js";
+import { validarCorreo } from "../utils/validarCorreo.js";
 import styles from "./Checkout.module.css";
 
 const DOCUMENTO_INFO = {
@@ -138,7 +139,8 @@ export default function Checkout() {
     errs.cedula = validarCampoVivo("cedula", form.cedula);
     errs.nombres = validarCampoVivo("nombres", form.nombres);
     errs.apellidos = validarCampoVivo("apellidos", form.apellidos);
-    if (!/^\S+@\S+\.\S+$/.test(form.correo)) errs.correo = "Ingresa un correo válido";
+    const correoValidado = validarCorreo(form.correo);
+    if (!correoValidado.valido) errs.correo = correoValidado.mensaje;
     if (form.correo !== form.confirmarCorreo) errs.confirmarCorreo = "Los correos no coinciden";
     if (!form.celular.trim()) errs.celular = "Ingresa tu número de teléfono / celular";
     if (!form.direccion.trim()) errs.direccion = "Ingresa tu dirección de la calle";
