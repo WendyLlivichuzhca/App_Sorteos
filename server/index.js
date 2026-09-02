@@ -13,6 +13,7 @@ import { calcularTotal } from './pricing.js';
 import { validarDocumento } from './validarDocumento.js';
 import { validarNombre } from './validarNombre.js';
 import { validarCorreo } from './validarCorreo.js';
+import { validarTelefono } from './validarTelefono.js';
 
 const PAYPHONE_API_BASE = 'https://pay.payphonetodoesposible.com';
 
@@ -650,6 +651,10 @@ app.post('/api/compras/checkout', async (req, res) => {
   }
   if (!validarNombre(comprador.nombre)) {
     return res.status(400).json({ error: 'Ingresa un nombre y apellido válidos (solo letras)' });
+  }
+  const telefonoValidado = validarTelefono(comprador.celular);
+  if (!telefonoValidado.valido) {
+    return res.status(400).json({ error: telefonoValidado.mensaje });
   }
 
   const conn = await pool.getConnection();

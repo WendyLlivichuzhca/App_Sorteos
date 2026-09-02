@@ -9,6 +9,7 @@ import { formatMoney } from "../utils/format.js";
 import { validarDocumento } from "../utils/validarDocumento.js";
 import { validarNombre, limpiarNombre } from "../utils/validarNombre.js";
 import { validarCorreo } from "../utils/validarCorreo.js";
+import { validarTelefono, limpiarTelefono } from "../utils/validarTelefono.js";
 import styles from "./Checkout.module.css";
 
 const DOCUMENTO_INFO = {
@@ -67,7 +68,14 @@ export default function Checkout() {
   const [comprobanteFile, setComprobanteFile] = useState(null);
   const [procesando, setProcesando] = useState(false);
   const [errores, setErrores] = useState({});
-  const [tocados, setTocados] = useState({ cedula: false, nombres: false, apellidos: false });
+  const [tocados, setTocados] = useState({
+    cedula: false,
+    nombres: false,
+    apellidos: false,
+    correo: false,
+    confirmarCorreo: false,
+    celular: false,
+  });
   const [errorGlobal, setErrorGlobal] = useState("");
   const [instruccionesPago, setInstruccionesPago] = useState("");
   const [qrPago, setQrPago] = useState("");
@@ -111,6 +119,8 @@ export default function Checkout() {
   const handleChange = (field) => (e) => setForm((f) => ({ ...f, [field]: e.target.value }));
   const handleChangeNombre = (field) => (e) =>
     setForm((f) => ({ ...f, [field]: limpiarNombre(e.target.value) }));
+  const handleChangeTelefono = (field) => (e) =>
+    setForm((f) => ({ ...f, [field]: limpiarTelefono(e.target.value) }));
 
   const validarCampoVivo = (field, valor) => {
     if (field === "cedula") {
@@ -122,6 +132,17 @@ export default function Checkout() {
     }
     if (field === "apellidos") {
       return validarNombre(valor) ? "" : "Ingresa un apellido válido (solo letras, mínimo 2 caracteres)";
+    }
+    if (field === "correo") {
+      const c = validarCorreo(valor);
+      return c.valido ? "" : c.mensaje;
+    }
+    if (field === "confirmarCorreo") {
+      return valor === form.correo ? "" : "Los correos no coinciden";
+    }
+    if (field === "celular") {
+      const t = validarTelefono(valor);
+      return t.valido ? "" : t.mensaje;
     }
     return "";
   };
@@ -139,16 +160,23 @@ export default function Checkout() {
     errs.cedula = validarCampoVivo("cedula", form.cedula);
     errs.nombres = validarCampoVivo("nombres", form.nombres);
     errs.apellidos = validarCampoVivo("apellidos", form.apellidos);
-    const correoValidado = validarCorreo(form.correo);
-    if (!correoValidado.valido) errs.correo = correoValidado.mensaje;
-    if (form.correo !== form.confirmarCorreo) errs.confirmarCorreo = "Los correos no coinciden";
-    if (!form.celular.trim()) errs.celular = "Ingresa tu número de teléfono / celular";
+    errs.correo = validarCampoVivo("correo", form.correo);
+    errs.confirmarCorreo = validarCampoVivo("confirmarCorreo", form.confirmarCorreo);
+    errs.celular = validarCampoVivo("celular", form.celular);
     if (!form.direccion.trim()) errs.direccion = "Ingresa tu dirección de la calle";
     if (!form.ciudad.trim()) errs.ciudad = "Ingresa tu ciudad";
 
     Object.keys(errs).forEach((k) => !errs[k] && delete errs[k]);
     setErrores(errs);
-    setTocados((t) => ({ ...t, cedula: true, nombres: true, apellidos: true }));
+    setTocados((t) => ({
+      ...t,
+      cedula: true,
+      nombres: true,
+      apellidos: true,
+      correo: true,
+      confirmarCorreo: true,
+      celular: true,
+    }));
     return Object.keys(errs).length === 0;
   };
 
@@ -311,38 +339,77 @@ export default function Checkout() {
 
             <label className={styles.field}>
               <span>Correo electrónico *</span>
-              <input
-                type="email"
-                placeholder="Email"
-                value={form.correo}
-                onChange={handleChange("correo")}
-                className={errores.correo ? styles.inputError : ""}
-              />
-              {errores.correo && <em>{errores.correo}</em>}
+              <div className={styles.inputIconWrap}>
+                <input
+                  type="email"
+                  placeholder="Email"
+                  value={form.correo}
+                  onChange={handleChange("correo")}
+                  onBlur={handleBlurVivo("correo")}
+                  className={
+                    tocados.correo && errores.correo
+                      ? styles.inputError
+                      : esCampoValido("correo")
+                      ? styles.inputValid
+                      : ""
+                  }
+                />
+                {tocados.correo && errores.correo && <Icon name="x" size={16} className={styles.iconInvalid} />}
+                {esCampoValido("correo") && <Icon name="check" size={16} className={styles.iconValid} />}
+              </div>
+              {tocados.correo && errores.correo && <em>{errores.correo}</em>}
+              {esCampoValido("correo") && <em className={styles.textoValido}>¡Correcto!</em>}
             </label>
 
             <label className={styles.field}>
               <span>Confirmar correo electrónico *</span>
-              <input
-                type="email"
-                placeholder=""
-                value={form.confirmarCorreo}
-                onChange={handleChange("confirmarCorreo")}
-                className={errores.confirmarCorreo ? styles.inputError : ""}
-              />
-              {errores.confirmarCorreo && <em>{errores.confirmarCorreo}</em>}
+              <div className={styles.inputIconWrap}>
+                <input
+                  type="email"
+                  placeholder=""
+                  value={form.confirmarCorreo}
+                  onChange={handleChange("confirmarCorreo")}
+                  onBlur={handleBlurVivo("confirmarCorreo")}
+                  className={
+                    tocados.confirmarCorreo && errores.confirmarCorreo
+                      ? styles.inputError
+                      : esCampoValido("confirmarCorreo")
+                      ? styles.inputValid
+                      : ""
+                  }
+                />
+                {tocados.confirmarCorreo && errores.confirmarCorreo && (
+                  <Icon name="x" size={16} className={styles.iconInvalid} />
+                )}
+                {esCampoValido("confirmarCorreo") && <Icon name="check" size={16} className={styles.iconValid} />}
+              </div>
+              {tocados.confirmarCorreo && errores.confirmarCorreo && <em>{errores.confirmarCorreo}</em>}
+              {esCampoValido("confirmarCorreo") && <em className={styles.textoValido}>¡Correcto!</em>}
             </label>
 
             <label className={styles.field}>
               <span>Teléfono *</span>
-              <input
-                type="tel"
-                placeholder="Teléfono"
-                value={form.celular}
-                onChange={handleChange("celular")}
-                className={errores.celular ? styles.inputError : ""}
-              />
-              {errores.celular && <em>{errores.celular}</em>}
+              <div className={styles.inputIconWrap}>
+                <input
+                  type="tel"
+                  placeholder="Ej: 0991234567"
+                  maxLength={10}
+                  value={form.celular}
+                  onChange={handleChangeTelefono("celular")}
+                  onBlur={handleBlurVivo("celular")}
+                  className={
+                    tocados.celular && errores.celular
+                      ? styles.inputError
+                      : esCampoValido("celular")
+                      ? styles.inputValid
+                      : ""
+                  }
+                />
+                {tocados.celular && errores.celular && <Icon name="x" size={16} className={styles.iconInvalid} />}
+                {esCampoValido("celular") && <Icon name="check" size={16} className={styles.iconValid} />}
+              </div>
+              {tocados.celular && errores.celular && <em>{errores.celular}</em>}
+              {esCampoValido("celular") && <em className={styles.textoValido}>¡Correcto!</em>}
             </label>
 
             <label className={styles.field}>
