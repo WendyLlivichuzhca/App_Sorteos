@@ -36,6 +36,9 @@ export default function ConsultarBoletos() {
 
       <div className={`container ${styles.wrap}`}>
         <div className={styles.card}>
+          <div className={styles.iconBadge}>
+            <Icon name="ticket" size={26} />
+          </div>
           <h1>Consultar mis boletos</h1>
           <p className={styles.subtitle}>Ingresa tu número de cédula para consultar tus boletos asignados</p>
 
