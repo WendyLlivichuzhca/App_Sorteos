@@ -66,6 +66,7 @@ export default function Checkout() {
   const [comprobanteFile, setComprobanteFile] = useState(null);
   const [procesando, setProcesando] = useState(false);
   const [errores, setErrores] = useState({});
+  const [tocados, setTocados] = useState({ cedula: false, nombres: false, apellidos: false });
   const [errorGlobal, setErrorGlobal] = useState("");
   const [instruccionesPago, setInstruccionesPago] = useState("");
   const [qrPago, setQrPago] = useState("");
@@ -110,19 +111,42 @@ export default function Checkout() {
   const handleChangeNombre = (field) => (e) =>
     setForm((f) => ({ ...f, [field]: limpiarNombre(e.target.value) }));
 
+  const validarCampoVivo = (field, valor) => {
+    if (field === "cedula") {
+      const doc = validarDocumento(form.tipoDocumento, valor);
+      return doc.valido ? "" : doc.mensaje;
+    }
+    if (field === "nombres") {
+      return validarNombre(valor) ? "" : "Ingresa un nombre válido (solo letras, mínimo 2 caracteres)";
+    }
+    if (field === "apellidos") {
+      return validarNombre(valor) ? "" : "Ingresa un apellido válido (solo letras, mínimo 2 caracteres)";
+    }
+    return "";
+  };
+
+  const handleBlurVivo = (field) => () => {
+    setTocados((t) => ({ ...t, [field]: true }));
+    setErrores((e) => ({ ...e, [field]: validarCampoVivo(field, form[field]) }));
+  };
+
+  const esCampoValido = (field) =>
+    tocados[field] && !errores[field] && String(form[field] || "").trim() !== "";
+
   const validarFormulario = () => {
     const errs = {};
-    const docValidado = validarDocumento(form.tipoDocumento, form.cedula);
-    if (!docValidado.valido) errs.cedula = docValidado.mensaje;
-    if (!validarNombre(form.nombres)) errs.nombres = "Ingresa un nombre válido (solo letras, mínimo 2 caracteres)";
-    if (!validarNombre(form.apellidos)) errs.apellidos = "Ingresa un apellido válido (solo letras, mínimo 2 caracteres)";
+    errs.cedula = validarCampoVivo("cedula", form.cedula);
+    errs.nombres = validarCampoVivo("nombres", form.nombres);
+    errs.apellidos = validarCampoVivo("apellidos", form.apellidos);
     if (!/^\S+@\S+\.\S+$/.test(form.correo)) errs.correo = "Ingresa un correo válido";
     if (form.correo !== form.confirmarCorreo) errs.confirmarCorreo = "Los correos no coinciden";
     if (!form.celular.trim()) errs.celular = "Ingresa tu número de teléfono / celular";
     if (!form.direccion.trim()) errs.direccion = "Ingresa tu dirección de la calle";
     if (!form.ciudad.trim()) errs.ciudad = "Ingresa tu ciudad";
 
+    Object.keys(errs).forEach((k) => !errs[k] && delete errs[k]);
     setErrores(errs);
+    setTocados((t) => ({ ...t, cedula: true, nombres: true, apellidos: true }));
     return Object.keys(errs).length === 0;
   };
 
@@ -209,41 +233,77 @@ export default function Checkout() {
 
               <label className={styles.field}>
                 <span>{DOCUMENTO_INFO[form.tipoDocumento].etiqueta} *</span>
-                <input
-                  type="text"
-                  placeholder={DOCUMENTO_INFO[form.tipoDocumento].placeholder}
-                  maxLength={DOCUMENTO_INFO[form.tipoDocumento].maxLength}
-                  value={form.cedula}
-                  onChange={handleChange("cedula")}
-                  className={errores.cedula ? styles.inputError : ""}
-                />
-                {errores.cedula && <em>{errores.cedula}</em>}
+                <div className={styles.inputIconWrap}>
+                  <input
+                    type="text"
+                    placeholder={DOCUMENTO_INFO[form.tipoDocumento].placeholder}
+                    maxLength={DOCUMENTO_INFO[form.tipoDocumento].maxLength}
+                    value={form.cedula}
+                    onChange={handleChange("cedula")}
+                    onBlur={handleBlurVivo("cedula")}
+                    className={
+                      tocados.cedula && errores.cedula
+                        ? styles.inputError
+                        : esCampoValido("cedula")
+                        ? styles.inputValid
+                        : ""
+                    }
+                  />
+                  {tocados.cedula && errores.cedula && <Icon name="x" size={16} className={styles.iconInvalid} />}
+                  {esCampoValido("cedula") && <Icon name="check" size={16} className={styles.iconValid} />}
+                </div>
+                {tocados.cedula && errores.cedula && <em>{errores.cedula}</em>}
+                {esCampoValido("cedula") && <em className={styles.textoValido}>¡Correcto!</em>}
               </label>
             </div>
 
             <div className={styles.rowTwo}>
               <label className={styles.field}>
                 <span>Nombres *</span>
-                <input
-                  type="text"
-                  placeholder="Nombre"
-                  value={form.nombres}
-                  onChange={handleChangeNombre("nombres")}
-                  className={errores.nombres ? styles.inputError : ""}
-                />
-                {errores.nombres && <em>{errores.nombres}</em>}
+                <div className={styles.inputIconWrap}>
+                  <input
+                    type="text"
+                    placeholder="Nombre"
+                    value={form.nombres}
+                    onChange={handleChangeNombre("nombres")}
+                    onBlur={handleBlurVivo("nombres")}
+                    className={
+                      tocados.nombres && errores.nombres
+                        ? styles.inputError
+                        : esCampoValido("nombres")
+                        ? styles.inputValid
+                        : ""
+                    }
+                  />
+                  {tocados.nombres && errores.nombres && <Icon name="x" size={16} className={styles.iconInvalid} />}
+                  {esCampoValido("nombres") && <Icon name="check" size={16} className={styles.iconValid} />}
+                </div>
+                {tocados.nombres && errores.nombres && <em>{errores.nombres}</em>}
+                {esCampoValido("nombres") && <em className={styles.textoValido}>¡Correcto!</em>}
               </label>
 
               <label className={styles.field}>
                 <span>Apellidos *</span>
-                <input
-                  type="text"
-                  placeholder="Apellido"
-                  value={form.apellidos}
-                  onChange={handleChangeNombre("apellidos")}
-                  className={errores.apellidos ? styles.inputError : ""}
-                />
-                {errores.apellidos && <em>{errores.apellidos}</em>}
+                <div className={styles.inputIconWrap}>
+                  <input
+                    type="text"
+                    placeholder="Apellido"
+                    value={form.apellidos}
+                    onChange={handleChangeNombre("apellidos")}
+                    onBlur={handleBlurVivo("apellidos")}
+                    className={
+                      tocados.apellidos && errores.apellidos
+                        ? styles.inputError
+                        : esCampoValido("apellidos")
+                        ? styles.inputValid
+                        : ""
+                    }
+                  />
+                  {tocados.apellidos && errores.apellidos && <Icon name="x" size={16} className={styles.iconInvalid} />}
+                  {esCampoValido("apellidos") && <Icon name="check" size={16} className={styles.iconValid} />}
+                </div>
+                {tocados.apellidos && errores.apellidos && <em>{errores.apellidos}</em>}
+                {esCampoValido("apellidos") && <em className={styles.textoValido}>¡Correcto!</em>}
               </label>
             </div>
 

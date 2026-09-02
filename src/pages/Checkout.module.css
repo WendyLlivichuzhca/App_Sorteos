@@ -67,10 +67,43 @@
   border-color: #F87171 !important;
 }
 
+.inputValid {
+  border-color: #34D399 !important;
+}
+
+.inputIconWrap {
+  position: relative;
+}
+
+.inputIconWrap input {
+  padding-right: 34px;
+}
+
+.iconInvalid,
+.iconValid {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  pointer-events: none;
+}
+
+.iconInvalid {
+  color: #F87171;
+}
+
+.iconValid {
+  color: #34D399;
+}
+
 .field em {
   font-style: normal;
   font-size: 12px;
   color: #F87171;
+}
+
+.field em.textoValido {
+  color: #34D399;
 }
 
 .readOnlyInput {
