@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { getConfiguracion } from "../services/api.js";
+import Icon from "../icons/Icon.jsx";
 import styles from "./Footer.module.css";
 
 export default function Footer() {
@@ -16,6 +17,9 @@ export default function Footer() {
   const whatsapp = config?.whatsapp?.replace(/\D/g, "") || "593999999999";
   const nombreEmpresa = config?.nombre_empresa || "El Trébol de Gaya";
   const logoUrl = config?.logo_url || "/logo-icon.svg";
+  const instagram = config?.instagram || "";
+  const facebook = config?.facebook || "";
+  const tiktok = config?.tiktok || "";
 
   return (
     <footer className={styles.footer}>
@@ -28,6 +32,25 @@ export default function Footer() {
             {nombreEmpresa}
           </span>
           <p>Sorteos verificados con premios reales. Compra segura y transparente.</p>
+          {(instagram || facebook || tiktok) && (
+            <div className={styles.socialRow}>
+              {instagram && (
+                <a href={instagram} target="_blank" rel="noopener noreferrer" aria-label="Instagram" className={styles.socialBtn}>
+                  <Icon name="instagram" size={17} />
+                </a>
+              )}
+              {facebook && (
+                <a href={facebook} target="_blank" rel="noopener noreferrer" aria-label="Facebook" className={styles.socialBtn}>
+                  <Icon name="facebook" size={17} />
+                </a>
+              )}
+              {tiktok && (
+                <a href={tiktok} target="_blank" rel="noopener noreferrer" aria-label="TikTok" className={styles.socialBtn}>
+                  <Icon name="tiktok" size={17} />
+                </a>
+              )}
+            </div>
+          )}
         </div>
 
         <div className={styles.col}>
