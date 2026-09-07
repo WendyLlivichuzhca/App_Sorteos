@@ -336,7 +336,7 @@ app.put('/api/sorteos/:id', requireAuth, async (req, res) => {
         parseFloat(precio),
         nuevoTotal,
         estado,
-        fechaSorteo,
+        fechaSorteo || sorteoActual.fecha_sorteo,
         JSON.stringify(galeria || []),
         req.params.id,
       ]

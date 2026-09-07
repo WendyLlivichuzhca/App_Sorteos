@@ -5,7 +5,6 @@ import Footer from "../components/Footer.jsx";
 import Badge from "../components/Badge.jsx";
 import StarRating from "../components/StarRating.jsx";
 import PremioImage from "../components/PremioImage.jsx";
-import CountdownTimer from "../components/CountdownTimer.jsx";
 import Icon from "../icons/Icon.jsx";
 import { getSorteoById, getPremiadosPublic } from "../services/api.js";
 import { formatMoney } from "../utils/format.js";
@@ -74,11 +73,6 @@ export default function SorteoDetalle() {
               <div className={styles.mainBadge}>
                 <Badge estado={sorteo.estado} />
               </div>
-              <div className={styles.mainDate}>
-                <span>Sorteo</span>
-                <strong>{new Date(sorteo.fechaSorteo).toLocaleDateString("es-ES", { day: "2-digit", month: "short", year: "numeric" }).toUpperCase()}</strong>
-                <small>{new Date(sorteo.fechaSorteo).toLocaleTimeString("es-ES", { hour: "2-digit", minute: "2-digit" })}</small>
-              </div>
             </div>
             <div className={styles.thumbs}>
               {(sorteo.galeria && sorteo.galeria.length > 0 ? sorteo.galeria : [1, 2, 3, 4]).map((g, i) => (
@@ -140,7 +134,9 @@ export default function SorteoDetalle() {
 
             {sorteo.estado !== "proximamente" ? (
               <>
-                <CountdownTimer target={sorteo.fechaSorteo} />
+                <div className={styles.sorteoAvisoBox}>
+                  <Icon name="clock" size={15} /> Se sortea al vender el 100% de los boletos
+                </div>
                 <button
                   type="button"
                   className={`btn btn-primary btn-block ${styles.comprarBtn}`}

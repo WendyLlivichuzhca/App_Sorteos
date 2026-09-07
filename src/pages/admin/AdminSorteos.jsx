@@ -22,7 +22,6 @@ export default function AdminSorteos() {
     precio: 2.0,
     total: 1000,
     estado: "activo",
-    fechaSorteo: "2026-08-30",
     galeria: [],
     imagenUrl: "",
   });
@@ -44,7 +43,7 @@ export default function AdminSorteos() {
 
   const handleOpenCreate = () => {
     setEditingItem(null);
-    setFormData({ nombre: "", categoria: "autos", precio: 2.0, total: 1000, estado: "activo", fechaSorteo: "2026-08-30", galeria: [], imagenUrl: "" });
+    setFormData({ nombre: "", categoria: "autos", precio: 2.0, total: 1000, estado: "activo", galeria: [], imagenUrl: "" });
     setShowModal(true);
   };
 
@@ -56,7 +55,6 @@ export default function AdminSorteos() {
       precio: item.precio,
       total: item.total,
       estado: item.estado,
-      fechaSorteo: item.fechaSorteo || "2026-08-30",
       galeria: item.galeria || [],
       imagenUrl: "",
     });
@@ -314,16 +312,6 @@ export default function AdminSorteos() {
 
               <div className={styles.formRow}>
                 <div className={styles.formGroup}>
-                  <label>Fecha Programada del Sorteo</label>
-                  <input
-                    type="date"
-                    required
-                    value={formData.fechaSorteo}
-                    onChange={(e) => setFormData({ ...formData, fechaSorteo: e.target.value })}
-                  />
-                </div>
-
-                <div className={styles.formGroup}>
                   <label>URL de Imagen Directa (Opcional)</label>
                   <input
                     type="text"
@@ -332,9 +320,7 @@ export default function AdminSorteos() {
                     onChange={(e) => setFormData({ ...formData, imagenUrl: e.target.value })}
                   />
                 </div>
-              </div>
 
-              <div className={styles.formRow}>
                 <div className={styles.formGroup}>
                   <label>Total de boletos</label>
                   <input
@@ -346,7 +332,9 @@ export default function AdminSorteos() {
                     onChange={(e) => setFormData({ ...formData, total: parseInt(e.target.value, 10) })}
                   />
                 </div>
+              </div>
 
+              <div className={styles.formRow}>
                 <div className={styles.formGroup}>
                   <label>Estado</label>
                   <select
