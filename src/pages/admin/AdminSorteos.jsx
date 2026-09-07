@@ -24,6 +24,7 @@ export default function AdminSorteos() {
     estado: "activo",
     galeria: [],
     imagenUrl: "",
+    incluyeTexto: "",
   });
 
   const cargarSorteos = () => {
@@ -43,7 +44,7 @@ export default function AdminSorteos() {
 
   const handleOpenCreate = () => {
     setEditingItem(null);
-    setFormData({ nombre: "", categoria: "autos", precio: 2.0, total: 1000, estado: "activo", galeria: [], imagenUrl: "" });
+    setFormData({ nombre: "", categoria: "autos", precio: 2.0, total: 1000, estado: "activo", galeria: [], imagenUrl: "", incluyeTexto: "" });
     setShowModal(true);
   };
 
@@ -57,6 +58,7 @@ export default function AdminSorteos() {
       estado: item.estado,
       galeria: item.galeria || [],
       imagenUrl: "",
+      incluyeTexto: (item.incluye || []).join("\n"),
     });
     setShowModal(true);
   };
@@ -69,7 +71,12 @@ export default function AdminSorteos() {
       const galeria = formData.imagenUrl
         ? [...formData.galeria, formData.imagenUrl]
         : formData.galeria;
-      const payload = { ...formData, galeria };
+      const incluye = formData.incluyeTexto
+        .split("\n")
+        .map((linea) => linea.trim())
+        .filter(Boolean);
+      const { incluyeTexto, ...resto } = formData;
+      const payload = { ...resto, galeria, incluye };
 
       if (editingItem) {
         await updateSorteo(editingItem.id, payload);
@@ -233,6 +240,19 @@ export default function AdminSorteos() {
                   value={formData.nombre}
                   onChange={(e) => setFormData({ ...formData, nombre: e.target.value })}
                 />
+              </div>
+
+              <div className={styles.formGroup}>
+                <label>Incluye además (opcional)</label>
+                <textarea
+                  rows="3"
+                  placeholder={"Un extra por línea, ej:\nIncluye 1 año de seguro pagado\nIncluye matrícula y placas"}
+                  value={formData.incluyeTexto}
+                  onChange={(e) => setFormData({ ...formData, incluyeTexto: e.target.value })}
+                />
+                <span style={{ display: "block", fontSize: "11px", color: "#7E897F", marginTop: "6px" }}>
+                  Si lo dejas vacío, esta sección no aparece en la página del sorteo.
+                </span>
               </div>
 
               <div className={styles.formRow}>

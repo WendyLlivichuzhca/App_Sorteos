@@ -205,6 +205,7 @@ app.get('/api/sorteos', async (req, res) => {
       ...r,
       fechaSorteo: r.fecha_sorteo,
       galeria: typeof r.galeria === 'string' ? JSON.parse(r.galeria || '[]') : r.galeria || [],
+      incluye: typeof r.incluye === 'string' ? JSON.parse(r.incluye || '[]') : r.incluye || [],
     }));
 
     res.json(parsed);
@@ -226,6 +227,7 @@ app.get('/api/sorteos/:id', async (req, res) => {
       ...row,
       fechaSorteo: row.fecha_sorteo,
       galeria: typeof row.galeria === 'string' ? JSON.parse(row.galeria || '[]') : row.galeria || [],
+      incluye: typeof row.incluye === 'string' ? JSON.parse(row.incluye || '[]') : row.incluye || [],
       disponibles: disp[0].count,
     });
   } catch (err) {
@@ -236,7 +238,7 @@ app.get('/api/sorteos/:id', async (req, res) => {
 app.post('/api/sorteos', requireAuth, async (req, res) => {
   try {
     const pool = getPool();
-    const { nombre, categoria, precio, total, estado, fechaSorteo, galeria } = req.body;
+    const { nombre, categoria, precio, total, estado, fechaSorteo, galeria, incluye } = req.body;
 
     if (!nombre || !nombre.trim()) {
       return res.status(400).json({ error: 'El nombre del sorteo es obligatorio' });
@@ -255,8 +257,8 @@ app.post('/api/sorteos', requireAuth, async (req, res) => {
     }
 
     const [result] = await pool.query(
-      `INSERT INTO sorteos (nombre, categoria, precio, total, vendidos, estado, fecha_sorteo, galeria)
-       VALUES (?, ?, ?, ?, 0, ?, ?, ?)`,
+      `INSERT INTO sorteos (nombre, categoria, precio, total, vendidos, estado, fecha_sorteo, galeria, incluye)
+       VALUES (?, ?, ?, ?, 0, ?, ?, ?, ?)`,
       [
         nombre,
         categoria || 'autos',
@@ -265,6 +267,7 @@ app.post('/api/sorteos', requireAuth, async (req, res) => {
         estado || 'activo',
         fechaSorteo || '2026-08-30',
         JSON.stringify(galeria || []),
+        JSON.stringify(incluye || []),
       ]
     );
 
@@ -288,7 +291,7 @@ app.post('/api/sorteos', requireAuth, async (req, res) => {
 app.put('/api/sorteos/:id', requireAuth, async (req, res) => {
   try {
     const pool = getPool();
-    const { nombre, categoria, precio, total, estado, fechaSorteo, galeria } = req.body;
+    const { nombre, categoria, precio, total, estado, fechaSorteo, galeria, incluye } = req.body;
     const nuevoTotal = parseInt(total);
 
     if (!nombre || !nombre.trim()) {
@@ -328,7 +331,7 @@ app.put('/api/sorteos/:id', requireAuth, async (req, res) => {
 
     await pool.query(
       `UPDATE sorteos
-       SET nombre = ?, categoria = ?, precio = ?, total = ?, estado = ?, fecha_sorteo = ?, galeria = ?
+       SET nombre = ?, categoria = ?, precio = ?, total = ?, estado = ?, fecha_sorteo = ?, galeria = ?, incluye = ?
        WHERE id = ?`,
       [
         nombre,
@@ -338,6 +341,7 @@ app.put('/api/sorteos/:id', requireAuth, async (req, res) => {
         estado,
         fechaSorteo || sorteoActual.fecha_sorteo,
         JSON.stringify(galeria || []),
+        JSON.stringify(incluye || []),
         req.params.id,
       ]
     );

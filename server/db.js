@@ -64,6 +64,7 @@ export async function initDB() {
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
       ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
     `);
+    await ensureColumn(pool, 'sorteos', 'incluye', 'JSON NULL');
 
     await pool.query(`
       CREATE TABLE IF NOT EXISTS paquetes (

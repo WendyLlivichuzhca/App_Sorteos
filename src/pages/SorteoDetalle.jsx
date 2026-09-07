@@ -121,16 +121,18 @@ export default function SorteoDetalle() {
               </div>
             )}
 
-            <div className={styles.incluyeBox}>
-              <h4>Incluye además</h4>
-              <ul>
-                {(sorteo.incluye || []).map((item) => (
-                  <li key={item}>
-                    <Icon name="check" size={15} strokeWidth={2.4} /> {item}
-                  </li>
-                ))}
-              </ul>
-            </div>
+            {sorteo.incluye && sorteo.incluye.length > 0 && (
+              <div className={styles.incluyeBox}>
+                <h4>Incluye además</h4>
+                <ul>
+                  {sorteo.incluye.map((item) => (
+                    <li key={item}>
+                      <Icon name="check" size={15} strokeWidth={2.4} /> {item}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
 
             {sorteo.estado !== "proximamente" ? (
               <>
