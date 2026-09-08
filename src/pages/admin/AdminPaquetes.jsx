@@ -8,7 +8,8 @@ export default function AdminPaquetes() {
   const [list, setList] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
-  const [formData, setFormData] = useState({ cantidadMinima: 5, porcentaje: 10 });
+  const CANTIDAD_MINIMA_COMPRA = 10;
+  const [formData, setFormData] = useState({ cantidadMinima: CANTIDAD_MINIMA_COMPRA, porcentaje: 10 });
   const [editingId, setEditingId] = useState(null);
   const [editPorcentaje, setEditPorcentaje] = useState(0);
   const [creando, setCreando] = useState(false);
@@ -32,7 +33,7 @@ export default function AdminPaquetes() {
     try {
       await createDescuento(formData);
       setShowModal(false);
-      setFormData({ cantidadMinima: 5, porcentaje: 10 });
+      setFormData({ cantidadMinima: CANTIDAD_MINIMA_COMPRA, porcentaje: 10 });
       cargarDescuentos();
     } catch (err) {
       alert(err.message || "No se pudo crear el tramo de descuento");
@@ -171,10 +172,13 @@ export default function AdminPaquetes() {
                   <input
                     type="number"
                     required
-                    min="1"
+                    min={CANTIDAD_MINIMA_COMPRA}
                     value={formData.cantidadMinima}
                     onChange={(e) => setFormData({ ...formData, cantidadMinima: parseInt(e.target.value, 10) })}
                   />
+                  <small style={{ color: "#8A968E" }}>
+                    La compra mínima en el checkout es de {CANTIDAD_MINIMA_COMPRA} boletos, así que un tramo por debajo nunca se alcanzaría.
+                  </small>
                 </div>
 
                 <div className={styles.formGroup}>

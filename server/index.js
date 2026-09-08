@@ -166,6 +166,10 @@ app.post('/api/auth/login', async (req, res) => {
   }
 });
 
+// Compra mínima permitida en el checkout: ningún tramo de descuento por debajo
+// de esta cantidad tiene sentido, porque nunca se podría alcanzar.
+const CANTIDAD_MINIMA_COMPRA = 10;
+
 // ==========================================
 // 1. SORTEOS ENDPOINTS (MySQL)
 // ==========================================
@@ -450,8 +454,8 @@ app.post('/api/admin/descuentos', requireAuth, async (req, res) => {
     if (!cantidadMinima || porcentaje === undefined || porcentaje === null || Number.isNaN(parseInt(porcentaje))) {
       return res.status(400).json({ error: 'Cantidad mínima y porcentaje son obligatorios' });
     }
-    if (parseInt(cantidadMinima) < 1) {
-      return res.status(400).json({ error: 'La cantidad mínima debe ser al menos 1' });
+    if (parseInt(cantidadMinima) < CANTIDAD_MINIMA_COMPRA) {
+      return res.status(400).json({ error: `La cantidad mínima del tramo no puede ser menor a ${CANTIDAD_MINIMA_COMPRA}, que es la compra mínima permitida en el checkout` });
     }
     if (parseInt(porcentaje) < 0 || parseInt(porcentaje) > 90) {
       return res.status(400).json({ error: 'El descuento debe estar entre 0% y 90%' });
@@ -477,8 +481,8 @@ app.put('/api/admin/descuentos/:id', requireAuth, async (req, res) => {
     if (!cantidadMinima || porcentaje === undefined || porcentaje === null || Number.isNaN(parseInt(porcentaje))) {
       return res.status(400).json({ error: 'Cantidad mínima y porcentaje son obligatorios' });
     }
-    if (parseInt(cantidadMinima) < 1) {
-      return res.status(400).json({ error: 'La cantidad mínima debe ser al menos 1' });
+    if (parseInt(cantidadMinima) < CANTIDAD_MINIMA_COMPRA) {
+      return res.status(400).json({ error: `La cantidad mínima del tramo no puede ser menor a ${CANTIDAD_MINIMA_COMPRA}, que es la compra mínima permitida en el checkout` });
     }
     if (parseInt(porcentaje) < 0 || parseInt(porcentaje) > 90) {
       return res.status(400).json({ error: 'El descuento debe estar entre 0% y 90%' });
@@ -648,8 +652,6 @@ app.delete('/api/admin/premiados/:id', requireAuth, async (req, res) => {
 // ==========================================
 // 2. CHECKOUT & TICKET ENGINE (MySQL)
 // ==========================================
-const CANTIDAD_MINIMA_COMPRA = 10;
-
 app.post('/api/compras/checkout', async (req, res) => {
   const pool = getPool();
   const { sorteoId, cantidad, comprador, metodoPago } = req.body;
