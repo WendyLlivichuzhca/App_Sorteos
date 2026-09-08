@@ -66,12 +66,12 @@ export default function Paquetes() {
   const precioBase = cantidad * sorteo.precio;
   const precio = ahorra > 0 ? precioBase * (1 - ahorra / 100) : precioBase;
 
-  // Paquetes predefinidos estándar (sus descuentos se calculan dinámicamente del panel admin)
-  // La compra mínima es de 10 boletos, por eso no hay paquetes por debajo de esa cantidad.
-  const paquetesPreset = [
-    { id: "vip", nombre: "Paquete VIP", boletos: 10, popular: true },
-    { id: "premium", nombre: "Paquete Premium", boletos: 20 },
-  ];
+  // Las tarjetas de paquete se generan directo de los tramos de Descuentos por Volumen
+  // (panel admin): cada tramo "desde X boletos" se muestra como un paquete de X boletos.
+  // Así, crear/editar/borrar un tramo ahí actualiza esta pantalla sin tocar código.
+  const paquetesPreset = [...tramos]
+    .sort((a, b) => a.cantidad_minima - b.cantidad_minima)
+    .map((t) => ({ id: `tramo-${t.id}`, boletos: t.cantidad_minima }));
 
   const paquete = {
     nombre: "Selección de boletos",
@@ -128,11 +128,12 @@ export default function Paquetes() {
                   {esActivo && <span className={styles.radioDot} />}
                 </span>
                 <div className={styles.paqueteInfo}>
-                  <strong>{p.nombre}</strong>
-                  <span className={styles.paqueteBoletos}>
-                    {p.boletos} {p.boletos === 1 ? "Boleto" : "Boletos"}
-                    {porcentajeAhorro > 0 && <span className={styles.ahorro}>Ahorra {porcentajeAhorro}%</span>}
-                  </span>
+                  <strong>{p.boletos} {p.boletos === 1 ? "Boleto" : "Boletos"}</strong>
+                  {porcentajeAhorro > 0 && (
+                    <span className={styles.paqueteBoletos}>
+                      <span className={styles.ahorro}>Ahorra {porcentajeAhorro}%</span>
+                    </span>
+                  )}
                 </div>
                 <span className={styles.paquetePrecio}>
                   {formatMoney(precioPreset)}
