@@ -9,7 +9,8 @@ export default function AdminPaquetes() {
   const [loading, setLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
   const CANTIDAD_MINIMA_COMPRA = 10;
-  const [formData, setFormData] = useState({ cantidadMinima: CANTIDAD_MINIMA_COMPRA, porcentaje: 10 });
+  // Un combo nuevo se crea sin descuento (0%); el % solo se ajusta después, editando la fila.
+  const [formData, setFormData] = useState({ cantidadMinima: CANTIDAD_MINIMA_COMPRA, porcentaje: 0 });
   const [editingId, setEditingId] = useState(null);
   const [editPorcentaje, setEditPorcentaje] = useState(0);
   const [creando, setCreando] = useState(false);
@@ -33,7 +34,7 @@ export default function AdminPaquetes() {
     try {
       await createDescuento(formData);
       setShowModal(false);
-      setFormData({ cantidadMinima: CANTIDAD_MINIMA_COMPRA, porcentaje: 10 });
+      setFormData({ cantidadMinima: CANTIDAD_MINIMA_COMPRA, porcentaje: 0 });
       cargarDescuentos();
     } catch (err) {
       alert(err.message || "No se pudo crear el tramo de descuento");
@@ -88,7 +89,7 @@ export default function AdminPaquetes() {
       <div className={styles.topRow}>
         <div />
         <button type="button" className={styles.createBtn} onClick={() => setShowModal(true)}>
-          <Icon name="plus" size={18} /> Crear Nuevo Tramo
+          <Icon name="plus" size={18} /> Crear Nuevo Combo
         </button>
       </div>
 
@@ -162,13 +163,13 @@ export default function AdminPaquetes() {
         <div className={styles.modalOverlay}>
           <div className={styles.modal}>
             <div className={styles.modalHeader}>
-              <h3>Crear Tramo de Descuento</h3>
+              <h3>Crear Nuevo Combo</h3>
               <button type="button" className={styles.closeBtn} onClick={() => setShowModal(false)}>×</button>
             </div>
             <form onSubmit={handleCreate} className={styles.form}>
               <div className={styles.formRow}>
                 <div className={styles.formGroup}>
-                  <label>Cantidad mínima de boletos</label>
+                  <label>Cantidad de boletos del combo</label>
                   <input
                     type="number"
                     required
@@ -177,26 +178,15 @@ export default function AdminPaquetes() {
                     onChange={(e) => setFormData({ ...formData, cantidadMinima: parseInt(e.target.value, 10) })}
                   />
                   <small style={{ color: "#8A968E" }}>
-                    La compra mínima en el checkout es de {CANTIDAD_MINIMA_COMPRA} boletos, así que un tramo por debajo nunca se alcanzaría.
+                    Se crea sin descuento (0%). La compra mínima en el checkout es de {CANTIDAD_MINIMA_COMPRA} boletos, así que un combo por debajo nunca se podría comprar.
+                    Si más adelante quieres darle un % de descuento a este combo, edítalo con el lápiz ✏️ en la tabla.
                   </small>
-                </div>
-
-                <div className={styles.formGroup}>
-                  <label>Descuento (%)</label>
-                  <input
-                    type="number"
-                    required
-                    min="0"
-                    max="90"
-                    value={formData.porcentaje}
-                    onChange={(e) => setFormData({ ...formData, porcentaje: parseInt(e.target.value, 10) })}
-                  />
                 </div>
               </div>
 
               <div className={styles.modalFooter}>
                 <button type="button" className={styles.cancelBtn} onClick={() => setShowModal(false)}>Cancelar</button>
-                <button type="submit" className={styles.saveBtn} disabled={creando}>{creando ? "Guardando..." : "Guardar Tramo"}</button>
+                <button type="submit" className={styles.saveBtn} disabled={creando}>{creando ? "Guardando..." : "Guardar Combo"}</button>
               </div>
             </form>
           </div>
