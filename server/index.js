@@ -648,6 +648,8 @@ app.delete('/api/admin/premiados/:id', requireAuth, async (req, res) => {
 // ==========================================
 // 2. CHECKOUT & TICKET ENGINE (MySQL)
 // ==========================================
+const CANTIDAD_MINIMA_COMPRA = 10;
+
 app.post('/api/compras/checkout', async (req, res) => {
   const pool = getPool();
   const { sorteoId, cantidad, comprador, metodoPago } = req.body;
@@ -656,6 +658,9 @@ app.post('/api/compras/checkout', async (req, res) => {
 
   if (!sId || !cant || cant < 1 || !comprador || !comprador.cedula || !comprador.nombre || !comprador.correo || !comprador.celular) {
     return res.status(400).json({ error: 'Faltan datos obligatorios para la compra' });
+  }
+  if (cant < CANTIDAD_MINIMA_COMPRA) {
+    return res.status(400).json({ error: `La compra mínima es de ${CANTIDAD_MINIMA_COMPRA} boletos` });
   }
   const correoValidado = validarCorreo(comprador.correo);
   if (!correoValidado.valido) {

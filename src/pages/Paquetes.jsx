@@ -15,7 +15,8 @@ export default function Paquetes() {
   const [sorteo, setSorteo] = useState(null);
   const [tramos, setTramos] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [cantidad, setCantidad] = useState(5);
+  const CANTIDAD_MINIMA = 10;
+  const [cantidad, setCantidad] = useState(CANTIDAD_MINIMA);
 
   useEffect(() => {
     setLoading(true);
@@ -66,10 +67,9 @@ export default function Paquetes() {
   const precio = ahorra > 0 ? precioBase * (1 - ahorra / 100) : precioBase;
 
   // Paquetes predefinidos estándar (sus descuentos se calculan dinámicamente del panel admin)
+  // La compra mínima es de 10 boletos, por eso no hay paquetes por debajo de esa cantidad.
   const paquetesPreset = [
-    { id: "basico", nombre: "Paquete Básico", boletos: 1 },
-    { id: "popular", nombre: "Paquete Popular", boletos: 5, popular: true },
-    { id: "vip", nombre: "Paquete VIP", boletos: 10 },
+    { id: "vip", nombre: "Paquete VIP", boletos: 10, popular: true },
     { id: "premium", nombre: "Paquete Premium", boletos: 20 },
   ];
 
@@ -86,7 +86,7 @@ export default function Paquetes() {
   };
 
   const handleCambio = (delta) => {
-    setCantidad((prev) => Math.max(1, Math.min(500, prev + delta)));
+    setCantidad((prev) => Math.max(CANTIDAD_MINIMA, Math.min(500, prev + delta)));
   };
 
   const seleccionarPreset = (numBoletos) => {
@@ -106,7 +106,7 @@ export default function Paquetes() {
 
         <div className={styles.notice}>
           <Icon name="share" size={18} />
-          Tus números serán generados aleatoriamente al completar tu compra.
+          Tus números serán generados aleatoriamente al completar tu compra. Compra mínima: {CANTIDAD_MINIMA} boletos.
         </div>
 
         <div className={styles.paquetes}>
@@ -161,7 +161,7 @@ export default function Paquetes() {
                 type="button"
                 className={styles.counterBtn}
                 onClick={() => handleCambio(-1)}
-                disabled={cantidad <= 1}
+                disabled={cantidad <= CANTIDAD_MINIMA}
               >
                 -
               </button>
@@ -169,13 +169,13 @@ export default function Paquetes() {
               <div className={styles.inputWrap}>
                 <input
                   type="number"
-                  min="1"
+                  min={CANTIDAD_MINIMA}
                   max="500"
                   value={cantidad}
                   onChange={(e) => {
                     const val = parseInt(e.target.value, 10);
-                    if (!isNaN(val)) setCantidad(Math.max(1, Math.min(500, val)));
-                    else setCantidad(1);
+                    if (!isNaN(val)) setCantidad(Math.max(CANTIDAD_MINIMA, Math.min(500, val)));
+                    else setCantidad(CANTIDAD_MINIMA);
                   }}
                   className={styles.counterInput}
                 />
