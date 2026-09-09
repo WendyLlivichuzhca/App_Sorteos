@@ -50,9 +50,16 @@ export default function AdminSorteos() {
 
   const handleOpenEdit = (item) => {
     setEditingItem(item);
+    // Si la categoría guardada del sorteo ya no existe (por ejemplo, se borró esa
+    // categoría después), el <select> solo puede mostrar las que sí existen — así que
+    // se usa la primera disponible como valor real, para que lo que se ve en pantalla
+    // sea lo mismo que se va a guardar.
+    const categoriaValida = categorias.some((c) => c.slug === item.categoria)
+      ? item.categoria
+      : (categorias[0]?.slug || item.categoria);
     setFormData({
       nombre: item.nombre,
-      categoria: item.categoria,
+      categoria: categoriaValida,
       precio: item.precio,
       total: item.total,
       estado: item.estado,
