@@ -7,6 +7,8 @@ import { getSorteos, createSorteo, updateSorteo, deleteSorteo, getCategorias } f
 import { formatMoney } from "../../utils/format.js";
 import styles from "./AdminSorteos.module.css";
 
+const GUIA_KEY = "sorteos_guia_cerrada";
+
 export default function AdminSorteos() {
   const [list, setList] = useState([]);
   const [categorias, setCategorias] = useState([]);
@@ -15,6 +17,22 @@ export default function AdminSorteos() {
   const [showModal, setShowModal] = useState(false);
   const [editingItem, setEditingItem] = useState(null);
   const [guardando, setGuardando] = useState(false);
+  const [guiaAbierta, setGuiaAbierta] = useState(() => {
+    try {
+      return localStorage.getItem(GUIA_KEY) !== "1";
+    } catch {
+      return true;
+    }
+  });
+
+  const cerrarGuia = () => {
+    setGuiaAbierta(false);
+    try {
+      localStorage.setItem(GUIA_KEY, "1");
+    } catch {
+      // si el navegador bloquea localStorage, simplemente no se recuerda la próxima vez
+    }
+  };
   const [formData, setFormData] = useState({
     nombre: "",
     categoria: "",
@@ -125,6 +143,21 @@ export default function AdminSorteos() {
           <Icon name="plus" size={18} /> Crear Nuevo Sorteo
         </button>
       </div>
+
+      {guiaAbierta && (
+        <div className={styles.guideBox}>
+          <div className={styles.guideHeader}>
+            <strong>📖 Guía rápida: cómo funciona este panel</strong>
+            <button type="button" className={styles.guideClose} onClick={cerrarGuia} title="Cerrar guía">×</button>
+          </div>
+          <ol className={styles.guideList}>
+            <li>Crea tu sorteo con <strong>"+ Crear Nuevo Sorteo"</strong>: nombre, categoría, precio por boleto y cantidad de boletos.</li>
+            <li>Antes de poder sortear un ganador, entra al ícono <strong>🏆</strong> de ese sorteo y agrega al menos un <strong>"Lugar"</strong> — es el premio que se va a sortear.</li>
+            <li>¿Tu sorteo reparte varios premios (1er y 2do lugar, por ejemplo)? Agrega un "Lugar" por cada uno, ahí mismo en 🏆.</li>
+            <li>Usa <strong>🎁</strong> para ver los números premiados, <strong>✏️</strong> para editar el sorteo, y <strong>🗑️</strong> para eliminarlo.</li>
+          </ol>
+        </div>
+      )}
 
       <div className={styles.kpiGrid}>
         {kpis.map((k) => (

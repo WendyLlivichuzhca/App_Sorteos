@@ -37,6 +37,57 @@
   transform: translateY(-1px);
 }
 
+.guideBox {
+  background: #10301F;
+  border: 1.5px solid #1F4B33;
+  border-radius: 14px;
+  padding: 16px 18px;
+  margin-bottom: 20px;
+}
+
+.guideHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.guideHeader strong {
+  font-size: 12.5px;
+  color: #F2F5F3;
+}
+
+.guideClose {
+  background: transparent;
+  border: none;
+  font-size: 18px;
+  line-height: 1;
+  color: #A9B3AD;
+  cursor: pointer;
+  padding: 2px 6px;
+}
+
+.guideClose:hover {
+  color: #F2F5F3;
+}
+
+.guideList {
+  margin: 10px 0 0;
+  padding-left: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.guideList li {
+  font-size: 11.5px;
+  color: #C7CFC9;
+  line-height: 1.5;
+}
+
+.guideList strong {
+  color: #4ADE80;
+}
+
 .kpiGrid {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
