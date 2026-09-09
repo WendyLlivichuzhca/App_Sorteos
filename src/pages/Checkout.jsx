@@ -66,6 +66,7 @@ export default function Checkout() {
     }
   );
 
+  const [paso, setPaso] = useState(1);
   const [comprobanteFile, setComprobanteFile] = useState(null);
   const [procesando, setProcesando] = useState(false);
   const [errores, setErrores] = useState({});
@@ -164,7 +165,7 @@ export default function Checkout() {
   const esCampoValido = (field) =>
     tocados[field] && !errores[field] && String(form[field] || "").trim() !== "";
 
-  const validarFormulario = () => {
+  const validarDatos = () => {
     const errs = {};
     errs.cedula = validarCampoVivo("cedula", form.cedula);
     errs.nombres = validarCampoVivo("nombres", form.nombres);
@@ -174,9 +175,6 @@ export default function Checkout() {
     errs.celular = validarCampoVivo("celular", form.celular);
     if (!form.direccion.trim()) errs.direccion = "Ingresa tu dirección de la calle";
     if (!form.ciudad.trim()) errs.ciudad = "Ingresa tu ciudad";
-    if ((metodoPago === "transferencia" || metodoPago === "qr") && !comprobanteFile) {
-      errs.comprobante = "Sube una foto o PDF de tu comprobante de pago para continuar";
-    }
 
     Object.keys(errs).forEach((k) => !errs[k] && delete errs[k]);
     setErrores(errs);
@@ -192,12 +190,23 @@ export default function Checkout() {
     return Object.keys(errs).length === 0;
   };
 
+  const handleContinuar = (e) => {
+    e.preventDefault();
+    setErrorGlobal("");
+    if (!validarDatos()) {
+      setErrorGlobal("Por favor, completa los campos obligatorios marcados en rojo.");
+      return;
+    }
+    setPaso(2);
+  };
+
   const handlePagar = async (e) => {
     e.preventDefault();
     setErrorGlobal("");
 
-    if (!validarFormulario()) {
-      setErrorGlobal("Por favor, completa los campos obligatorios marcados en rojo.");
+    if ((metodoPago === "transferencia" || metodoPago === "qr") && !comprobanteFile) {
+      setErrores((er) => ({ ...er, comprobante: "Sube una foto o PDF de tu comprobante de pago para continuar" }));
+      setErrorGlobal("Por favor, sube tu comprobante de pago para continuar.");
       return;
     }
 
@@ -255,14 +264,34 @@ export default function Checkout() {
 
   return (
     <div className="page">
-      <Navbar variant="checkout" />
+      <Navbar variant="checkout" step={paso === 1 ? "datos" : "pago"} />
 
       <div className={`container ${styles.wrap}`}>
-        <form onSubmit={handlePagar} noValidate className={styles.grid}>
+        <form onSubmit={paso === 1 ? handleContinuar : handlePagar} noValidate className={styles.grid}>
           {/* Columna Izquierda: Datos de Facturación */}
           <div className={styles.colFacturacion}>
             <h2>Datos de Facturación</h2>
 
+            {paso === 2 && (
+              <div className={styles.expandGrayBox}>
+                <p>
+                  <strong>{form.nombres} {form.apellidos}</strong>
+                </p>
+                <p>{DOCUMENTO_INFO[form.tipoDocumento].etiqueta}: {form.cedula}</p>
+                <p>{form.correo} · {form.celular}</p>
+                <p>{form.direccion}, {form.ciudad}, {form.provincia}</p>
+                <button
+                  type="button"
+                  onClick={() => setPaso(1)}
+                  style={{ marginTop: "10px", background: "transparent", border: "none", color: "#16a34a", fontWeight: 600, fontSize: "13px", cursor: "pointer", padding: 0 }}
+                >
+                  ✏️ Editar mis datos
+                </button>
+              </div>
+            )}
+
+            {paso === 1 && (
+            <>
             <div className={styles.rowTwo}>
               <label className={styles.field}>
                 <span>Tipo Documento *</span>
@@ -465,6 +494,8 @@ export default function Checkout() {
                 {errores.ciudad && <em>{errores.ciudad}</em>}
               </label>
             </div>
+            </>
+            )}
           </div>
 
           {/* Columna Derecha: Tu Pedido + Selección de Método de Pago */}
@@ -491,12 +522,13 @@ export default function Checkout() {
 
             {/* Sección Selecciona tu método de pago */}
             <div className={styles.metodosBox}>
-              <h3>Selecciona tu método de pago</h3>
+              <h3>{paso === 1 ? "Selecciona tu método de pago" : "Completa tu pago"}</h3>
 
               <div className={styles.metodosList}>
                 {/* Opción 1: Transferencia bancaria o depósito */}
                 {metodosHabilitados.transferencia && (
                 <div className={styles.metodoItem}>
+                  {paso === 1 && (
                   <label className={styles.radioLabel} onClick={() => setMetodoPago("transferencia")}>
                     <input
                       type="radio"
@@ -506,8 +538,9 @@ export default function Checkout() {
                     />
                     <span className={styles.radioText}>Transferencia bancaria o depósito</span>
                   </label>
+                  )}
 
-                  {metodoPago === "transferencia" && (
+                  {paso === 2 && metodoPago === "transferencia" && (
                     <div className={styles.expandGrayBox}>
                       <p>
                         Por favor, <strong>NO PROCEDAS SI NO ESTÁS SEGURO</strong> de que quieres realizar la compra. Realiza tu pago directamente con transferencia o depósito a nuestra cuenta bancaria. Tu pedido no se procesará hasta que se haya recibido el importe en nuestra cuenta.
@@ -538,6 +571,7 @@ export default function Checkout() {
                 {/* Opción 2: Pagar con tarjeta de crédito o débito (Payphone) */}
                 {metodosHabilitados.payphone && (
                 <div className={styles.metodoItem}>
+                  {paso === 1 && (
                   <label className={styles.radioLabel} onClick={() => setMetodoPago("payphone")}>
                     <input
                       type="radio"
@@ -558,8 +592,9 @@ export default function Checkout() {
                       </div>
                     </div>
                   </label>
+                  )}
 
-                  {metodoPago === "payphone" && (
+                  {paso === 2 && metodoPago === "payphone" && (
                     <div className={styles.expandGrayBox}>
                       <p>
                         Usa tus tarjetas de crédito o débito Visa, Mastercard, Diners o Discover de cualquier banco del mundo y, si tienes la aplicación Payphone, utiliza tu saldo.
@@ -572,6 +607,7 @@ export default function Checkout() {
                 {/* Opción 4: Pagar con código QR (JEP Fácil) */}
                 {metodosHabilitados.qr && (
                 <div className={styles.metodoItem}>
+                  {paso === 1 && (
                   <label className={styles.radioLabel} onClick={() => setMetodoPago("qr")}>
                     <input
                       type="radio"
@@ -581,8 +617,9 @@ export default function Checkout() {
                     />
                     <span className={styles.radioText}>Pagar con código QR (JEP Fácil)</span>
                   </label>
+                  )}
 
-                  {metodoPago === "qr" && (
+                  {paso === 2 && metodoPago === "qr" && (
                     <div className={styles.expandGrayBox}>
                       <p>
                         Por favor, <strong>NO PROCEDAS SI NO ESTÁS SEGURO</strong> de que quieres realizar la compra. Escanea el código con tu app de JEP Fácil y realiza el pago. Tu pedido no se procesará hasta que se haya recibido el pago.
@@ -620,6 +657,7 @@ export default function Checkout() {
                 Tus datos personales se utilizarán para procesar tu pedido, mejorar tu experiencia en esta web y otros propósitos descritos en nuestra <strong>política de privacidad</strong>.
               </p>
 
+              {paso === 2 && (
               <div className={styles.termsRow}>
                 <label className={styles.termsLabel}>
                   <input
@@ -632,10 +670,19 @@ export default function Checkout() {
                   </span>
                 </label>
               </div>
+              )}
 
               {errorGlobal && <div className={styles.errorMessage}>⚠️ {errorGlobal}</div>}
 
-              <div className={styles.btnRow}>{renderBotonPago()}</div>
+              <div className={styles.btnRow}>
+                {paso === 1 ? (
+                  <button type="submit" className={styles.blackBtn}>
+                    Continuar
+                  </button>
+                ) : (
+                  renderBotonPago()
+                )}
+              </div>
             </div>
           </div>
         </form>
