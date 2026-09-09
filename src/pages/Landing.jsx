@@ -46,11 +46,9 @@ export default function Landing() {
         <div className={`container ${styles.heroInner}`}>
           {/* Columna izquierda: texto */}
           <div className={styles.heroCopy}>
+            <span className={styles.heroBadge}>🌿 Tu suerte, más cerca</span>
             <h1>
-              Participa en<br />
-              los mejores sorteos<br />
-              y gana increíbles<br />
-              premios.
+              Participa en los mejores <span className={styles.highlight}>sorteos</span> y gana increíbles <span className={styles.highlight}>premios</span>.
             </h1>
             <p>
               Boletos seguros, sorteos verificados<br />
@@ -76,6 +74,11 @@ export default function Landing() {
               alt="Terreno, auto, moto y laptop en sorteo"
               className={styles.heroImg}
             />
+            <Link to="/sorteos" className={styles.heroImgBadge}>
+              <Icon name="ticket" size={14} />
+              Tu próximo gran premio
+              <Icon name="arrowRight" size={14} />
+            </Link>
           </div>
         </div>
       </section>
@@ -101,7 +104,10 @@ export default function Landing() {
       {destacados.length > 0 && (
         <section className={`container ${styles.destacadosSection}`}>
           <div className={styles.destacadosHeader}>
-            <h2>Sorteos destacados</h2>
+            <h2>
+              <Icon name="star" size={22} className={styles.destacadosStarIcon} />
+              Sorteos destacados
+            </h2>
             <Link to="/sorteos" className={styles.verTodos}>Ver todos →</Link>
           </div>
           <div className={styles.destacadosGrid}>
@@ -111,8 +117,15 @@ export default function Landing() {
                   <PremioImage categoria={s.categoria} images={s.galeria} />
                 </div>
                 <div className={styles.destacadoBody}>
+                  <span className={styles.destacadoBadge}>{s.categoria}</span>
                   <h4>{s.nombre}</h4>
-                  <span>{formatMoney(s.precio)} por boleto</span>
+                  <div className={styles.destacadoPrecio}>
+                    <Icon name="ticket" size={16} />
+                    {formatMoney(s.precio)} por boleto
+                  </div>
+                  <span className={styles.destacadoCta}>
+                    Participar ahora <Icon name="arrowRight" size={15} />
+                  </span>
                 </div>
               </Link>
             ))}

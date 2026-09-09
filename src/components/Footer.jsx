@@ -69,8 +69,14 @@ export default function Footer() {
 
         <div className={styles.col}>
           <h4>Contacto</h4>
-          <a href={`mailto:${correo}`}>{correo}</a>
-          <a href={`https://wa.me/${whatsapp}`} target="_blank" rel="noopener noreferrer">WhatsApp Soporte</a>
+          <a href={`mailto:${correo}`} className={styles.contactoLink}>
+            <Icon name="mail" size={15} />
+            {correo}
+          </a>
+          <a href={`https://wa.me/${whatsapp}`} target="_blank" rel="noopener noreferrer" className={styles.contactoLink}>
+            <Icon name="whatsapp" size={15} />
+            WhatsApp Soporte
+          </a>
         </div>
       </div>
       <div className={styles.bottom}>© {new Date().getFullYear()} {nombreEmpresa}. Todos los derechos reservados.</div>

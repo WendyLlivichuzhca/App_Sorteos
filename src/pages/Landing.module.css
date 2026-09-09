@@ -139,12 +139,30 @@
 }
 
 /* ── Texto ── */
+.heroBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(52, 211, 153, 0.12);
+  border: 1px solid rgba(52, 211, 153, 0.35);
+  color: #6FCB9A;
+  font-size: 12.5px;
+  font-weight: 700;
+  padding: 6px 14px;
+  border-radius: 50px;
+  margin-bottom: 14px;
+}
+
 .heroCopy h1 {
   font-size: 38px;
   line-height: 1.18;
   font-weight: 800;
   color: #ffffff;
   letter-spacing: -0.8px;
+}
+
+.highlight {
+  color: #4ADE80;
 }
 
 .heroCopy p {
@@ -188,9 +206,33 @@
 
 /* ── Imagen de premios ── */
 .heroArt {
+  position: relative;
   display: flex;
   align-items: center;
   justify-content: center;
+}
+
+.heroImgBadge {
+  position: absolute;
+  left: 24px;
+  bottom: 24px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(10, 20, 15, 0.85);
+  backdrop-filter: blur(6px);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  color: #ffffff;
+  font-size: 12.5px;
+  font-weight: 700;
+  padding: 9px 16px;
+  border-radius: 50px;
+  text-decoration: none;
+  transition: transform 0.18s ease;
+}
+
+.heroImgBadge:hover {
+  transform: translateY(-2px);
 }
 
 .heroImg {
@@ -327,9 +369,30 @@
 }
 
 .destacadosHeader h2 {
+  display: flex;
+  align-items: center;
+  gap: 10px;
   font-size: 22px;
   font-weight: 800;
   color: #F2F5F3;
+  position: relative;
+  padding-bottom: 10px;
+}
+
+.destacadosHeader h2::after {
+  content: "";
+  position: absolute;
+  left: 32px;
+  bottom: 0;
+  width: 40px;
+  height: 3px;
+  border-radius: 3px;
+  background: linear-gradient(90deg, #22A06A, #4ADE80);
+}
+
+.destacadosStarIcon {
+  color: #FBBF24;
+  fill: #FBBF24;
 }
 
 .verTodos {
@@ -340,8 +403,8 @@
 
 .destacadosGrid {
   margin-top: 22px;
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  display: flex;
+  flex-direction: column;
   gap: 20px;
 }
 
@@ -352,7 +415,7 @@
   border: 1px solid #26332C;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.25);
   text-decoration: none;
-  display: block;
+  display: flex;
   transition: box-shadow 0.18s ease, transform 0.18s ease;
 }
 
@@ -362,24 +425,60 @@
 }
 
 .destacadoImg {
-  height: 150px;
+  width: 42%;
+  flex-shrink: 0;
 }
 
 .destacadoBody {
-  padding: 16px 18px 20px;
+  flex: 1;
+  padding: 22px 26px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.destacadoBadge {
+  align-self: flex-start;
+  background: #15291E;
+  color: #34D399;
+  font-size: 11px;
+  font-weight: 700;
+  padding: 4px 12px;
+  border-radius: 999px;
+  text-transform: capitalize;
+  border: 1px solid #1F4B33;
+  margin-bottom: 10px;
 }
 
 .destacadoBody h4 {
-  font-size: 15px;
-  font-weight: 700;
+  font-size: 19px;
+  font-weight: 800;
   color: #F2F5F3;
+  line-height: 1.3;
 }
 
-.destacadoBody span {
-  display: block;
-  margin-top: 6px;
+.destacadoPrecio {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  margin-top: 12px;
+  font-size: 14px;
+  font-weight: 600;
+  color: #C7CFC9;
+}
+
+.destacadoCta {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 18px;
+  align-self: flex-start;
+  background: linear-gradient(135deg, #22A06A, #146B45);
+  color: #fff;
+  border-radius: 50px;
+  padding: 10px 20px;
   font-size: 13px;
-  color: #57536D;
+  font-weight: 700;
 }
 
 /* ══════════════════════════════════════════
@@ -400,11 +499,13 @@
 @media (max-width: 860px) {
   .features { grid-template-columns: 1fr; padding: 20px 0; }
   .featureSep { border-left: none; border-top: 1px solid #26332C; }
-  .destacadosGrid { grid-template-columns: 1fr; }
+  .destacadoCard { flex-direction: column; }
+  .destacadoImg { width: 100%; height: 200px; }
 }
 
 @media (max-width: 640px) {
   .hero { padding-bottom: 70px; }
   .heroCopy h1 { font-size: 26px; }
   .categorias { grid-template-columns: repeat(3, 1fr); }
+  .heroImgBadge { left: 12px; bottom: 12px; padding: 7px 12px; font-size: 11.5px; }
 }
