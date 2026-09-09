@@ -22,7 +22,7 @@ const gradientByCategoria = {
 export default function PremioImage({ categoria, src, className = "", iconSize = 46 }) {
   if (src) {
     return (
-      <div className={`${styles.wrap} ${className}`} style={{ background: "#17152b" }}>
+      <div className={`${styles.wrap} ${className}`} style={{ background: "#0B0F0D" }}>
         <img src={src} alt="Premio" style={{ width: "100%", height: "100%", objectFit: "contain" }} />
       </div>
     );
