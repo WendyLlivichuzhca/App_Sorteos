@@ -153,6 +153,15 @@ h1, h2, h3, p {
 .page {
   flex: 1;
   width: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Empuja el pie de página al fondo de la pantalla en páginas con poco
+   contenido: el contenedor principal (siempre el div del medio, entre el
+   Navbar y el Footer) crece para llenar el espacio sobrante. */
+.page > div {
+  flex: 1 0 auto;
 }
 
 .visually-hidden {
