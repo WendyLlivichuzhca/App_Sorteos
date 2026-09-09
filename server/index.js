@@ -14,6 +14,7 @@ import { validarDocumento } from './validarDocumento.js';
 import { validarNombre } from './validarNombre.js';
 import { validarCorreo } from './validarCorreo.js';
 import { validarTelefono } from './validarTelefono.js';
+import { enviarCorreoNumerosComprados } from './email.js';
 
 const PAYPHONE_API_BASE = 'https://pay.payphonetodoesposible.com';
 
@@ -86,6 +87,17 @@ async function aprobarCompra(pool, compraId) {
       [compra.cliente_id, compra.cliente_nombre, compra.sorteo_id, ...numeros]
     );
   }
+
+  // No se espera (await) esta promesa a propósito: si el correo falla o tarda,
+  // no debe retrasar ni tumbar la aprobación de la compra en sí.
+  enviarCorreoNumerosComprados({
+    correo: compra.cliente_correo,
+    nombre: compra.cliente_nombre,
+    sorteoNombre: compra.sorteo_nombre,
+    codigo: compra.codigo,
+    numeros,
+    totalPagado: compra.total_pagado,
+  });
 
   return { ...compra, estado: 'aprobado' };
 }
