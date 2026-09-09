@@ -320,18 +320,25 @@ export function getPool() {
 // `executor` es el pool o, si se llama dentro de una transacción, la conexión activa
 // (conn) — así las inserciones quedan dentro de la misma transacción y se revierten
 // juntas si algo más falla, en vez de quedar a medias.
+// Se inserta en bloques pequeños (en vez de un solo INSERT gigante) porque un
+// sorteo con muchos miles de boletos puede generar un paquete SQL más grande
+// que el límite del servidor MySQL (max_allowed_packet), lo que cierra la
+// conexión a mitad de camino ("Can't add new command when connection is in
+// closed state").
+const TAMANO_LOTE_BOLETOS = 2000;
+
 export async function generarBoletosMySQL(sorteoId, total, vendidosIniciales = 0, executor = pool) {
   const [check] = await executor.query('SELECT COUNT(*) as count FROM boletos WHERE sorteo_id = ?', [sorteoId]);
   if (check[0].count > 0) return;
 
-  const values = [];
-  for (let i = 1; i <= total; i++) {
-    const numStr = String(i).padStart(4, '0');
-    const estado = i <= vendidosIniciales ? 'vendido' : 'disponible';
-    values.push([sorteoId, numStr, estado]);
-  }
-
-  if (values.length > 0) {
+  for (let inicio = 1; inicio <= total; inicio += TAMANO_LOTE_BOLETOS) {
+    const fin = Math.min(inicio + TAMANO_LOTE_BOLETOS - 1, total);
+    const values = [];
+    for (let i = inicio; i <= fin; i++) {
+      const numStr = String(i).padStart(4, '0');
+      const estado = i <= vendidosIniciales ? 'vendido' : 'disponible';
+      values.push([sorteoId, numStr, estado]);
+    }
     await executor.query('INSERT INTO boletos (sorteo_id, numero, estado) VALUES ?', [values]);
   }
 }

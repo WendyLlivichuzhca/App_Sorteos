@@ -260,23 +260,36 @@ app.post('/api/sorteos', requireAuth, async (req, res) => {
       return res.status(400).json({ error: 'Estado de sorteo no válido' });
     }
 
-    const [result] = await pool.query(
-      `INSERT INTO sorteos (nombre, categoria, precio, total, vendidos, estado, fecha_sorteo, galeria, incluye)
-       VALUES (?, ?, ?, ?, 0, ?, ?, ?, ?)`,
-      [
-        nombre,
-        categoria || 'autos',
-        parseFloat(precio),
-        parseInt(total),
-        estado || 'activo',
-        fechaSorteo || '2026-08-30',
-        JSON.stringify(galeria || []),
-        JSON.stringify(incluye || []),
-      ]
-    );
+    const conn = await pool.getConnection();
+    let newId;
+    try {
+      await conn.beginTransaction();
 
-    const newId = result.insertId;
-    await generarBoletosMySQL(newId, parseInt(total), 0);
+      const [result] = await conn.query(
+        `INSERT INTO sorteos (nombre, categoria, precio, total, vendidos, estado, fecha_sorteo, galeria, incluye)
+         VALUES (?, ?, ?, ?, 0, ?, ?, ?, ?)`,
+        [
+          nombre,
+          categoria || 'autos',
+          parseFloat(precio),
+          parseInt(total),
+          estado || 'activo',
+          fechaSorteo || '2026-08-30',
+          JSON.stringify(galeria || []),
+          JSON.stringify(incluye || []),
+        ]
+      );
+
+      newId = result.insertId;
+      await generarBoletosMySQL(newId, parseInt(total), 0, conn);
+
+      await conn.commit();
+    } catch (err) {
+      await conn.rollback();
+      throw err;
+    } finally {
+      conn.release();
+    }
 
     res.status(201).json({ id: newId, message: 'Sorteo creado exitosamente en MySQL' });
   } catch (err) {
