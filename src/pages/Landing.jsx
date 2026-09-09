@@ -127,7 +127,7 @@ export default function Landing() {
             {destacados.map((s) => (
               <Link key={s.id} to={`/sorteos/${s.id}`} className={styles.destacadoCard}>
                 <div className={styles.destacadoImg}>
-                  <PremioImage categoria={s.categoria} src={s.galeria?.[0]} />
+                  <PremioImage categoria={s.categoria} images={s.galeria} />
                 </div>
                 <div className={styles.destacadoBody}>
                   <h4>{s.nombre}</h4>

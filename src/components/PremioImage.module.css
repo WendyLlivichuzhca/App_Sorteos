@@ -21,6 +21,7 @@
   object-fit: cover;
   filter: blur(25px) brightness(0.55) saturate(1.3);
   transform: scale(1.15);
+  animation: fadeIn 0.6s ease;
 }
 
 .fgImg {
@@ -28,4 +29,36 @@
   width: 100%;
   height: 100%;
   object-fit: contain;
+  animation: fadeIn 0.6s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.dots {
+  position: absolute;
+  bottom: 8px;
+  left: 0;
+  right: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  z-index: 2;
+}
+
+.dot {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.4);
+  transition: all 0.2s ease;
+}
+
+.dotActive {
+  background: #ffffff;
+  width: 14px;
+  border-radius: 3px;
 }

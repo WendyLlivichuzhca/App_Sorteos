@@ -82,7 +82,7 @@ export default function Sorteos() {
           {filtrados.map((s) => (
             <div key={s.id} className={styles.card}>
               <div className={styles.imgWrap}>
-                <PremioImage categoria={s.categoria} src={s.galeria?.[0]} className={styles.img} />
+                <PremioImage categoria={s.categoria} images={s.galeria} className={styles.img} />
                 <div className={styles.badgeWrap}>
                   <Badge estado={s.estado} />
                 </div>
