@@ -76,8 +76,8 @@ export default function Landing() {
           {/* Columna derecha: imagen de premios */}
           <div className={styles.heroArt}>
             <img
-              src="/hero-prizes.png"
-              alt="Premios: auto, moto y laptop"
+              src="/hero-prizes.jpg"
+              alt="Terreno, auto, moto y laptop en sorteo"
               className={styles.heroImg}
             />
           </div>
