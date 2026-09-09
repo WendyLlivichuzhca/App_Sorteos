@@ -22,9 +22,11 @@ export function AppProvider({ children }) {
       metodoPago,
     });
 
+    let comprobanteSubido = false;
     if (comprobanteFile) {
       try {
         await subirComprobante(data.compraId, comprobanteFile);
+        comprobanteSubido = true;
       } catch (err) {
         console.error("Error al subir comprobante:", err);
       }
@@ -41,6 +43,7 @@ export function AppProvider({ children }) {
       paquete: seleccion.paquete,
       comprador: compradorFinal,
       metodoPago,
+      comprobanteSubido,
     };
     setUltimaCompra(compra);
     return compra;

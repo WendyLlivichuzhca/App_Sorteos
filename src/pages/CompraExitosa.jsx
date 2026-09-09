@@ -153,29 +153,35 @@ Comprador: ${ultimaCompra.comprador.nombre}
                 Por favor, realiza la transferencia por el total e indica tu código de orden <strong>{ultimaCompra.codigo}</strong>.
               </p>
 
-              {/* Carga de Comprobante en la Pantalla de Éxito */}
-              <div style={{ background: "#141B17", border: "1px dashed #1F8A5A", borderRadius: "6px", padding: "14px", marginTop: "10px" }}>
-                <strong style={{ display: "block", fontSize: "13px", color: "#F2F5F3", marginBottom: "6px" }}>
-                  📤 Adjunta aquí tu comprobante de pago:
-                </strong>
-                <input
-                  type="file"
-                  accept="image/*,application/pdf"
-                  onChange={async (e) => {
-                    const file = e.target.files[0];
-                    if (file && ultimaCompra.compraId) {
-                      try {
-                        const { subirComprobante } = await import("../services/api.js");
-                        await subirComprobante(ultimaCompra.compraId, file);
-                        alert("¡Comprobante subido con éxito! El administrador revisará tu pago.");
-                      } catch (err) {
-                        alert(err.message || "Error al subir comprobante");
+              {/* Carga de Comprobante en la Pantalla de Éxito (solo si no se subió ya en el checkout) */}
+              {ultimaCompra.comprobanteSubido ? (
+                <div style={{ background: "#141B17", border: "1px solid #1F8A5A", borderRadius: "6px", padding: "12px 14px", marginTop: "10px", color: "#4ADE80", fontSize: "12.5px", fontWeight: 600 }}>
+                  ✅ Ya recibimos tu comprobante de pago, está en revisión.
+                </div>
+              ) : (
+                <div style={{ background: "#141B17", border: "1px dashed #1F8A5A", borderRadius: "6px", padding: "14px", marginTop: "10px" }}>
+                  <strong style={{ display: "block", fontSize: "13px", color: "#F2F5F3", marginBottom: "6px" }}>
+                    📤 Adjunta aquí tu comprobante de pago:
+                  </strong>
+                  <input
+                    type="file"
+                    accept="image/*,application/pdf"
+                    onChange={async (e) => {
+                      const file = e.target.files[0];
+                      if (file && ultimaCompra.compraId) {
+                        try {
+                          const { subirComprobante } = await import("../services/api.js");
+                          await subirComprobante(ultimaCompra.compraId, file);
+                          alert("¡Comprobante subido con éxito! El administrador revisará tu pago.");
+                        } catch (err) {
+                          alert(err.message || "Error al subir comprobante");
+                        }
                       }
-                    }
-                  }}
-                  style={{ fontSize: "12.5px", width: "100%" }}
-                />
-              </div>
+                    }}
+                    style={{ fontSize: "12.5px", width: "100%" }}
+                  />
+                </div>
+              )}
             </div>
           )}
 
@@ -205,28 +211,34 @@ Comprador: ${ultimaCompra.comprador.nombre}
                 Por favor, realiza el pago por el total e indica tu código de orden <strong>{ultimaCompra.codigo}</strong>.
               </p>
 
-              <div style={{ background: "#141B17", border: "1px dashed #1F8A5A", borderRadius: "6px", padding: "14px", marginTop: "10px" }}>
-                <strong style={{ display: "block", fontSize: "13px", color: "#F2F5F3", marginBottom: "6px" }}>
-                  📤 Adjunta aquí tu comprobante de pago:
-                </strong>
-                <input
-                  type="file"
-                  accept="image/*,application/pdf"
-                  onChange={async (e) => {
-                    const file = e.target.files[0];
-                    if (file && ultimaCompra.compraId) {
-                      try {
-                        const { subirComprobante } = await import("../services/api.js");
-                        await subirComprobante(ultimaCompra.compraId, file);
-                        alert("¡Comprobante subido con éxito! El administrador revisará tu pago.");
-                      } catch (err) {
-                        alert(err.message || "Error al subir comprobante");
+              {ultimaCompra.comprobanteSubido ? (
+                <div style={{ background: "#141B17", border: "1px solid #1F8A5A", borderRadius: "6px", padding: "12px 14px", marginTop: "10px", color: "#4ADE80", fontSize: "12.5px", fontWeight: 600 }}>
+                  ✅ Ya recibimos tu comprobante de pago, está en revisión.
+                </div>
+              ) : (
+                <div style={{ background: "#141B17", border: "1px dashed #1F8A5A", borderRadius: "6px", padding: "14px", marginTop: "10px" }}>
+                  <strong style={{ display: "block", fontSize: "13px", color: "#F2F5F3", marginBottom: "6px" }}>
+                    📤 Adjunta aquí tu comprobante de pago:
+                  </strong>
+                  <input
+                    type="file"
+                    accept="image/*,application/pdf"
+                    onChange={async (e) => {
+                      const file = e.target.files[0];
+                      if (file && ultimaCompra.compraId) {
+                        try {
+                          const { subirComprobante } = await import("../services/api.js");
+                          await subirComprobante(ultimaCompra.compraId, file);
+                          alert("¡Comprobante subido con éxito! El administrador revisará tu pago.");
+                        } catch (err) {
+                          alert(err.message || "Error al subir comprobante");
+                        }
                       }
-                    }
-                  }}
-                  style={{ fontSize: "12.5px", width: "100%" }}
-                />
-              </div>
+                    }}
+                    style={{ fontSize: "12.5px", width: "100%" }}
+                  />
+                </div>
+              )}
             </div>
           )}
 
