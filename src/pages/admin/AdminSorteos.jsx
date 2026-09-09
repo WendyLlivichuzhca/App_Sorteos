@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import AdminLayout from "../../components/admin/AdminLayout.jsx";
 import Icon from "../../icons/Icon.jsx";
 import PremioImage from "../../components/PremioImage.jsx";
@@ -8,7 +8,6 @@ import { formatMoney } from "../../utils/format.js";
 import styles from "./AdminSorteos.module.css";
 
 export default function AdminSorteos() {
-  const navigate = useNavigate();
   const [list, setList] = useState([]);
   const [categorias, setCategorias] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -87,13 +86,11 @@ export default function AdminSorteos() {
 
       if (editingItem) {
         await updateSorteo(editingItem.id, payload);
-        setShowModal(false);
-        cargarSorteos();
       } else {
-        const nuevo = await createSorteo(payload);
-        setShowModal(false);
-        navigate(`/admin/sorteos/${nuevo.id}/lugares`);
+        await createSorteo(payload);
       }
+      setShowModal(false);
+      cargarSorteos();
     } catch (err) {
       alert(err.message || "No se pudo guardar el sorteo");
     } finally {
