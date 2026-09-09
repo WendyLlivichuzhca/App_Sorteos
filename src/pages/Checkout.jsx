@@ -305,6 +305,39 @@ export default function Checkout() {
               </div>
             )}
 
+            {paso === 2 && metodoPago === "transferencia" && (
+              <div className={styles.cardBox} style={{ marginTop: "20px" }}>
+                <div className={styles.cardBoxHeader}>
+                  <h3>🏦 Cuentas para tu transferencia</h3>
+                </div>
+                {cuentasBancarias.length > 0 ? (
+                  cuentasBancarias.map((c, idx) => (
+                    <div key={idx} className={styles.cuentaCard}>
+                      <div className={styles.cuentaBanco}>{c.banco || "Cuenta bancaria"}</div>
+                      {c.tipoCuenta && (
+                        <div className={styles.cuentaRow}><span>Tipo</span><strong>{c.tipoCuenta}</strong></div>
+                      )}
+                      {c.numeroCuenta && (
+                        <div className={styles.cuentaRow}><span>Número</span><strong>{c.numeroCuenta}</strong></div>
+                      )}
+                      {c.titular && (
+                        <div className={styles.cuentaRow}><span>Titular</span><strong>{c.titular}</strong></div>
+                      )}
+                      {c.cedulaTitular && (
+                        <div className={styles.cuentaRow}><span>Cédula/RUC</span><strong>{c.cedulaTitular}</strong></div>
+                      )}
+                    </div>
+                  ))
+                ) : instruccionesPago ? (
+                  <p style={{ fontSize: "13px", color: "#C7CFC9", whiteSpace: "pre-line" }}>{instruccionesPago}</p>
+                ) : (
+                  <p style={{ fontSize: "13px", color: "#8A948C" }}>
+                    Por favor contáctanos para que te enviemos los datos de la cuenta para tu transferencia.
+                  </p>
+                )}
+              </div>
+            )}
+
             {paso === 1 && (
             <>
             <div className={styles.rowTwo}>
@@ -534,40 +567,6 @@ export default function Checkout() {
                 <strong>{formatMoney(paquete.precio)}</strong>
               </div>
             </div>
-
-            {/* Sección Cuentas para transferir (solo paso 2, método transferencia) */}
-            {paso === 2 && metodoPago === "transferencia" && (
-              <div className={styles.cardBox}>
-                <div className={styles.cardBoxHeader}>
-                  <h3>🏦 Cuentas para tu transferencia</h3>
-                </div>
-                {cuentasBancarias.length > 0 ? (
-                  cuentasBancarias.map((c, idx) => (
-                    <div key={idx} className={styles.cuentaCard}>
-                      <div className={styles.cuentaBanco}>{c.banco || "Cuenta bancaria"}</div>
-                      {c.tipoCuenta && (
-                        <div className={styles.cuentaRow}><span>Tipo</span><strong>{c.tipoCuenta}</strong></div>
-                      )}
-                      {c.numeroCuenta && (
-                        <div className={styles.cuentaRow}><span>Número</span><strong>{c.numeroCuenta}</strong></div>
-                      )}
-                      {c.titular && (
-                        <div className={styles.cuentaRow}><span>Titular</span><strong>{c.titular}</strong></div>
-                      )}
-                      {c.cedulaTitular && (
-                        <div className={styles.cuentaRow}><span>Cédula/RUC</span><strong>{c.cedulaTitular}</strong></div>
-                      )}
-                    </div>
-                  ))
-                ) : instruccionesPago ? (
-                  <p style={{ fontSize: "13px", color: "#C7CFC9", whiteSpace: "pre-line" }}>{instruccionesPago}</p>
-                ) : (
-                  <p style={{ fontSize: "13px", color: "#8A948C" }}>
-                    Por favor contáctanos para que te enviemos los datos de la cuenta para tu transferencia.
-                  </p>
-                )}
-              </div>
-            )}
 
             {/* Sección Selecciona tu método de pago */}
             <div className={styles.metodosBox}>
