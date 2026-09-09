@@ -318,37 +318,56 @@ app.put('/api/sorteos/:id', requireAuth, async (req, res) => {
     if (sorteos.length === 0) return res.status(404).json({ error: 'Sorteo no encontrado' });
     const sorteoActual = sorteos[0];
 
-    if (nuevoTotal !== sorteoActual.total) {
-      if (sorteoActual.vendidos > 0) {
-        return res.status(400).json({
-          error: 'No puedes cambiar la cantidad de boletos porque ya se vendieron algunos. Crea un sorteo nuevo si necesitas otra cantidad.',
-        });
-      }
-      // Todavía no hay ventas: es seguro regenerar los boletos con la nueva cantidad.
-      await pool.query('DELETE FROM boletos WHERE sorteo_id = ?', [req.params.id]);
-      await generarBoletosMySQL(req.params.id, nuevoTotal, 0);
-      await pool.query(
-        `DELETE FROM numeros_premiados WHERE sorteo_id = ? AND numero NOT IN (SELECT numero FROM boletos WHERE sorteo_id = ?)`,
-        [req.params.id, req.params.id]
-      );
-    }
+    // Se compara contra los boletos que de verdad existen (no contra sorteos.total) para que,
+    // si alguna vez quedaron desincronizados por un error a mitad de camino, este guardado
+    // los vuelva a alinear solo, en vez de arrastrar el desfase para siempre.
+    const [boletosActuales] = await pool.query('SELECT COUNT(*) as count FROM boletos WHERE sorteo_id = ?', [req.params.id]);
+    const totalBoletosReal = boletosActuales[0].count;
 
-    await pool.query(
-      `UPDATE sorteos
-       SET nombre = ?, categoria = ?, precio = ?, total = ?, estado = ?, fecha_sorteo = ?, galeria = ?, incluye = ?
-       WHERE id = ?`,
-      [
-        nombre,
-        categoria,
-        parseFloat(precio),
-        nuevoTotal,
-        estado,
-        fechaSorteo || sorteoActual.fecha_sorteo,
-        JSON.stringify(galeria || []),
-        JSON.stringify(incluye || []),
-        req.params.id,
-      ]
-    );
+    const conn = await pool.getConnection();
+    try {
+      await conn.beginTransaction();
+
+      if (nuevoTotal !== totalBoletosReal) {
+        if (sorteoActual.vendidos > 0) {
+          await conn.rollback();
+          return res.status(400).json({
+            error: 'No puedes cambiar la cantidad de boletos porque ya se vendieron algunos. Crea un sorteo nuevo si necesitas otra cantidad.',
+          });
+        }
+        // Todavía no hay ventas: es seguro regenerar los boletos con la nueva cantidad.
+        await conn.query('DELETE FROM boletos WHERE sorteo_id = ?', [req.params.id]);
+        await generarBoletosMySQL(req.params.id, nuevoTotal, 0, conn);
+        await conn.query(
+          `DELETE FROM numeros_premiados WHERE sorteo_id = ? AND numero NOT IN (SELECT numero FROM boletos WHERE sorteo_id = ?)`,
+          [req.params.id, req.params.id]
+        );
+      }
+
+      await conn.query(
+        `UPDATE sorteos
+         SET nombre = ?, categoria = ?, precio = ?, total = ?, estado = ?, fecha_sorteo = ?, galeria = ?, incluye = ?
+         WHERE id = ?`,
+        [
+          nombre,
+          categoria,
+          parseFloat(precio),
+          nuevoTotal,
+          estado,
+          fechaSorteo || sorteoActual.fecha_sorteo || '2026-08-30',
+          JSON.stringify(galeria || []),
+          JSON.stringify(incluye || []),
+          req.params.id,
+        ]
+      );
+
+      await conn.commit();
+    } catch (err) {
+      await conn.rollback();
+      throw err;
+    } finally {
+      conn.release();
+    }
 
     res.json({ message: 'Sorteo actualizado en MySQL' });
   } catch (err) {

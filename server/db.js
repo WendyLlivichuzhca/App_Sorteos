@@ -317,8 +317,11 @@ export function getPool() {
   return pool;
 }
 
-export async function generarBoletosMySQL(sorteoId, total, vendidosIniciales = 0) {
-  const [check] = await pool.query('SELECT COUNT(*) as count FROM boletos WHERE sorteo_id = ?', [sorteoId]);
+// `executor` es el pool o, si se llama dentro de una transacción, la conexión activa
+// (conn) — así las inserciones quedan dentro de la misma transacción y se revierten
+// juntas si algo más falla, en vez de quedar a medias.
+export async function generarBoletosMySQL(sorteoId, total, vendidosIniciales = 0, executor = pool) {
+  const [check] = await executor.query('SELECT COUNT(*) as count FROM boletos WHERE sorteo_id = ?', [sorteoId]);
   if (check[0].count > 0) return;
 
   const values = [];
@@ -329,7 +332,7 @@ export async function generarBoletosMySQL(sorteoId, total, vendidosIniciales = 0
   }
 
   if (values.length > 0) {
-    await pool.query('INSERT INTO boletos (sorteo_id, numero, estado) VALUES ?', [values]);
+    await executor.query('INSERT INTO boletos (sorteo_id, numero, estado) VALUES ?', [values]);
   }
 }
 
