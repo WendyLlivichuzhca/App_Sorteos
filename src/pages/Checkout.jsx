@@ -118,6 +118,14 @@ export default function Checkout() {
   const { sorteo, paquete } = seleccion;
 
   const handleChange = (field) => (e) => setForm((f) => ({ ...f, [field]: e.target.value }));
+  const handleChangeDocumento = (e) => {
+    const crudo = e.target.value;
+    const limpio =
+      form.tipoDocumento === "pasaporte"
+        ? crudo.replace(/[^A-Za-z0-9]/g, "")
+        : crudo.replace(/\D/g, "");
+    setForm((f) => ({ ...f, cedula: limpio }));
+  };
   const handleChangeNombre = (field) => (e) =>
     setForm((f) => ({ ...f, [field]: limpiarNombre(e.target.value) }));
   const handleChangeTelefono = (field) => (e) =>
@@ -273,7 +281,7 @@ export default function Checkout() {
                     placeholder={DOCUMENTO_INFO[form.tipoDocumento].placeholder}
                     maxLength={DOCUMENTO_INFO[form.tipoDocumento].maxLength}
                     value={form.cedula}
-                    onChange={handleChange("cedula")}
+                    onChange={handleChangeDocumento}
                     onBlur={handleBlurVivo("cedula")}
                     className={
                       tocados.cedula && errores.cedula
