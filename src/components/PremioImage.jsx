@@ -23,7 +23,7 @@ export default function PremioImage({ categoria, src, className = "", iconSize =
   if (src) {
     return (
       <div className={`${styles.wrap} ${className}`} style={{ background: "#17152b" }}>
-        <img src={src} alt="Premio" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+        <img src={src} alt="Premio" style={{ width: "100%", height: "100%", objectFit: "contain" }} />
       </div>
     );
   }
