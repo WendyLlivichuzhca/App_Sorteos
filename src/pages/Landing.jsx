@@ -3,7 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import Navbar from "../components/Navbar.jsx";
 import Footer from "../components/Footer.jsx";
 import Icon from "../icons/Icon.jsx";
-import { getSorteos, getCategorias } from "../services/api.js";
+import { getSorteos } from "../services/api.js";
 import PremioImage from "../components/PremioImage.jsx";
 import { formatMoney } from "../utils/format.js";
 import styles from "./Landing.module.css";
@@ -17,15 +17,11 @@ const features = [
 export default function Landing() {
   const navigate = useNavigate();
   const [destacados, setDestacados] = useState([]);
-  const [categorias, setCategorias] = useState([]);
 
   useEffect(() => {
     getSorteos("todos", "activo")
       .then((data) => setDestacados(data.slice(0, 3)))
       .catch((err) => console.error("Error cargando sorteos destacados:", err));
-    getCategorias()
-      .then(setCategorias)
-      .catch((err) => console.error("Error cargando categorías:", err));
   }, []);
 
   return (
@@ -97,21 +93,6 @@ export default function Landing() {
                 <p>{f.text}</p>
               </div>
             </div>
-          ))}
-        </div>
-      </section>
-
-      {/* ── CATEGORÍAS ── */}
-      <section className={`container ${styles.categoriasSection}`}>
-        <h2>Categorías populares</h2>
-        <div className={styles.categorias}>
-          {categorias.map((c) => (
-            <Link key={c.id} to={`/sorteos?categoria=${c.slug}`} className={styles.categoria}>
-              <span className={styles.categoriaIcon}>
-                <Icon name={c.icono} size={24} strokeWidth={1.6} />
-              </span>
-              {c.nombre}
-            </Link>
           ))}
         </div>
       </section>
