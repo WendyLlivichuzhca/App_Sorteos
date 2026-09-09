@@ -1208,6 +1208,7 @@ app.get('/api/configuracion', async (req, res) => {
     res.json({
       ...config,
       metodosPago: typeof config.metodos_pago === 'string' ? JSON.parse(config.metodos_pago) : config.metodos_pago,
+      cuentasBancarias: typeof config.cuentas_bancarias === 'string' ? JSON.parse(config.cuentas_bancarias) : config.cuentas_bancarias || [],
     });
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -1219,7 +1220,7 @@ app.put('/api/admin/configuracion', requireAuth, async (req, res) => {
     const pool = getPool();
     const {
       nombreEmpresa, whatsapp, correo, facebook, instagram, tiktok,
-      colorTema, politicas, faqTexto, metodosPago, instruccionesPago, qrPago, logoUrl,
+      colorTema, politicas, faqTexto, metodosPago, instruccionesPago, qrPago, logoUrl, cuentasBancarias,
     } = req.body;
 
     if (!nombreEmpresa || !nombreEmpresa.trim()) {
@@ -1232,11 +1233,12 @@ app.put('/api/admin/configuracion', requireAuth, async (req, res) => {
     await pool.query(
       `UPDATE configuracion SET
         nombre_empresa = ?, whatsapp = ?, correo = ?, facebook = ?, instagram = ?, tiktok = ?,
-        color_tema = ?, politicas = ?, faq_texto = ?, metodos_pago = ?, instrucciones_pago = ?, qr_pago = ?, logo_url = ?
+        color_tema = ?, politicas = ?, faq_texto = ?, metodos_pago = ?, instrucciones_pago = ?, qr_pago = ?, logo_url = ?, cuentas_bancarias = ?
        WHERE id = 1`,
       [
         nombreEmpresa, whatsapp, correo, facebook, instagram, tiktok,
         colorTema, politicas, faqTexto, JSON.stringify(metodosPago || {}), instruccionesPago || '', qrPago || null, logoUrl || null,
+        JSON.stringify(cuentasBancarias || []),
       ]
     );
     res.json({ message: 'Configuración actualizada' });

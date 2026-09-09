@@ -29,6 +29,7 @@ export default function AdminConfiguracion() {
     logoUrl: "",
   });
   const [metodos, setMetodos] = useState({});
+  const [cuentasBancarias, setCuentasBancarias] = useState([]);
 
   useEffect(() => {
     getConfiguracion()
@@ -48,6 +49,7 @@ export default function AdminConfiguracion() {
           logoUrl: data.logo_url || "",
         });
         setMetodos(data.metodosPago || {});
+        setCuentasBancarias(data.cuentasBancarias || []);
       })
       .catch((err) => console.error("Error cargando configuración:", err))
       .finally(() => setLoading(false));
@@ -57,11 +59,26 @@ export default function AdminConfiguracion() {
     setMetodos({ ...metodos, [key]: !metodos[key] });
   };
 
+  const agregarCuenta = () => {
+    setCuentasBancarias((prev) => [
+      ...prev,
+      { banco: "", tipoCuenta: "", numeroCuenta: "", titular: "", cedulaTitular: "" },
+    ]);
+  };
+
+  const actualizarCuenta = (idx, campo, valor) => {
+    setCuentasBancarias((prev) => prev.map((c, i) => (i === idx ? { ...c, [campo]: valor } : c)));
+  };
+
+  const quitarCuenta = (idx) => {
+    setCuentasBancarias((prev) => prev.filter((_, i) => i !== idx));
+  };
+
   const handleSave = async (e) => {
     e.preventDefault();
     setSaving(true);
     try {
-      await updateConfiguracion({ ...config, metodosPago: metodos });
+      await updateConfiguracion({ ...config, metodosPago: metodos, cuentasBancarias });
       setSaved(true);
       setTimeout(() => setSaved(false), 3000);
     } catch (err) {
@@ -216,16 +233,77 @@ export default function AdminConfiguracion() {
             </div>
 
             <div className={styles.formGroup} style={{ marginTop: "16px" }}>
-              <label>Instrucciones de Pago (se muestran en el checkout)</label>
+              <label>Cuentas Bancarias para Transferencias</label>
+              <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
+                {cuentasBancarias.map((c, idx) => (
+                  <div key={idx} style={{ background: "#101512", border: "1.5px dashed #26332C", borderRadius: "10px", padding: "12px" }}>
+                    <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "8px", marginBottom: "8px" }}>
+                      <input
+                        type="text"
+                        placeholder="Banco o cooperativa (ej: JEP, Pichincha)"
+                        value={c.banco}
+                        onChange={(e) => actualizarCuenta(idx, "banco", e.target.value)}
+                      />
+                      <input
+                        type="text"
+                        placeholder="Tipo de cuenta (Ahorros, Corriente...)"
+                        value={c.tipoCuenta}
+                        onChange={(e) => actualizarCuenta(idx, "tipoCuenta", e.target.value)}
+                      />
+                    </div>
+                    <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "8px", marginBottom: "8px" }}>
+                      <input
+                        type="text"
+                        placeholder="Número de cuenta"
+                        value={c.numeroCuenta}
+                        onChange={(e) => actualizarCuenta(idx, "numeroCuenta", e.target.value)}
+                      />
+                      <input
+                        type="text"
+                        placeholder="Nombre del titular"
+                        value={c.titular}
+                        onChange={(e) => actualizarCuenta(idx, "titular", e.target.value)}
+                      />
+                    </div>
+                    <div style={{ display: "flex", gap: "8px" }}>
+                      <input
+                        type="text"
+                        placeholder="Cédula/RUC del titular"
+                        value={c.cedulaTitular}
+                        onChange={(e) => actualizarCuenta(idx, "cedulaTitular", e.target.value)}
+                        style={{ flex: 1 }}
+                      />
+                      <button type="button" className={styles.iconBtn} onClick={() => quitarCuenta(idx)} title="Quitar cuenta">
+                        🗑️
+                      </button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+              <button
+                type="button"
+                className={styles.iconBtn}
+                onClick={agregarCuenta}
+                style={{ marginTop: "10px", width: "100%" }}
+              >
+                + Agregar cuenta bancaria
+              </button>
+              <span style={{ fontSize: "11.5px", color: "#7E897F", display: "block", marginTop: "8px" }}>
+                Cada cuenta se muestra como una tarjeta separada al cliente cuando elige pagar por transferencia. Puedes agregar varias.
+              </span>
+            </div>
+
+            <div className={styles.formGroup} style={{ marginTop: "16px" }}>
+              <label>Notas adicionales de pago (opcional)</label>
               <textarea
-                rows="4"
-                placeholder="Ej: Banco Pichincha, Cuenta de Ahorros N° 1234567890, a nombre de Wendy Llivichuzhca, cédula 1234567890. Envía tu comprobante por WhatsApp al +593 99 999 9999."
+                rows="3"
+                placeholder="Cualquier instrucción extra, ej: horario de atención, o a quién contactar por WhatsApp si tiene dudas."
                 value={config.instruccionesPago}
                 onChange={(e) => setConfig({ ...config, instruccionesPago: e.target.value })}
                 style={{ padding: "10px", borderRadius: "10px", border: "1.5px solid #26332C", background: "#101512", color: "#E4E8E5", fontSize: "13px", outline: "none" }}
               />
               <span style={{ fontSize: "11.5px", color: "#7E897F" }}>
-                Escribe aquí tu número de cuenta, WhatsApp, o cualquier dato que el cliente necesite para pagarte.
+                Si solo tienes texto libre y no quieres usar el formato de tarjetas de arriba, puedes escribir todo aquí en su lugar.
               </span>
             </div>
 

@@ -119,6 +119,85 @@
   gap: 32px;
 }
 
+/* Tarjeta genérica (usada para "Tus datos" y como base del layout de cuentas) */
+.cardBox {
+  background: #141B17;
+  border: 1px solid #26332C;
+  border-radius: 12px;
+  padding: 18px 20px;
+}
+
+.cardBoxHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+
+.cardBoxHeader h3 {
+  font-size: 15px;
+  font-weight: 800;
+  color: #F2F5F3;
+  margin: 0;
+}
+
+.editLink {
+  background: transparent;
+  border: none;
+  color: #16a34a;
+  font-weight: 600;
+  font-size: 12.5px;
+  cursor: pointer;
+  padding: 0;
+}
+
+.datosRow {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 7px 0;
+  border-bottom: 1px dotted #26332C;
+  font-size: 13px;
+  color: #8A948C;
+}
+
+.datosRow:last-child {
+  border-bottom: none;
+}
+
+.datosRow strong {
+  color: #F2F5F3;
+  text-align: right;
+}
+
+.cuentaCard {
+  background: #101512;
+  border: 1px solid #26332C;
+  border-radius: 8px;
+  padding: 12px 14px;
+  margin-top: 10px;
+}
+
+.cuentaBanco {
+  font-size: 13.5px;
+  font-weight: 800;
+  color: #4ADE80;
+  margin-bottom: 6px;
+}
+
+.cuentaRow {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  font-size: 12.5px;
+  color: #8A948C;
+  padding: 2px 0;
+}
+
+.cuentaRow strong {
+  color: #F2F5F3;
+}
+
 /* Tu Pedido Box */
 .tuPedidoBox h3 {
   font-size: 20px;

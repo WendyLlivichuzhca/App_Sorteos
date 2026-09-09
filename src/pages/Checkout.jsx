@@ -80,6 +80,7 @@ export default function Checkout() {
   });
   const [errorGlobal, setErrorGlobal] = useState("");
   const [instruccionesPago, setInstruccionesPago] = useState("");
+  const [cuentasBancarias, setCuentasBancarias] = useState([]);
   const [qrPago, setQrPago] = useState("");
   const [metodosHabilitados, setMetodosHabilitados] = useState({ transferencia: true, payphone: true, qr: false });
   const [aceptaTerminos, setAceptaTerminos] = useState(false);
@@ -91,6 +92,7 @@ export default function Checkout() {
     getConfiguracion()
       .then((config) => {
         setInstruccionesPago(config.instrucciones_pago || "");
+        setCuentasBancarias(config.cuentasBancarias || []);
         setQrPago(config.qr_pago || "");
         const metodos = config.metodosPago || {};
         setMetodosHabilitados({
@@ -273,20 +275,33 @@ export default function Checkout() {
             <h2>Datos de Facturación</h2>
 
             {paso === 2 && (
-              <div className={styles.expandGrayBox}>
-                <p>
+              <div className={styles.cardBox}>
+                <div className={styles.cardBoxHeader}>
+                  <h3>👤 Tus datos</h3>
+                  <button type="button" className={styles.editLink} onClick={() => setPaso(1)}>
+                    ✏️ Editar
+                  </button>
+                </div>
+                <div className={styles.datosRow}>
+                  <span>Nombre</span>
                   <strong>{form.nombres} {form.apellidos}</strong>
-                </p>
-                <p>{DOCUMENTO_INFO[form.tipoDocumento].etiqueta}: {form.cedula}</p>
-                <p>{form.correo} · {form.celular}</p>
-                <p>{form.direccion}, {form.ciudad}, {form.provincia}</p>
-                <button
-                  type="button"
-                  onClick={() => setPaso(1)}
-                  style={{ marginTop: "10px", background: "transparent", border: "none", color: "#16a34a", fontWeight: 600, fontSize: "13px", cursor: "pointer", padding: 0 }}
-                >
-                  ✏️ Editar mis datos
-                </button>
+                </div>
+                <div className={styles.datosRow}>
+                  <span>{DOCUMENTO_INFO[form.tipoDocumento].etiqueta}</span>
+                  <strong>{form.cedula}</strong>
+                </div>
+                <div className={styles.datosRow}>
+                  <span>Correo</span>
+                  <strong>{form.correo}</strong>
+                </div>
+                <div className={styles.datosRow}>
+                  <span>Teléfono</span>
+                  <strong>{form.celular}</strong>
+                </div>
+                <div className={styles.datosRow}>
+                  <span>Dirección</span>
+                  <strong>{form.direccion}, {form.ciudad}, {form.provincia}</strong>
+                </div>
               </div>
             )}
 
@@ -520,6 +535,40 @@ export default function Checkout() {
               </div>
             </div>
 
+            {/* Sección Cuentas para transferir (solo paso 2, método transferencia) */}
+            {paso === 2 && metodoPago === "transferencia" && (
+              <div className={styles.cardBox}>
+                <div className={styles.cardBoxHeader}>
+                  <h3>🏦 Cuentas para tu transferencia</h3>
+                </div>
+                {cuentasBancarias.length > 0 ? (
+                  cuentasBancarias.map((c, idx) => (
+                    <div key={idx} className={styles.cuentaCard}>
+                      <div className={styles.cuentaBanco}>{c.banco || "Cuenta bancaria"}</div>
+                      {c.tipoCuenta && (
+                        <div className={styles.cuentaRow}><span>Tipo</span><strong>{c.tipoCuenta}</strong></div>
+                      )}
+                      {c.numeroCuenta && (
+                        <div className={styles.cuentaRow}><span>Número</span><strong>{c.numeroCuenta}</strong></div>
+                      )}
+                      {c.titular && (
+                        <div className={styles.cuentaRow}><span>Titular</span><strong>{c.titular}</strong></div>
+                      )}
+                      {c.cedulaTitular && (
+                        <div className={styles.cuentaRow}><span>Cédula/RUC</span><strong>{c.cedulaTitular}</strong></div>
+                      )}
+                    </div>
+                  ))
+                ) : instruccionesPago ? (
+                  <p style={{ fontSize: "13px", color: "#C7CFC9", whiteSpace: "pre-line" }}>{instruccionesPago}</p>
+                ) : (
+                  <p style={{ fontSize: "13px", color: "#8A948C" }}>
+                    Por favor contáctanos para que te enviemos los datos de la cuenta para tu transferencia.
+                  </p>
+                )}
+              </div>
+            )}
+
             {/* Sección Selecciona tu método de pago */}
             <div className={styles.metodosBox}>
               <h3>{paso === 1 ? "Selecciona tu método de pago" : "Completa tu pago"}</h3>
@@ -543,11 +592,8 @@ export default function Checkout() {
                   {paso === 2 && metodoPago === "transferencia" && (
                     <div className={styles.expandGrayBox}>
                       <p>
-                        Por favor, <strong>NO PROCEDAS SI NO ESTÁS SEGURO</strong> de que quieres realizar la compra. Realiza tu pago directamente con transferencia o depósito a nuestra cuenta bancaria. Tu pedido no se procesará hasta que se haya recibido el importe en nuestra cuenta.
+                        Por favor, <strong>NO PROCEDAS SI NO ESTÁS SEGURO</strong> de que quieres realizar la compra. Tu pedido no se procesará hasta que se haya recibido el importe en nuestra cuenta.
                       </p>
-                      {instruccionesPago && (
-                        <p style={{ whiteSpace: "pre-line", marginTop: "10px" }}>{instruccionesPago}</p>
-                      )}
                       <label style={{ display: "block", marginTop: "12px", fontSize: "13px", fontWeight: 600 }}>
                         Sube tu comprobante de pago *
                         <input
