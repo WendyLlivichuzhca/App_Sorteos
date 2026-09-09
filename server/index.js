@@ -278,14 +278,6 @@ app.post('/api/sorteos', requireAuth, async (req, res) => {
     const newId = result.insertId;
     await generarBoletosMySQL(newId, parseInt(total), 0);
 
-    // Todo sorteo arranca con un lugar por defecto (1er lugar = el premio completo del
-    // sorteo), así los sorteos simples de un solo ganador siguen funcionando igual que
-    // siempre. Si la jefa quiere un combo con varios ganadores, agrega más lugares luego.
-    await pool.query(
-      'INSERT INTO sorteo_lugares (sorteo_id, orden, premio) VALUES (?, 1, ?)',
-      [newId, nombre]
-    );
-
     res.status(201).json({ id: newId, message: 'Sorteo creado exitosamente en MySQL' });
   } catch (err) {
     res.status(500).json({ error: err.message });
