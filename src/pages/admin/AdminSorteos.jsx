@@ -18,7 +18,7 @@ export default function AdminSorteos() {
   const [guardando, setGuardando] = useState(false);
   const [formData, setFormData] = useState({
     nombre: "",
-    categoria: "autos",
+    categoria: "",
     precio: 2.0,
     total: 1000,
     estado: "activo",
@@ -44,7 +44,7 @@ export default function AdminSorteos() {
 
   const handleOpenCreate = () => {
     setEditingItem(null);
-    setFormData({ nombre: "", categoria: "autos", precio: 2.0, total: 1000, estado: "activo", galeria: [], imagenUrl: "", incluyeTexto: "" });
+    setFormData({ nombre: "", categoria: categorias[0]?.slug || "", precio: 2.0, total: 1000, estado: "activo", galeria: [], imagenUrl: "", incluyeTexto: "" });
     setShowModal(true);
   };
 
