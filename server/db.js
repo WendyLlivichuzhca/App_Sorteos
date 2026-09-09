@@ -263,16 +263,6 @@ export async function initDB() {
       await generarBoletosMySQL(resS2.insertId, 500, 320);
     }
 
-    const [descuentosCount] = await pool.query('SELECT COUNT(*) as count FROM descuentos_volumen');
-    if (descuentosCount[0].count === 0) {
-      await pool.query(`
-        INSERT INTO descuentos_volumen (cantidad_minima, porcentaje) VALUES
-        (5, 10),
-        (10, 20),
-        (20, 30);
-      `);
-    }
-
     const [configCount] = await pool.query('SELECT COUNT(*) as count FROM configuracion');
     if (configCount[0].count === 0) {
       await pool.query(
