@@ -9,6 +9,35 @@ import styles from "./AdminSorteos.module.css";
 
 const GUIA_KEY = "sorteos_guia_cerrada";
 
+const comprimirImagen = (file, maxDim = 1600, calidad = 0.82) =>
+  new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onerror = () => reject(new Error("No se pudo leer el archivo"));
+    reader.onload = () => {
+      const img = new window.Image();
+      img.onerror = () => reject(new Error("No se pudo procesar la imagen"));
+      img.onload = () => {
+        let { width, height } = img;
+        if (width > maxDim || height > maxDim) {
+          if (width > height) {
+            height = Math.round((height * maxDim) / width);
+            width = maxDim;
+          } else {
+            width = Math.round((width * maxDim) / height);
+            height = maxDim;
+          }
+        }
+        const canvas = document.createElement("canvas");
+        canvas.width = width;
+        canvas.height = height;
+        canvas.getContext("2d").drawImage(img, 0, 0, width, height);
+        resolve(canvas.toDataURL("image/jpeg", calidad));
+      };
+      img.src = reader.result;
+    };
+    reader.readAsDataURL(file);
+  });
+
 export default function AdminSorteos() {
   const [list, setList] = useState([]);
   const [categorias, setCategorias] = useState([]);
@@ -349,15 +378,18 @@ export default function AdminSorteos() {
                     onChange={(e) => {
                       const files = Array.from(e.target.files);
                       files.forEach((file) => {
-                        const reader = new FileReader();
-                        reader.onloadend = () => {
-                          setFormData((prev) => ({
-                            ...prev,
-                            galeria: [...prev.galeria, reader.result],
-                          }));
-                        };
-                        reader.readAsDataURL(file);
+                        comprimirImagen(file)
+                          .then((dataUrl) => {
+                            setFormData((prev) => ({
+                              ...prev,
+                              galeria: [...prev.galeria, dataUrl],
+                            }));
+                          })
+                          .catch(() => {
+                            alert(`No se pudo procesar la imagen "${file.name}"`);
+                          });
                       });
+                      e.target.value = "";
                     }}
                     style={{ fontSize: "13px" }}
                   />
