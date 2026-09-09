@@ -166,6 +166,9 @@ export default function Checkout() {
     errs.celular = validarCampoVivo("celular", form.celular);
     if (!form.direccion.trim()) errs.direccion = "Ingresa tu dirección de la calle";
     if (!form.ciudad.trim()) errs.ciudad = "Ingresa tu ciudad";
+    if ((metodoPago === "transferencia" || metodoPago === "qr") && !comprobanteFile) {
+      errs.comprobante = "Sube una foto o PDF de tu comprobante de pago para continuar";
+    }
 
     Object.keys(errs).forEach((k) => !errs[k] && delete errs[k]);
     setErrores(errs);
@@ -504,6 +507,21 @@ export default function Checkout() {
                       {instruccionesPago && (
                         <p style={{ whiteSpace: "pre-line", marginTop: "10px" }}>{instruccionesPago}</p>
                       )}
+                      <label style={{ display: "block", marginTop: "12px", fontSize: "13px", fontWeight: 600 }}>
+                        Sube tu comprobante de pago *
+                        <input
+                          type="file"
+                          accept="image/*,application/pdf"
+                          onChange={(e) => setComprobanteFile(e.target.files[0] || null)}
+                          style={{ display: "block", marginTop: "6px", fontSize: "13px" }}
+                        />
+                      </label>
+                      {comprobanteFile && (
+                        <p style={{ fontSize: "12.5px", color: "#16a34a", marginTop: "4px" }}>✓ {comprobanteFile.name}</p>
+                      )}
+                      {errores.comprobante && (
+                        <p style={{ fontSize: "12.5px", color: "#dc2626", marginTop: "4px" }}>{errores.comprobante}</p>
+                      )}
                     </div>
                   )}
                 </div>
@@ -567,6 +585,21 @@ export default function Checkout() {
                           alt="Código QR para pagar con JEP Fácil"
                           style={{ width: "150px", height: "150px", objectFit: "contain", marginTop: "12px", border: "1px solid #e2e8f0", borderRadius: "8px", background: "#fff" }}
                         />
+                      )}
+                      <label style={{ display: "block", marginTop: "12px", fontSize: "13px", fontWeight: 600 }}>
+                        Sube tu comprobante de pago *
+                        <input
+                          type="file"
+                          accept="image/*,application/pdf"
+                          onChange={(e) => setComprobanteFile(e.target.files[0] || null)}
+                          style={{ display: "block", marginTop: "6px", fontSize: "13px" }}
+                        />
+                      </label>
+                      {comprobanteFile && (
+                        <p style={{ fontSize: "12.5px", color: "#16a34a", marginTop: "4px" }}>✓ {comprobanteFile.name}</p>
+                      )}
+                      {errores.comprobante && (
+                        <p style={{ fontSize: "12.5px", color: "#dc2626", marginTop: "4px" }}>{errores.comprobante}</p>
                       )}
                     </div>
                   )}
