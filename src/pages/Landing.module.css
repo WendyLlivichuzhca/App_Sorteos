@@ -132,9 +132,9 @@
   z-index: 2;
   display: grid;
   grid-template-columns: 1fr 1fr;
-  align-items: center;
+  align-items: start;
   gap: 20px;
-  padding-top: 96px;
+  padding-top: 110px;
   padding-bottom: 90px;
 }
 
@@ -208,8 +208,8 @@
 .heroArt {
   position: relative;
   display: flex;
-  align-items: center;
-  justify-content: center;
+  align-items: flex-start;
+  justify-content: flex-end;
 }
 
 .heroImgBadge {
@@ -496,7 +496,7 @@
   }
   .heroCopy h1 { font-size: 32px; }
   .heroNote { justify-content: center; }
-  .heroArt { order: -1; }
+  .heroArt { order: -1; justify-content: center; }
   .spark { display: none; }
 }
 
