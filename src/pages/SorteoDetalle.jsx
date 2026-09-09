@@ -56,6 +56,7 @@ export default function SorteoDetalle() {
   }
 
   const pctVendido = Math.round((sorteo.vendidos / sorteo.total) * 100);
+  const CANTIDAD_MINIMA = 10;
 
   return (
     <div className="page">
@@ -99,12 +100,12 @@ export default function SorteoDetalle() {
                 <span>Vendidos</span>
               </div>
               <div className={styles.stat}>
-                <strong>{sorteo.disponibles}</strong>
-                <span>Disponibles</span>
+                <strong>{pctVendido}%</strong>
+                <span>Vendido</span>
               </div>
               <div className={styles.stat}>
-                <strong>{sorteo.total.toLocaleString("es-ES")}</strong>
-                <span>Total de boletos</span>
+                <strong>{CANTIDAD_MINIMA}</strong>
+                <span>Compra mínima</span>
               </div>
               <div className={styles.stat}>
                 <strong>{formatMoney(sorteo.precio)}</strong>
