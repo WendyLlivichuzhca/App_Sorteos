@@ -154,21 +154,22 @@
 .changeMethodBtn {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
-  background: #101512;
-  border: 1.5px solid #1F8A5A;
-  color: #4ADE80;
+  gap: 7px;
+  background: linear-gradient(135deg, #22A06A, #146B45);
+  border: none;
+  color: #ffffff;
   font-weight: 700;
-  font-size: 12px;
-  padding: 7px 14px;
+  font-size: 12.5px;
+  padding: 9px 16px;
   border-radius: 50px;
   cursor: pointer;
-  transition: background 0.15s ease, transform 0.15s ease;
+  box-shadow: 0 4px 14px rgba(31, 138, 90, 0.4);
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
 }
 
 .changeMethodBtn:hover {
-  background: #15291E;
-  transform: translateY(-1px);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 18px rgba(31, 138, 90, 0.55);
 }
 
 .datosRow {
