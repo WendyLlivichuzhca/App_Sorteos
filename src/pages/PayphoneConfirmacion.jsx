@@ -124,21 +124,21 @@ export default function PayphoneConfirmacion() {
 
           <div className={styles.boletosBox}>
             <span>Tus boletos (números aleatorios)</span>
-            <strong>{resultado.boletos.map((n) => `#${n}`).join(", ")}</strong>
+            <strong>{(resultado?.boletos || []).map((n) => `#${n}`).join(", ") || "—"}</strong>
           </div>
 
           <div className={styles.detalle}>
             <div className={styles.detalleRow}>
               <span>Sorteo</span>
-              <strong>{resultado.sorteoNombre}</strong>
+              <strong>{resultado?.sorteoNombre || "—"}</strong>
             </div>
             <div className={styles.detalleRow}>
               <span>Código de orden</span>
-              <strong>{resultado.codigo}</strong>
+              <strong>{resultado?.codigo || "—"}</strong>
             </div>
             <div className={styles.detalleRow}>
               <span>Total pagado</span>
-              <strong>{formatMoney(resultado.total)}</strong>
+              <strong>{resultado?.total != null ? formatMoney(resultado.total) : "—"}</strong>
             </div>
           </div>
 

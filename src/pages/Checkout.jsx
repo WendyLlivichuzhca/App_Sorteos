@@ -230,6 +230,15 @@ export default function Checkout() {
       if (metodoPago === "payphone") {
         // Método respaldado por PayPhone: se redirige a su pasarela real de pago.
         const { payWithCard } = await iniciarPagoPayphone(compra.compraId);
+        if (!payWithCard) {
+          setErrorGlobal(
+            "No se pudo conectar con la pasarela de pago con tarjeta en este momento. Tu pedido quedó guardado (código " +
+              compra.codigo +
+              "), pero inténtalo de nuevo en unos minutos o elige otro método de pago."
+          );
+          setProcesando(false);
+          return;
+        }
         window.location.href = payWithCard;
         return;
       }
