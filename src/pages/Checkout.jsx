@@ -586,7 +586,7 @@ export default function Checkout() {
               <div className={styles.cardBoxHeader}>
                 <h3>{paso === 1 ? "Selecciona tu método de pago" : "Completa tu pago"}</h3>
                 {paso === 2 && (
-                  <button type="button" className={styles.editLink} onClick={() => setPaso(1)}>
+                  <button type="button" className={styles.changeMethodBtn} onClick={() => setPaso(1)}>
                     ↩️ Cambiar método de pago
                   </button>
                 )}

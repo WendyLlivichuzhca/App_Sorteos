@@ -151,6 +151,26 @@
   padding: 0;
 }
 
+.changeMethodBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: #101512;
+  border: 1.5px solid #1F8A5A;
+  color: #4ADE80;
+  font-weight: 700;
+  font-size: 12px;
+  padding: 7px 14px;
+  border-radius: 50px;
+  cursor: pointer;
+  transition: background 0.15s ease, transform 0.15s ease;
+}
+
+.changeMethodBtn:hover {
+  background: #15291E;
+  transform: translateY(-1px);
+}
+
 .datosRow {
   display: flex;
   justify-content: space-between;
