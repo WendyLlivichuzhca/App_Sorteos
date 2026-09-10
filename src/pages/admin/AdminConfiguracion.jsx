@@ -30,6 +30,7 @@ export default function AdminConfiguracion() {
   });
   const [metodos, setMetodos] = useState({});
   const [cuentasBancarias, setCuentasBancarias] = useState([]);
+  const [qrPagos, setQrPagos] = useState([]);
 
   useEffect(() => {
     getConfiguracion()
@@ -50,6 +51,7 @@ export default function AdminConfiguracion() {
         });
         setMetodos(data.metodosPago || {});
         setCuentasBancarias(data.cuentasBancarias || []);
+        setQrPagos(data.qrPagos || []);
       })
       .catch((err) => console.error("Error cargando configuración:", err))
       .finally(() => setLoading(false));
@@ -74,11 +76,33 @@ export default function AdminConfiguracion() {
     setCuentasBancarias((prev) => prev.filter((_, i) => i !== idx));
   };
 
+  const agregarQr = () => {
+    setQrPagos((prev) => [...prev, { etiqueta: "", imagen: "" }]);
+  };
+
+  const actualizarQrEtiqueta = (idx, valor) => {
+    setQrPagos((prev) => prev.map((q, i) => (i === idx ? { ...q, etiqueta: valor } : q)));
+  };
+
+  const actualizarQrImagen = async (idx, file) => {
+    if (!file) return;
+    try {
+      const dataUrl = await resizeImageToDataUrl(file, 500);
+      setQrPagos((prev) => prev.map((q, i) => (i === idx ? { ...q, imagen: dataUrl } : q)));
+    } catch (err) {
+      alert(err.message || "No se pudo procesar la imagen");
+    }
+  };
+
+  const quitarQr = (idx) => {
+    setQrPagos((prev) => prev.filter((_, i) => i !== idx));
+  };
+
   const handleSave = async (e) => {
     e.preventDefault();
     setSaving(true);
     try {
-      await updateConfiguracion({ ...config, metodosPago: metodos, cuentasBancarias });
+      await updateConfiguracion({ ...config, metodosPago: metodos, cuentasBancarias, qrPagos });
       setSaved(true);
       setTimeout(() => setSaved(false), 3000);
     } catch (err) {
@@ -308,40 +332,47 @@ export default function AdminConfiguracion() {
             </div>
 
             <div className={styles.formGroup} style={{ marginTop: "16px" }}>
-              <label>QR de Pago (JEP Fácil u otro código QR)</label>
-              {config.qrPago && (
-                <div style={{ display: "flex", alignItems: "center", gap: "12px", marginBottom: "10px" }}>
-                  <img
-                    src={config.qrPago}
-                    alt="QR de pago"
-                    style={{ width: "90px", height: "90px", objectFit: "contain", border: "1.5px solid #26332C", borderRadius: "8px", background: "#fff" }}
-                  />
-                  <button
-                    type="button"
-                    className={styles.iconBtn}
-                    onClick={() => setConfig({ ...config, qrPago: "" })}
-                  >
-                    🗑️ Quitar QR
-                  </button>
-                </div>
-              )}
-              <input
-                type="file"
-                accept="image/*"
-                onChange={async (e) => {
-                  const file = e.target.files[0];
-                  if (!file) return;
-                  try {
-                    const dataUrl = await resizeImageToDataUrl(file, 500);
-                    setConfig((prev) => ({ ...prev, qrPago: dataUrl }));
-                  } catch (err) {
-                    alert(err.message || "No se pudo procesar la imagen");
-                  }
-                }}
-                style={{ fontSize: "13px" }}
-              />
-              <span style={{ fontSize: "11.5px", color: "#7E897F" }}>
-                Se muestra al cliente cuando elige pagar con QR en el checkout.
+              <label>Códigos QR de Pago (JEP Fácil u otros)</label>
+              <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
+                {qrPagos.map((q, idx) => (
+                  <div key={idx} style={{ background: "#101512", border: "1.5px dashed #26332C", borderRadius: "10px", padding: "12px", display: "flex", gap: "12px", alignItems: "flex-start" }}>
+                    {q.imagen && (
+                      <img
+                        src={q.imagen}
+                        alt={q.etiqueta || "QR de pago"}
+                        style={{ width: "70px", height: "70px", objectFit: "contain", border: "1.5px solid #26332C", borderRadius: "8px", background: "#fff", flexShrink: 0 }}
+                      />
+                    )}
+                    <div style={{ flex: 1, display: "flex", flexDirection: "column", gap: "8px" }}>
+                      <input
+                        type="text"
+                        placeholder="Nombre del QR (ej: JEP Fácil, Banco Pichincha)"
+                        value={q.etiqueta}
+                        onChange={(e) => actualizarQrEtiqueta(idx, e.target.value)}
+                      />
+                      <input
+                        type="file"
+                        accept="image/*"
+                        onChange={(e) => actualizarQrImagen(idx, e.target.files[0])}
+                        style={{ fontSize: "12.5px" }}
+                      />
+                    </div>
+                    <button type="button" className={styles.iconBtn} onClick={() => quitarQr(idx)} title="Quitar QR">
+                      🗑️
+                    </button>
+                  </div>
+                ))}
+              </div>
+              <button
+                type="button"
+                className={styles.iconBtn}
+                onClick={agregarQr}
+                style={{ marginTop: "10px", width: "100%" }}
+              >
+                + Agregar código QR
+              </button>
+              <span style={{ fontSize: "11.5px", color: "#7E897F", display: "block", marginTop: "8px" }}>
+                Cada QR se muestra como una tarjeta separada al cliente cuando elige pagar con QR. Puedes agregar varios.
               </span>
             </div>
           </div>

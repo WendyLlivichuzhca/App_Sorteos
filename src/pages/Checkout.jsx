@@ -82,6 +82,7 @@ export default function Checkout() {
   const [instruccionesPago, setInstruccionesPago] = useState("");
   const [cuentasBancarias, setCuentasBancarias] = useState([]);
   const [qrPago, setQrPago] = useState("");
+  const [qrPagos, setQrPagos] = useState([]);
   const [metodosHabilitados, setMetodosHabilitados] = useState({ transferencia: true, payphone: true, qr: false });
   const [aceptaTerminos, setAceptaTerminos] = useState(false);
 
@@ -94,6 +95,7 @@ export default function Checkout() {
         setInstruccionesPago(config.instrucciones_pago || "");
         setCuentasBancarias(config.cuentasBancarias || []);
         setQrPago(config.qr_pago || "");
+        setQrPagos(config.qrPagos || []);
         const metodos = config.metodosPago || {};
         setMetodosHabilitados({
           transferencia: metodos.transferencia !== false,
@@ -346,6 +348,40 @@ export default function Checkout() {
                 ) : (
                   <p style={{ fontSize: "13px", color: "#8A948C" }}>
                     Por favor contáctanos para que te enviemos los datos de la cuenta para tu transferencia.
+                  </p>
+                )}
+              </div>
+            )}
+
+            {paso === 2 && metodoPago === "qr" && (
+              <div className={styles.cardBox} style={{ marginTop: "20px" }}>
+                <div className={styles.cardBoxHeader}>
+                  <h3>📱 Códigos QR para pagar</h3>
+                </div>
+                {qrPagos.length > 0 ? (
+                  <div style={{ display: "flex", flexWrap: "wrap", gap: "14px" }}>
+                    {qrPagos.map((q, idx) => (
+                      <div key={idx} className={styles.cuentaCard} style={{ textAlign: "center" }}>
+                        {q.imagen && (
+                          <img
+                            src={q.imagen}
+                            alt={q.etiqueta || "Código QR"}
+                            style={{ width: "130px", height: "130px", objectFit: "contain", borderRadius: "8px", background: "#fff" }}
+                          />
+                        )}
+                        <div className={styles.cuentaBanco} style={{ marginTop: "8px" }}>{q.etiqueta || "Código QR"}</div>
+                      </div>
+                    ))}
+                  </div>
+                ) : qrPago ? (
+                  <img
+                    src={qrPago}
+                    alt="Código QR para pagar"
+                    style={{ width: "150px", height: "150px", objectFit: "contain", border: "1px solid #26332C", borderRadius: "8px", background: "#fff" }}
+                  />
+                ) : (
+                  <p style={{ fontSize: "13px", color: "#8A948C" }}>
+                    Por favor contáctanos para que te enviemos el código QR para tu pago.
                   </p>
                 )}
               </div>
@@ -687,15 +723,8 @@ export default function Checkout() {
                   {paso === 2 && metodoPago === "qr" && (
                     <div className={styles.expandGrayBox}>
                       <p>
-                        Por favor, <strong>NO PROCEDAS SI NO ESTÁS SEGURO</strong> de que quieres realizar la compra. Escanea el código con tu app de JEP Fácil y realiza el pago. Tu pedido no se procesará hasta que se haya recibido el pago.
+                        Por favor, <strong>NO PROCEDAS SI NO ESTÁS SEGURO</strong> de que quieres realizar la compra. Escanea el código con tu app y realiza el pago. Tu pedido no se procesará hasta que se haya recibido el pago.
                       </p>
-                      {qrPago && (
-                        <img
-                          src={qrPago}
-                          alt="Código QR para pagar con JEP Fácil"
-                          style={{ width: "150px", height: "150px", objectFit: "contain", marginTop: "12px", border: "1px solid #e2e8f0", borderRadius: "8px", background: "#fff" }}
-                        />
-                      )}
                       <label style={{ display: "block", marginTop: "12px", fontSize: "13px", fontWeight: 600 }}>
                         Sube tu comprobante de pago *
                         <input
