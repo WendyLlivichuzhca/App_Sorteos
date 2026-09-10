@@ -5,7 +5,7 @@ import Footer from "../components/Footer.jsx";
 import Badge from "../components/Badge.jsx";
 import PremioImage from "../components/PremioImage.jsx";
 import Icon from "../icons/Icon.jsx";
-import { buscarBoletosPorCedula, getEstadisticasPublicas } from "../services/api.js";
+import { buscarBoletosPorCedula, getEstadisticasPublicas, subirComprobante } from "../services/api.js";
 import { formatDate, formatMoney } from "../utils/format.js";
 import styles from "./ConsultarBoletos.module.css";
 
@@ -15,6 +15,8 @@ export default function ConsultarBoletos() {
   const [buscado, setBuscado] = useState(false);
   const [cargando, setCargando] = useState(false);
   const [boletosVendidos, setBoletosVendidos] = useState(null);
+  const [subiendoId, setSubiendoId] = useState(null);
+  const [subidoIds, setSubidoIds] = useState([]);
 
   useEffect(() => {
     getEstadisticasPublicas()
@@ -35,6 +37,19 @@ export default function ConsultarBoletos() {
     } catch (err) {
       console.error("Error al buscar boletos:", err);
       setCargando(false);
+    }
+  };
+
+  const handleSubirComprobante = async (compraId, file) => {
+    if (!file) return;
+    setSubiendoId(compraId);
+    try {
+      await subirComprobante(compraId, file);
+      setSubidoIds((prev) => [...prev, compraId]);
+    } catch (err) {
+      alert(err.message || "No se pudo subir el comprobante");
+    } finally {
+      setSubiendoId(null);
     }
   };
 
@@ -102,6 +117,27 @@ export default function ConsultarBoletos() {
                           ))}
                         </div>
                       </div>
+
+                      {c.estado === "pendiente" && (
+                        <div className={styles.comprobanteBox}>
+                          {subidoIds.includes(c.id) ? (
+                            <p className={styles.comprobanteOk}>✅ Comprobante recibido, en revisión.</p>
+                          ) : (
+                            <>
+                              <label className={styles.comprobanteLabel}>
+                                📤 ¿Ya pagaste? Sube aquí tu comprobante de pago:
+                                <input
+                                  type="file"
+                                  accept="image/*,application/pdf"
+                                  disabled={subiendoId === c.id}
+                                  onChange={(e) => handleSubirComprobante(c.id, e.target.files[0])}
+                                />
+                              </label>
+                              {subiendoId === c.id && <span className={styles.comprobanteSubiendo}>Subiendo...</span>}
+                            </>
+                          )}
+                        </div>
+                      )}
                     </div>
                   ))}
                 </div>

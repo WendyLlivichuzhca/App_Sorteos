@@ -48,7 +48,7 @@ const PROVINCIAS_ECUADOR = [
 
 export default function Checkout() {
   const navigate = useNavigate();
-  const { seleccion, comprador, metodoPago, setMetodoPago, confirmarCompra } = useApp();
+  const { seleccion, comprador, setComprador, metodoPago, setMetodoPago, confirmarCompra } = useApp();
 
   const [form, setForm] = useState(
     comprador || {
@@ -199,6 +199,10 @@ export default function Checkout() {
       setErrorGlobal("Por favor, completa los campos obligatorios marcados en rojo.");
       return;
     }
+    // Se guarda ya mismo (no solo al final de la compra) para que, si el
+    // cliente usa el botón "atrás" del navegador o recarga por accidente,
+    // no pierda lo que ya llenó.
+    setComprador(form);
     setPaso(2);
   };
 
@@ -579,7 +583,14 @@ export default function Checkout() {
 
             {/* Sección Selecciona tu método de pago */}
             <div className={styles.metodosBox}>
-              <h3>{paso === 1 ? "Selecciona tu método de pago" : "Completa tu pago"}</h3>
+              <div className={styles.cardBoxHeader}>
+                <h3>{paso === 1 ? "Selecciona tu método de pago" : "Completa tu pago"}</h3>
+                {paso === 2 && (
+                  <button type="button" className={styles.editLink} onClick={() => setPaso(1)}>
+                    ↩️ Cambiar método de pago
+                  </button>
+                )}
+              </div>
 
               <div className={styles.metodosList}>
                 {/* Opción 1: Transferencia bancaria o depósito */}
