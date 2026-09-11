@@ -13,19 +13,32 @@
 }
 
 .blob1 {
-  width: 340px;
-  height: 340px;
-  top: -110px;
-  left: -130px;
-  background: radial-gradient(circle, rgba(31, 138, 90, 0.14), rgba(31, 138, 90, 0) 70%);
+  width: 420px;
+  height: 420px;
+  top: -130px;
+  left: -160px;
+  background: radial-gradient(circle, rgba(31, 138, 90, 0.18), rgba(31, 138, 90, 0) 70%);
 }
 
 .blob2 {
-  width: 300px;
-  height: 300px;
-  bottom: -90px;
-  right: -90px;
-  background: radial-gradient(circle, rgba(52, 179, 120, 0.13), rgba(52, 179, 120, 0) 70%);
+  width: 380px;
+  height: 380px;
+  bottom: -120px;
+  right: -130px;
+  background: radial-gradient(circle, rgba(52, 179, 120, 0.16), rgba(52, 179, 120, 0) 70%);
+}
+
+.blob3 {
+  position: absolute;
+  width: 260px;
+  height: 260px;
+  top: 38%;
+  left: -80px;
+  border-radius: 50%;
+  filter: blur(50px);
+  pointer-events: none;
+  z-index: 0;
+  background: radial-gradient(circle, rgba(31, 138, 90, 0.13), rgba(31, 138, 90, 0) 70%);
 }
 
 .leaf {
@@ -35,9 +48,12 @@
   z-index: 0;
 }
 
-.leaf1 { width: 30px; height: 30px; top: 10%; left: 4%; opacity: 0.32; transform: rotate(-20deg); }
-.leaf2 { width: 24px; height: 24px; top: 60%; left: 6%; opacity: 0.28; transform: rotate(30deg); }
-.leaf3 { width: 28px; height: 28px; top: 12%; right: 5%; opacity: 0.3; transform: rotate(18deg); }
+.leaf1 { width: 40px; height: 40px; top: 8%; left: 6%; opacity: 0.45; transform: rotate(-20deg); }
+.leaf2 { width: 30px; height: 30px; top: 42%; left: 3%; opacity: 0.4; transform: rotate(30deg); }
+.leaf3 { width: 36px; height: 36px; top: 10%; right: 7%; opacity: 0.42; transform: rotate(18deg); }
+.leaf4 { width: 28px; height: 28px; top: 65%; right: 5%; opacity: 0.38; transform: rotate(-14deg); }
+.leaf5 { width: 26px; height: 26px; bottom: 8%; left: 8%; opacity: 0.35; transform: rotate(24deg); }
+.leaf6 { width: 24px; height: 24px; bottom: 12%; right: 10%; opacity: 0.35; transform: rotate(-30deg); }
 
 .wrap {
   position: relative;
