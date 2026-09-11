@@ -187,30 +187,32 @@
 .heroArt {
   position: relative;
   display: flex;
-  align-items: flex-start;
+  align-items: center;
   justify-content: flex-end;
+  gap: 16px;
 }
 
 .heroImgFrame {
   position: relative;
   width: 100%;
   max-width: 480px;
+  flex: 0 1 auto;
+  min-width: 0;
 }
 
 .scriptText {
-  position: absolute;
-  top: 38%;
-  right: -18px;
+  flex-shrink: 0;
   font-family: "Caveat", cursive;
-  font-size: 24px;
+  font-size: 26px;
   font-weight: 700;
   line-height: 1.2;
   color: #146B45;
   transform: rotate(-6deg);
   pointer-events: none;
+  white-space: nowrap;
 }
 
-@media (max-width: 1300px) {
+@media (max-width: 1140px) {
   .scriptText { display: none; }
 }
 
@@ -236,8 +238,8 @@
 
 .heroImgBadge {
   position: absolute;
-  left: 24px;
-  bottom: 24px;
+  left: 14px;
+  bottom: 14px;
   display: inline-flex;
   align-items: center;
   gap: 8px;
