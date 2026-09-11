@@ -91,6 +91,12 @@ export default function AdminBoletos() {
       </div>
 
       <div className={styles.tableCard}>
+        <div className={styles.tableCardHeader}>
+          <div>
+            <h3>Boletos del Sorteo</h3>
+            <p>Consulta a quién le pertenece cada boleto vendido o reservado</p>
+          </div>
+        </div>
         <div style={{ padding: "16px 18px", borderBottom: "1px solid #E3E8E5", display: "flex", alignItems: "center", justifyContent: "space-between", gap: "14px", flexWrap: "wrap" }}>
           <input
             type="text"
@@ -147,7 +153,7 @@ export default function AdminBoletos() {
                 onClick={() => setPagina(paginaSegura - 1)}
                 style={paginaSegura <= 1 ? { opacity: 0.4, cursor: "not-allowed" } : undefined}
               >
-                ← Anterior
+                <Icon name="chevronLeft" size={14} /> Anterior
               </button>
               <span style={{ fontSize: "11.5px", fontWeight: 700, color: "#101512" }}>
                 Página {paginaSegura} de {totalPaginas}
@@ -159,7 +165,7 @@ export default function AdminBoletos() {
                 onClick={() => setPagina(paginaSegura + 1)}
                 style={paginaSegura >= totalPaginas ? { opacity: 0.4, cursor: "not-allowed" } : undefined}
               >
-                Siguiente →
+                Siguiente <Icon name="chevronRight" size={14} />
               </button>
             </div>
           </div>

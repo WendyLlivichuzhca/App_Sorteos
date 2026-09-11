@@ -186,20 +186,20 @@ export default function AdminNumerosPremiados() {
                     <div className={styles.actionsCell}>
                       {editingId === p.id ? (
                         <button type="button" className={styles.iconBtn} onClick={() => handleSaveEdit(p)} title="Guardar">
-                          💾
+                          <Icon name="save" size={14} />
                         </button>
                       ) : (
                         <button type="button" className={styles.iconBtn} onClick={() => handleStartEdit(p)} title="Editar premio">
-                          ✏️
+                          <Icon name="edit" size={14} />
                         </button>
                       )}
                       {p.ganado ? (
                         <button type="button" className={styles.iconBtn} onClick={() => toggleEntregado(p)} title={p.entregado ? "Marcar como pendiente" : "Marcar como entregado"}>
-                          {p.entregado ? "↩️" : "✅"}
+                          <Icon name={p.entregado ? "undo" : "check"} size={14} />
                         </button>
                       ) : null}
                       <button type="button" className={styles.iconBtn} onClick={() => handleEliminar(p.id)} title="Eliminar">
-                        🗑️
+                        <Icon name="trash" size={14} />
                       </button>
                     </div>
                   </td>
@@ -211,7 +211,7 @@ export default function AdminNumerosPremiados() {
 
         <div style={{ display: "flex", flexDirection: "column", gap: "18px", alignSelf: "start" }}>
           <div className={styles.tableCard} style={{ padding: "18px" }}>
-            <h3 style={{ fontSize: "13.5px", fontWeight: "800", color: "#101512" }}>Agregar Número Premiado</h3>
+            <h3 className={styles.cardTitle}>Agregar Número Premiado</h3>
             <form onSubmit={handleAgregar} style={{ marginTop: "14px", display: "flex", flexDirection: "column", gap: "12px" }}>
               <div className={styles.formGroup}>
                 <label>Número de boleto</label>
@@ -239,7 +239,7 @@ export default function AdminNumerosPremiados() {
           </div>
 
           <div className={styles.tableCard} style={{ padding: "18px" }}>
-            <h3 style={{ fontSize: "13.5px", fontWeight: "800", color: "#101512" }}>🎲 Generar al Azar</h3>
+            <h3 className={styles.cardTitle}>🎲 Generar al Azar</h3>
             <p style={{ fontSize: "11.5px", color: "#5B6660", marginTop: "4px" }}>
               Elige números reales de este sorteo al azar. Después ponle el premio a cada uno con el ✏️ de la tabla.
             </p>

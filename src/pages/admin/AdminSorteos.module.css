@@ -171,6 +171,13 @@
   margin-top: 2px;
 }
 
+.cardTitle {
+  font-size: 13.5px;
+  font-weight: 800;
+  color: #101512;
+  margin-bottom: 14px;
+}
+
 .filterSelect {
   padding: 7px 12px;
   border-radius: 9px;
@@ -308,12 +315,17 @@
 }
 
 .iconBtn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
   background: #F7FAF8;
   border: 1.5px solid #E3E8E5;
   border-radius: 9px;
   padding: 6px 9px;
   cursor: pointer;
   font-size: 12px;
+  color: #3F4A44;
   transition: all 0.15s ease;
 }
 
@@ -456,4 +468,10 @@
   font-weight: 700;
   cursor: pointer;
   font-size: 12px;
+}
+
+@media (max-width: 1100px) {
+  .kpiGrid {
+    grid-template-columns: repeat(2, 1fr);
+  }
 }

@@ -91,6 +91,12 @@ export default function AdminClientes() {
       </div>
 
       <div className={styles.tableCard}>
+        <div className={styles.tableCardHeader}>
+          <div>
+            <h3>Todos los Clientes</h3>
+            <p>Historial y estado de cada comprador registrado</p>
+          </div>
+        </div>
         <div style={{ padding: "16px 18px", borderBottom: "1px solid #E3E8E5" }}>
           <input
             type="text"
@@ -133,10 +139,10 @@ export default function AdminClientes() {
                 <td>
                   <div className={styles.actionsCell}>
                     <button type="button" className={styles.iconBtn} onClick={() => verHistorial(c)} title="Ver historial">
-                      📜
+                      <Icon name="history" size={14} />
                     </button>
                     <button type="button" className={styles.iconBtn} onClick={() => toggleBloqueo(c)} title={c.bloqueado ? "Desbloquear" : "Bloquear"}>
-                      {c.bloqueado ? "🔓" : "🚫"}
+                      <Icon name={c.bloqueado ? "unlock" : "ban"} size={14} />
                     </button>
                   </div>
                 </td>
@@ -158,7 +164,7 @@ export default function AdminClientes() {
                 onClick={() => setPagina(paginaSegura - 1)}
                 style={paginaSegura <= 1 ? { opacity: 0.4, cursor: "not-allowed" } : undefined}
               >
-                ← Anterior
+                <Icon name="chevronLeft" size={14} /> Anterior
               </button>
               <span style={{ fontSize: "11.5px", fontWeight: 700, color: "#101512" }}>
                 Página {paginaSegura} de {totalPaginas}
@@ -170,7 +176,7 @@ export default function AdminClientes() {
                 onClick={() => setPagina(paginaSegura + 1)}
                 style={paginaSegura >= totalPaginas ? { opacity: 0.4, cursor: "not-allowed" } : undefined}
               >
-                Siguiente →
+                Siguiente <Icon name="chevronRight" size={14} />
               </button>
             </div>
           </div>

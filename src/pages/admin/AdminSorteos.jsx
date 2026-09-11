@@ -268,16 +268,16 @@ export default function AdminSorteos() {
                 <td>
                   <div className={styles.actionsCell}>
                     <Link to={`/admin/sorteos/${s.id}/lugares`} className={styles.iconBtn} title="Premio Mayor y Lugares" style={{ textDecoration: "none" }}>
-                      🏆
+                      <Icon name="award" size={14} />
                     </Link>
                     <Link to={`/admin/sorteos/${s.id}/premiados`} className={styles.iconBtn} title="Números Premiados" style={{ textDecoration: "none" }}>
-                      🎁
+                      <Icon name="gift" size={14} />
                     </Link>
                     <button type="button" className={styles.iconBtn} onClick={() => handleOpenEdit(s)} title="Editar">
-                      ✏️
+                      <Icon name="edit" size={14} />
                     </button>
                     <button type="button" className={styles.iconBtn} onClick={() => handleDelete(s.id)} title="Eliminar">
-                      🗑️
+                      <Icon name="trash" size={14} />
                     </button>
                   </div>
                 </td>

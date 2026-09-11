@@ -106,6 +106,12 @@ export default function AdminCategorias() {
 
       <div style={{ display: "grid", gridTemplateColumns: "1fr 340px", gap: "24px" }}>
         <div className={styles.tableCard}>
+          <div className={styles.tableCardHeader}>
+            <div>
+              <h3>Todas las Categorías</h3>
+              <p>Categorías disponibles para clasificar tus sorteos</p>
+            </div>
+          </div>
           <table className={styles.table}>
             <thead>
               <tr>
@@ -136,15 +142,15 @@ export default function AdminCategorias() {
                     <div className={styles.actionsCell}>
                       {editingId === c.id ? (
                         <button type="button" className={styles.iconBtn} onClick={() => handleSaveEdit(c)} title="Guardar">
-                          💾
+                          <Icon name="save" size={14} />
                         </button>
                       ) : (
                         <button type="button" className={styles.iconBtn} onClick={() => handleStartEdit(c)} title="Editar">
-                          ✏️
+                          <Icon name="edit" size={14} />
                         </button>
                       )}
                       <button type="button" className={styles.iconBtn} onClick={() => handleDelete(c.id)} title="Eliminar">
-                        🗑️
+                        <Icon name="trash" size={14} />
                       </button>
                     </div>
                   </td>
@@ -155,7 +161,7 @@ export default function AdminCategorias() {
         </div>
 
         <div className={styles.tableCard} style={{ padding: "18px" }}>
-          <h3 style={{ fontSize: "13.5px", fontWeight: "800", color: "#101512" }}>Crear Nueva Categoría</h3>
+          <h3 className={styles.cardTitle}>Crear Nueva Categoría</h3>
           <form onSubmit={handleAdd} style={{ marginTop: "14px", display: "flex", flexDirection: "column", gap: "12px" }}>
             <input
               type="text"

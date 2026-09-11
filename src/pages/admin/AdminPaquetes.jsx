@@ -109,6 +109,12 @@ export default function AdminPaquetes() {
       </div>
 
       <div className={styles.tableCard}>
+        <div className={styles.tableCardHeader}>
+          <div>
+            <h3>Tramos de Descuento</h3>
+            <p>Combos automáticos según la cantidad de boletos comprados</p>
+          </div>
+        </div>
         <table className={styles.table}>
           <thead>
             <tr>
@@ -131,7 +137,7 @@ export default function AdminPaquetes() {
                       max="90"
                       value={editPorcentaje}
                       onChange={(e) => setEditPorcentaje(parseInt(e.target.value, 10))}
-                      style={{ width: "70px", padding: "6px 10px", borderRadius: "6px", border: "1.5px solid #1F8A5A" }}
+                      style={{ width: "70px", padding: "6px 10px", borderRadius: "8px", border: "1.5px solid #1F8A5A" }}
                     />
                   ) : (
                     <span className={styles.categoryBadge}>{p.porcentaje}% OFF</span>
@@ -141,15 +147,15 @@ export default function AdminPaquetes() {
                   <div className={styles.actionsCell}>
                     {editingId === p.id ? (
                       <button type="button" className={styles.iconBtn} onClick={() => handleSaveEdit(p)} title="Guardar">
-                        💾
+                        <Icon name="save" size={14} />
                       </button>
                     ) : (
                       <button type="button" className={styles.iconBtn} onClick={() => handleStartEdit(p)} title="Editar">
-                        ✏️
+                        <Icon name="edit" size={14} />
                       </button>
                     )}
                     <button type="button" className={styles.iconBtn} onClick={() => handleDelete(p.id)} title="Eliminar">
-                      🗑️
+                      <Icon name="trash" size={14} />
                     </button>
                   </div>
                 </td>

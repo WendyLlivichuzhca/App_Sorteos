@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import AdminLayout from "../../components/admin/AdminLayout.jsx";
+import Icon from "../../icons/Icon.jsx";
 import { getConfiguracion, updateConfiguracion } from "../../services/api.js";
 import { resizeImageToDataUrl } from "../../utils/imageResize.js";
 import styles from "./AdminSorteos.module.css";
@@ -131,7 +132,7 @@ export default function AdminConfiguracion() {
       <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "24px" }}>
         {/* Formulario Datos Empresa & Redes */}
         <div className={styles.tableCard} style={{ padding: "24px" }}>
-          <h3 style={{ fontSize: "13.5px", fontWeight: "800", marginBottom: "16px" }}>Empresa & Redes Sociales</h3>
+          <h3 className={styles.cardTitle}>Empresa & Redes Sociales</h3>
           <form onSubmit={handleSave} className={styles.form} style={{ padding: 0 }}>
             <div className={styles.formGroup}>
               <label>Logo de la Empresa</label>
@@ -148,7 +149,7 @@ export default function AdminConfiguracion() {
                       className={styles.iconBtn}
                       onClick={() => setConfig({ ...config, logoUrl: "" })}
                     >
-                      🗑️ Quitar logo
+                      <Icon name="trash" size={14} /> Quitar logo
                     </button>
                   </>
                 )}
@@ -239,7 +240,7 @@ export default function AdminConfiguracion() {
         <div style={{ display: "flex", flexDirection: "column", gap: "24px" }}>
           {/* Métodos de Pago Activos */}
           <div className={styles.tableCard} style={{ padding: "24px" }}>
-            <h3 style={{ fontSize: "13.5px", fontWeight: "800", marginBottom: "14px" }}>Métodos de Pago Aceptados</h3>
+            <h3 className={styles.cardTitle}>Métodos de Pago Aceptados</h3>
             <p style={{ fontSize: "13px", color: "#5B6660", marginBottom: "16px" }}>Activa o desactiva las pasarelas visibles para el cliente</p>
 
             <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
@@ -298,7 +299,7 @@ export default function AdminConfiguracion() {
                         style={{ flex: 1 }}
                       />
                       <button type="button" className={styles.iconBtn} onClick={() => quitarCuenta(idx)} title="Quitar cuenta">
-                        🗑️
+                        <Icon name="trash" size={14} />
                       </button>
                     </div>
                   </div>
@@ -306,9 +307,9 @@ export default function AdminConfiguracion() {
               </div>
               <button
                 type="button"
-                className={styles.iconBtn}
+                className={styles.createBtn}
                 onClick={agregarCuenta}
-                style={{ marginTop: "10px", width: "100%" }}
+                style={{ marginTop: "10px", width: "100%", justifyContent: "center" }}
               >
                 + Agregar cuenta bancaria
               </button>
@@ -358,16 +359,16 @@ export default function AdminConfiguracion() {
                       />
                     </div>
                     <button type="button" className={styles.iconBtn} onClick={() => quitarQr(idx)} title="Quitar QR">
-                      🗑️
+                      <Icon name="trash" size={14} />
                     </button>
                   </div>
                 ))}
               </div>
               <button
                 type="button"
-                className={styles.iconBtn}
+                className={styles.createBtn}
                 onClick={agregarQr}
-                style={{ marginTop: "10px", width: "100%" }}
+                style={{ marginTop: "10px", width: "100%", justifyContent: "center" }}
               >
                 + Agregar código QR
               </button>
@@ -379,7 +380,7 @@ export default function AdminConfiguracion() {
 
           {/* Políticas & Términos */}
           <div className={styles.tableCard} style={{ padding: "24px" }}>
-            <h3 style={{ fontSize: "13.5px", fontWeight: "800", marginBottom: "14px" }}>Políticas y Preguntas Frecuentes</h3>
+            <h3 className={styles.cardTitle}>Políticas y Preguntas Frecuentes</h3>
 
             <div className={styles.formGroup} style={{ marginBottom: "14px" }}>
               <label>Políticas de Privacidad y Sorteos</label>

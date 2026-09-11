@@ -176,20 +176,20 @@ export default function AdminLugaresSorteo() {
                     <div className={styles.actionsCell}>
                       {editingId === l.id ? (
                         <button type="button" className={styles.iconBtn} onClick={() => handleSaveEdit(l)} title="Guardar">
-                          💾
+                          <Icon name="save" size={14} />
                         </button>
                       ) : (
                         <button type="button" className={styles.iconBtn} onClick={() => handleStartEdit(l)} title="Editar premio">
-                          ✏️
+                          <Icon name="edit" size={14} />
                         </button>
                       )}
                       {l.boleto_numero ? (
                         <button type="button" className={styles.iconBtn} onClick={() => toggleEntregado(l)} title={l.entregado ? "Marcar como pendiente" : "Marcar como entregado"}>
-                          {l.entregado ? "↩️" : "✅"}
+                          <Icon name={l.entregado ? "undo" : "check"} size={14} />
                         </button>
                       ) : (
                         <button type="button" className={styles.iconBtn} onClick={() => handleEliminar(l.id)} title="Eliminar">
-                          🗑️
+                          <Icon name="trash" size={14} />
                         </button>
                       )}
                     </div>
@@ -201,7 +201,7 @@ export default function AdminLugaresSorteo() {
         </div>
 
         <div className={styles.tableCard} style={{ padding: "18px", alignSelf: "start" }}>
-          <h3 style={{ fontSize: "13.5px", fontWeight: "800", color: "#101512" }}>Agregar un Lugar</h3>
+          <h3 className={styles.cardTitle}>Agregar un Lugar</h3>
           <p style={{ fontSize: "11.5px", color: "#5B6660", marginTop: "4px" }}>
             Por ejemplo, si ya tienes el 1er lugar (el premio principal), agrega aquí el 2do lugar con su propio premio.
           </p>

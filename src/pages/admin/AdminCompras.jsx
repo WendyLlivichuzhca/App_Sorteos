@@ -133,7 +133,7 @@ export default function AdminCompras() {
                           onClick={() => cambiarEstado(c, "aprobado")}
                           title="Aprobar compra"
                         >
-                          ✅
+                          <Icon name="check" size={14} />
                         </button>
                         <button
                           type="button"
@@ -141,7 +141,7 @@ export default function AdminCompras() {
                           onClick={() => cambiarEstado(c, "rechazado")}
                           title="Rechazar compra"
                         >
-                          ❌
+                          <Icon name="x" size={14} />
                         </button>
                       </>
                     )}
@@ -151,7 +151,7 @@ export default function AdminCompras() {
                       onClick={() => setSelectedReceipt(c)}
                       title="Ver Comprobante"
                     >
-                      📄
+                      <Icon name="fileText" size={14} />
                     </button>
                   </div>
                 </td>
@@ -173,7 +173,7 @@ export default function AdminCompras() {
                 onClick={() => setPagina(paginaSegura - 1)}
                 style={paginaSegura <= 1 ? { opacity: 0.4, cursor: "not-allowed" } : undefined}
               >
-                ← Anterior
+                <Icon name="chevronLeft" size={14} /> Anterior
               </button>
               <span style={{ fontSize: "11.5px", fontWeight: 700, color: "#101512" }}>
                 Página {paginaSegura} de {totalPaginas}
@@ -185,7 +185,7 @@ export default function AdminCompras() {
                 onClick={() => setPagina(paginaSegura + 1)}
                 style={paginaSegura >= totalPaginas ? { opacity: 0.4, cursor: "not-allowed" } : undefined}
               >
-                Siguiente →
+                Siguiente <Icon name="chevronRight" size={14} />
               </button>
             </div>
           </div>

@@ -69,7 +69,7 @@ export default function AdminGanadores() {
       </div>
 
       <div className={styles.tableCard} style={{ padding: "18px" }}>
-        <h3 style={{ fontSize: "13.5px", fontWeight: "800", color: "#101512", marginBottom: "14px" }}>Realizar Sorteo</h3>
+        <h3 className={styles.cardTitle}>Realizar Sorteo</h3>
         <div style={{ display: "flex", gap: "12px", alignItems: "center", flexWrap: "wrap" }}>
         <select
           value={sorteoId}
