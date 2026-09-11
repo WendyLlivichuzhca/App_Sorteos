@@ -849,9 +849,13 @@ app.get('/api/compras/buscar', async (req, res) => {
     // cedula, asi que solo se devuelve lo minimo necesario para "ver mis
     // boletos" -- nunca el correo, celular ni el link del comprobante de otra
     // persona, aunque alguien adivine o conozca su cedula.
+    //
+    // Las rechazadas se excluyen a proposito: sus boletos_asignados quedan
+    // "congelados" con numeros que ya se liberaron y pueden pertenecer a otro
+    // cliente ahora, asi que mostrarlas confundiria mas de lo que ayuda.
     const [compras] = await pool.query(
       `SELECT id, codigo, sorteo_nombre, cantidad_boletos, total_pagado, estado, boletos_asignados
-       FROM compras WHERE cliente_cedula = ? ORDER BY id DESC`,
+       FROM compras WHERE cliente_cedula = ? AND estado != 'rechazado' ORDER BY id DESC`,
       [cedula]
     );
     const parsed = compras.map((c) => ({
