@@ -210,7 +210,7 @@ export default function CompraExitosa() {
       const archivo = new File([blob], `comprobante-${ultimaCompra.codigo}.pdf`, { type: "application/pdf" });
 
       if (navigator.canShare && navigator.canShare({ files: [archivo] })) {
-        await navigator.share({ text: texto, title: nombreEmpresa, files: [archivo] });
+        await navigator.share({ files: [archivo] });
         return;
       }
       if (navigator.share) {
