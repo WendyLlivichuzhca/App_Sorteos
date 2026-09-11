@@ -7,80 +7,88 @@
   overflow: visible;
 }
 
-/* Tarjetas decorativas flotantes (tickets/boletos) - esquina derecha */
-.spark {
+/* Formas orgánicas de fondo (blobs suaves) */
+.blob {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(50px);
+  pointer-events: none;
+  z-index: 0;
+}
+
+.blob1 {
+  width: 420px;
+  height: 420px;
+  top: -140px;
+  left: -160px;
+  background: radial-gradient(circle, rgba(31, 138, 90, 0.16), rgba(31, 138, 90, 0) 70%);
+}
+
+.blob2 {
+  width: 340px;
+  height: 340px;
+  bottom: -120px;
+  left: 6%;
+  background: radial-gradient(circle, rgba(52, 179, 120, 0.14), rgba(52, 179, 120, 0) 70%);
+}
+
+/* Hojitas decorativas */
+.leaf {
   position: absolute;
   pointer-events: none;
+  color: #34B378;
+  z-index: 0;
 }
 
-/* ─ Tarjetas tipo ticket ─ */
-.spark1 {
-  width: 54px;
-  height: 72px;
-  border-radius: 12px;
-  background: linear-gradient(145deg, #34B378 0%, #1B7A4C 60%, #123D28 100%);
-  border: 1px solid rgba(31, 138, 90, 0.35);
-  box-shadow: 0 4px 20px rgba(31, 138, 90, 0.28), inset 0 1px 0 rgba(255,255,255,0.15);
-  top: 7%;
-  right: 5%;
-  transform: rotate(18deg);
-  animation: cardFloat1 5s ease-in-out infinite;
+.leaf1 {
+  width: 34px;
+  height: 34px;
+  top: 14%;
+  left: 5%;
+  opacity: 0.35;
+  transform: rotate(-20deg);
 }
 
-.spark2 {
-  width: 42px;
-  height: 56px;
-  border-radius: 10px;
-  background: linear-gradient(145deg, #1F8A5A 0%, #155C3A 100%);
-  border: 1px solid rgba(31, 138, 90, 0.3);
-  box-shadow: 0 4px 16px rgba(31, 138, 90, 0.22);
-  top: 28%;
-  right: 1%;
-  transform: rotate(-14deg);
-  animation: cardFloat2 6s ease-in-out infinite;
-  animation-delay: 1s;
+.leaf2 {
+  width: 22px;
+  height: 22px;
+  top: 62%;
+  left: 10%;
+  opacity: 0.3;
+  transform: rotate(35deg);
 }
 
-.spark3 {
-  width: 38px;
-  height: 52px;
-  border-radius: 10px;
-  background: linear-gradient(145deg, #1F8A5A 0%, #1B7A4C 100%);
-  border: 1px solid rgba(31, 138, 90, 0.28);
-  box-shadow: 0 4px 14px rgba(31, 138, 90, 0.25);
-  top: 56%;
-  right: 8%;
-  transform: rotate(28deg);
-  animation: cardFloat1 7s ease-in-out infinite;
-  animation-delay: 2.5s;
+.leaf3 {
+  width: 26px;
+  height: 26px;
+  top: 10%;
+  right: 30%;
+  opacity: 0.3;
+  transform: rotate(15deg);
 }
 
-.spark4 {
-  width: 46px;
-  height: 62px;
-  border-radius: 12px;
-  background: linear-gradient(145deg, #1F8A5A 0%, #0F5C3A 100%);
-  border: 1px solid rgba(31, 138, 90, 0.3);
-  box-shadow: 0 4px 18px rgba(31, 138, 90, 0.22);
-  top: 73%;
-  right: 2.5%;
-  transform: rotate(-6deg);
-  animation: cardFloat2 5.5s ease-in-out infinite;
-  animation-delay: 0.5s;
+.leaf4 {
+  width: 30px;
+  height: 30px;
+  bottom: 8%;
+  right: 6%;
+  opacity: 0.28;
+  transform: rotate(-10deg);
 }
 
-/* ─ Destellos brillantes (puntos de luz rosa/lila) ─ */
-.glitter1, .glitter2, .glitter3, .glitter4, .glitter5 {
+/* ─ Destellos brillantes (puntos de luz) ─ */
+.glitter1, .glitter2 {
   position: absolute;
   pointer-events: none;
   border-radius: 50%;
   animation: glitterPulse 3s ease-in-out infinite;
+  z-index: 0;
 }
 
 .glitter1 {
   width: 6px; height: 6px;
-  background: #f472b6;
-  box-shadow: 0 0 8px 3px rgba(244, 114, 182, 0.6);
+  background: #34B378;
+  box-shadow: 0 0 8px 3px rgba(52, 179, 120, 0.55);
   top: 18%; left: 42%;
   animation-delay: 0s;
 }
@@ -91,36 +99,7 @@
   top: 32%; left: 55%;
   animation-delay: 0.8s;
 }
-.glitter3 {
-  width: 4px; height: 4px;
-  background: #f9a8d4;
-  box-shadow: 0 0 6px 2px rgba(249, 168, 212, 0.7);
-  top: 12%; left: 65%;
-  animation-delay: 1.4s;
-}
-.glitter4 {
-  width: 5px; height: 5px;
-  background: #34B378;
-  box-shadow: 0 0 8px 3px rgba(52, 179, 120, 0.6);
-  top: 55%; left: 48%;
-  animation-delay: 2s;
-}
-.glitter5 {
-  width: 6px; height: 6px;
-  background: #e879f9;
-  box-shadow: 0 0 10px 4px rgba(232, 121, 249, 0.55);
-  top: 22%; left: 72%;
-  animation-delay: 0.4s;
-}
 
-@keyframes cardFloat1 {
-  0%, 100% { transform: rotate(18deg) translateY(0); }
-  50%       { transform: rotate(18deg) translateY(-10px); }
-}
-@keyframes cardFloat2 {
-  0%, 100% { transform: rotate(-14deg) translateY(0); }
-  50%       { transform: rotate(-14deg) translateY(-10px); }
-}
 @keyframes glitterPulse {
   0%, 100% { opacity: 0.4; transform: scale(1); }
   50%       { opacity: 1; transform: scale(1.6); }
@@ -210,6 +189,49 @@
   display: flex;
   align-items: flex-start;
   justify-content: flex-end;
+}
+
+.heroImgFrame {
+  position: relative;
+  width: 100%;
+  max-width: 480px;
+}
+
+.scriptText {
+  position: absolute;
+  top: 38%;
+  right: -18px;
+  font-family: "Caveat", cursive;
+  font-size: 24px;
+  font-weight: 700;
+  line-height: 1.2;
+  color: #146B45;
+  transform: rotate(-6deg);
+  pointer-events: none;
+}
+
+@media (max-width: 1300px) {
+  .scriptText { display: none; }
+}
+
+.heroDots {
+  display: flex;
+  justify-content: center;
+  gap: 6px;
+  margin-top: 14px;
+}
+
+.heroDot, .heroDotActive {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #D8DFDC;
+}
+
+.heroDotActive {
+  background: #1F8A5A;
+  width: 18px;
+  border-radius: 4px;
 }
 
 .heroImgBadge {
@@ -497,7 +519,8 @@
   .heroCopy h1 { font-size: 32px; }
   .heroNote { justify-content: center; }
   .heroArt { order: -1; justify-content: center; }
-  .spark { display: none; }
+  .scriptText { display: none; }
+  .leaf3, .leaf4 { display: none; }
 }
 
 @media (max-width: 860px) {

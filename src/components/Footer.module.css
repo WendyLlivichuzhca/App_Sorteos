@@ -1,21 +1,60 @@
 .footer {
-  background: var(--color-primary);
-  color: rgba(16, 21, 18, 0.75);
+  position: relative;
+  background: linear-gradient(180deg, #123D28 0%, #0B2E1E 100%);
+  color: rgba(255, 255, 255, 0.68);
   margin-top: auto;
+  padding-top: 34px;
+  overflow: hidden;
+}
+
+.wave {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 40px;
+  display: block;
+  color: var(--color-bg);
+}
+
+.leafDecor {
+  position: absolute;
+  pointer-events: none;
+  opacity: 0.08;
+  color: #ffffff;
+}
+
+.leafDecor1 {
+  width: 160px;
+  height: 160px;
+  right: -20px;
+  bottom: -10px;
+  transform: rotate(-12deg);
+}
+
+.leafDecor2 {
+  width: 90px;
+  height: 90px;
+  left: 4%;
+  top: 30px;
+  transform: rotate(24deg);
+  opacity: 0.06;
 }
 
 .inner {
+  position: relative;
+  z-index: 1;
   display: grid;
   grid-template-columns: 1.6fr 1fr 1fr 1fr;
   gap: 32px;
-  padding: 56px 24px 32px;
+  padding: 22px 24px 32px;
 }
 
 .brand p {
   margin-top: 14px;
   font-size: 14px;
   line-height: 1.6;
-  color: rgba(16, 21, 18, 0.62);
+  color: rgba(255, 255, 255, 0.55);
   max-width: 280px;
 }
 
@@ -25,7 +64,7 @@
   gap: 8px;
   font-weight: 800;
   font-size: 17px;
-  color: #101512;
+  color: #fff;
 }
 
 .logoIcon {
@@ -62,18 +101,20 @@
   width: 34px;
   height: 34px;
   border-radius: 50%;
-  background: rgba(16, 21, 18, 0.08);
-  color: rgba(16, 21, 18, 0.7);
+  background: rgba(255, 255, 255, 0.08);
+  color: rgba(255, 255, 255, 0.75);
   transition: background 0.15s ease, color 0.15s ease, transform 0.15s ease;
 }
 
 .socialBtn:hover {
-  background: var(--color-primary-dark);
+  background: #1F8A5A;
   color: #fff;
   transform: translateY(-2px);
 }
 
 .col {
+  position: relative;
+  z-index: 1;
   display: flex;
   flex-direction: column;
   gap: 12px;
@@ -81,13 +122,13 @@
 }
 
 .col h4 {
-  color: #101512;
+  color: #fff;
   font-size: 14px;
   margin-bottom: 4px;
 }
 
 .col a:hover {
-  color: #101512;
+  color: #fff;
 }
 
 .contactoLink {
@@ -97,11 +138,13 @@
 }
 
 .bottom {
+  position: relative;
+  z-index: 1;
   text-align: center;
   font-size: 13px;
   padding: 20px 24px;
-  border-top: 1px solid rgba(16, 21, 18, 0.12);
-  color: rgba(16, 21, 18, 0.55);
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  color: rgba(255, 255, 255, 0.45);
 }
 
 @media (max-width: 720px) {

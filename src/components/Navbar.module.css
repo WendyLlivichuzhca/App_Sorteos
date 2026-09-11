@@ -2,15 +2,17 @@
   position: sticky;
   top: 0;
   z-index: 40;
-  background: var(--color-primary);
-  border-bottom: 1px solid rgba(16, 21, 18, 0.1);
+  background: rgba(255, 255, 255, 0.9);
+  backdrop-filter: blur(8px);
+  border-bottom: 1px solid var(--color-border);
 }
 
 .header.dark {
   position: absolute;
   width: 100%;
-  background: var(--color-primary);
-  border-bottom: 1px solid rgba(16, 21, 18, 0.1);
+  background: rgba(255, 255, 255, 0.9);
+  backdrop-filter: blur(8px);
+  border-bottom: 1px solid var(--color-border);
 }
 
 .inner {
@@ -66,20 +68,20 @@
   gap: 26px;
   font-size: 14.5px;
   font-weight: 500;
-  color: rgba(16, 21, 18, 0.75);
+  color: var(--color-text-muted);
   margin-left: auto;
 }
 
 .dark .nav {
-  color: rgba(16, 21, 18, 0.75);
+  color: var(--color-text-muted);
 }
 
 .nav a:hover {
-  color: #101512;
+  color: var(--color-primary);
 }
 
 .dark .nav a:hover {
-  color: #101512;
+  color: var(--color-primary);
 }
 
 .actions {

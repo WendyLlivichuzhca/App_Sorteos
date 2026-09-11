@@ -30,18 +30,27 @@ export default function Landing() {
 
       {/* ── HERO ── */}
       <section className={styles.hero}>
-        {/* Tarjetas ticket flotantes */}
-        <div className={`${styles.spark} ${styles.spark1}`} />
-        <div className={`${styles.spark} ${styles.spark2}`} />
-        <div className={`${styles.spark} ${styles.spark3}`} />
-        <div className={`${styles.spark} ${styles.spark4}`} />
+        {/* Formas orgánicas de fondo */}
+        <div className={`${styles.blob} ${styles.blob1}`} />
+        <div className={`${styles.blob} ${styles.blob2}`} />
+
+        {/* Hojitas decorativas */}
+        <svg className={`${styles.leaf} ${styles.leaf1}`} viewBox="0 0 100 100" fill="none" aria-hidden="true">
+          <path fill="currentColor" d="M50 5C25 15 10 40 15 65C20 88 45 98 68 90C88 83 95 60 85 40C75 20 60 8 50 5Z" />
+        </svg>
+        <svg className={`${styles.leaf} ${styles.leaf2}`} viewBox="0 0 100 100" fill="none" aria-hidden="true">
+          <path fill="currentColor" d="M50 5C25 15 10 40 15 65C20 88 45 98 68 90C88 83 95 60 85 40C75 20 60 8 50 5Z" />
+        </svg>
+        <svg className={`${styles.leaf} ${styles.leaf3}`} viewBox="0 0 100 100" fill="none" aria-hidden="true">
+          <path fill="currentColor" d="M50 5C25 15 10 40 15 65C20 88 45 98 68 90C88 83 95 60 85 40C75 20 60 8 50 5Z" />
+        </svg>
+        <svg className={`${styles.leaf} ${styles.leaf4}`} viewBox="0 0 100 100" fill="none" aria-hidden="true">
+          <path fill="currentColor" d="M50 5C25 15 10 40 15 65C20 88 45 98 68 90C88 83 95 60 85 40C75 20 60 8 50 5Z" />
+        </svg>
 
         {/* Destellos de luz brillante */}
         <div className={styles.glitter1} />
         <div className={styles.glitter2} />
-        <div className={styles.glitter3} />
-        <div className={styles.glitter4} />
-        <div className={styles.glitter5} />
 
         <div className={`container ${styles.heroInner}`}>
           {/* Columna izquierda: texto */}
@@ -69,16 +78,27 @@ export default function Landing() {
 
           {/* Columna derecha: imagen de premios */}
           <div className={styles.heroArt}>
-            <img
-              src="/hero-prizes.jpg"
-              alt="Terreno, auto, moto y laptop en sorteo"
-              className={styles.heroImg}
-            />
-            <Link to="/sorteos" className={styles.heroImgBadge}>
-              <Icon name="ticket" size={14} />
-              Tu próximo gran premio
-              <Icon name="arrowRight" size={14} />
-            </Link>
+            <div className={styles.heroImgFrame}>
+              <img
+                src="/hero-prizes.jpg"
+                alt="Terreno, auto, moto y laptop en sorteo"
+                className={styles.heroImg}
+              />
+              <Link to="/sorteos" className={styles.heroImgBadge}>
+                <Icon name="ticket" size={14} />
+                Tu próximo gran premio
+                <Icon name="arrowRight" size={14} />
+              </Link>
+              <div className={styles.heroDots}>
+                <span className={styles.heroDotActive} />
+                <span className={styles.heroDot} />
+                <span className={styles.heroDot} />
+                <span className={styles.heroDot} />
+              </div>
+            </div>
+            <span className={styles.scriptText}>
+              Sueña<br />Participa<br />Gana ✧
+            </span>
           </div>
         </div>
       </section>

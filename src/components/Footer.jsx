@@ -23,6 +23,15 @@ export default function Footer() {
 
   return (
     <footer className={styles.footer}>
+      <svg className={styles.wave} viewBox="0 0 1440 40" preserveAspectRatio="none" aria-hidden="true">
+        <path fill="currentColor" d="M0,0 L1440,0 L1440,14 C1200,34 960,34 720,20 C480,6 240,6 0,22 Z" />
+      </svg>
+      <svg className={`${styles.leafDecor} ${styles.leafDecor1}`} viewBox="0 0 100 100" fill="none" aria-hidden="true">
+        <path fill="currentColor" d="M50 5C25 15 10 40 15 65C20 88 45 98 68 90C88 83 95 60 85 40C75 20 60 8 50 5Z" />
+      </svg>
+      <svg className={`${styles.leafDecor} ${styles.leafDecor2}`} viewBox="0 0 100 100" fill="none" aria-hidden="true">
+        <path fill="currentColor" d="M50 5C25 15 10 40 15 65C20 88 45 98 68 90C88 83 95 60 85 40C75 20 60 8 50 5Z" />
+      </svg>
       <div className={`container ${styles.inner}`}>
         <div className={styles.brand}>
           <span className={styles.logo}>
