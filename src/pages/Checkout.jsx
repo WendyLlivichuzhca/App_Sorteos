@@ -344,9 +344,9 @@ export default function Checkout() {
                     </div>
                   ))
                 ) : instruccionesPago ? (
-                  <p style={{ fontSize: "13px", color: "#C7CFC9", whiteSpace: "pre-line" }}>{instruccionesPago}</p>
+                  <p style={{ fontSize: "13px", color: "#3F4A44", whiteSpace: "pre-line" }}>{instruccionesPago}</p>
                 ) : (
-                  <p style={{ fontSize: "13px", color: "#8A948C" }}>
+                  <p style={{ fontSize: "13px", color: "#8B958F" }}>
                     Por favor contáctanos para que te enviemos los datos de la cuenta para tu transferencia.
                   </p>
                 )}
@@ -377,10 +377,10 @@ export default function Checkout() {
                   <img
                     src={qrPago}
                     alt="Código QR para pagar"
-                    style={{ width: "150px", height: "150px", objectFit: "contain", border: "1px solid #26332C", borderRadius: "8px", background: "#fff" }}
+                    style={{ width: "150px", height: "150px", objectFit: "contain", border: "1px solid #E3E8E5", borderRadius: "8px", background: "#fff" }}
                   />
                 ) : (
-                  <p style={{ fontSize: "13px", color: "#8A948C" }}>
+                  <p style={{ fontSize: "13px", color: "#8B958F" }}>
                     Por favor contáctanos para que te enviemos el código QR para tu pago.
                   </p>
                 )}

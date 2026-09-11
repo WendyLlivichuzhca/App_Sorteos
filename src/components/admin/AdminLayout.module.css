@@ -1,7 +1,7 @@
 .adminPage {
   display: flex;
   min-height: 100vh;
-  background: #0B0F0D;
+  background: #F7FAF8;
   font-family: "Segoe UI", -apple-system, BlinkMacSystemFont, sans-serif;
 }
 
@@ -23,7 +23,7 @@
   justify-content: space-between;
   padding: 14px 32px;
   font-size: 10.5px;
-  color: #7E897F;
+  color: #8B958F;
 }
 
 .version {

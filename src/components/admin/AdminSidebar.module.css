@@ -3,11 +3,11 @@
   height: 100vh;
   position: sticky;
   top: 0;
-  background: #101512;
-  color: #F2F5F3;
+  background: #FFFFFF;
+  color: #101512;
   display: flex;
   flex-direction: column;
-  border-right: 1.5px solid #26332C;
+  border-right: 1.5px solid #E3E8E5;
   flex-shrink: 0;
   z-index: 50;
 }
@@ -19,7 +19,7 @@
   align-items: center;
   gap: 10px;
   padding: 0 16px;
-  border-bottom: 1.5px solid #26332C;
+  border-bottom: 1.5px solid #E3E8E5;
 }
 
 .logoBadge {
@@ -31,7 +31,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 4px 14px rgba(31, 138, 90, 0.35);
+  box-shadow: 0 4px 14px rgba(31, 138, 90, 0.3);
   flex-shrink: 0;
   overflow: hidden;
 }
@@ -52,17 +52,17 @@
   font-size: 12.5px;
   font-weight: 800;
   letter-spacing: 0.3px;
-  color: #F2F5F3;
+  color: #101512;
 }
 
 .accent {
-  color: #34D399;
+  color: #1F8A5A;
 }
 
 .adminBadge {
   display: inline-block;
-  background: #15291E;
-  color: #34D399;
+  background: #EAF7F0;
+  color: #146B45;
   font-size: 8.5px;
   font-weight: 800;
   padding: 2px 6px;
@@ -80,7 +80,7 @@
   flex-direction: column;
   gap: 18px;
   scrollbar-width: thin;
-  scrollbar-color: #26332C transparent;
+  scrollbar-color: #E3E8E5 transparent;
 }
 
 .menu::-webkit-scrollbar {
@@ -92,7 +92,7 @@
 }
 
 .menu::-webkit-scrollbar-thumb {
-  background: #26332C;
+  background: #E3E8E5;
   border-radius: 999px;
 }
 
@@ -105,7 +105,7 @@
 .groupTitle {
   font-size: 9px;
   font-weight: 800;
-  color: #7E897F;
+  color: #8B958F;
   letter-spacing: 1px;
   padding-left: 10px;
   margin-bottom: 2px;
@@ -123,7 +123,7 @@
   gap: 12px;
   padding: 8px 10px;
   border-radius: 12px;
-  color: #A9B3AD;
+  color: #5B6660;
   font-size: 12px;
   font-weight: 600;
   text-decoration: none;
@@ -131,26 +131,26 @@
 }
 
 .item:hover {
-  background: #16281E;
-  color: #F2F5F3;
+  background: #F3F6F4;
+  color: #101512;
 }
 
 .item:hover .itemIcon {
-  background: #15291E;
-  color: #34D399;
+  background: #EAF7F0;
+  color: #1F8A5A;
 }
 
 .itemActive {
-  background: #15291E !important;
-  color: #34D399 !important;
+  background: #EAF7F0 !important;
+  color: #146B45 !important;
 }
 
 .itemIcon {
   width: 32px;
   height: 32px;
   border-radius: 10px;
-  background: #1B2420;
-  color: #7E897F;
+  background: #F3F6F4;
+  color: #8B958F;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -161,7 +161,7 @@
 .itemActive .itemIcon {
   background: linear-gradient(135deg, #22A06A, #146B45);
   color: #ffffff;
-  box-shadow: 0 3px 10px rgba(31, 138, 90, 0.35);
+  box-shadow: 0 3px 10px rgba(31, 138, 90, 0.3);
 }
 
 .itemLabel {

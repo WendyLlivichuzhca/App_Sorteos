@@ -5,13 +5,13 @@
 .wrap h1 {
   font-size: 28px;
   font-weight: 800;
-  color: #F2F5F3;
+  color: #101512;
   letter-spacing: -0.4px;
 }
 
 .subtitle {
   margin-top: 4px;
-  color: #A9B3AD;
+  color: #5B6660;
   font-size: 14.5px;
 }
 
@@ -26,7 +26,7 @@
   left: 16px;
   top: 50%;
   transform: translateY(-50%);
-  color: #7E897F;
+  color: #8B958F;
   pointer-events: none;
 }
 
@@ -34,10 +34,10 @@
   width: 100%;
   padding: 12px 16px 12px 42px;
   border-radius: 12px;
-  border: 1.5px solid #26332C;
-  background: #141B17;
+  border: 1.5px solid #E3E8E5;
+  background: #FFFFFF;
   font-size: 14.5px;
-  color: #F2F5F3;
+  color: #101512;
   outline: none;
   transition: border-color 0.15s ease;
 }
@@ -47,7 +47,7 @@
 }
 
 .searchBox input::placeholder {
-  color: #7E897F;
+  color: #8B958F;
 }
 
 .filtros {
@@ -58,9 +58,9 @@
 }
 
 .filtro {
-  border: none;
-  background: #141B17;
-  color: #E4E8E5;
+  border: 1.5px solid #E3E8E5;
+  background: #FFFFFF;
+  color: #3F4A44;
   font-weight: 600;
   font-size: 13.5px;
   padding: 9px 22px;
@@ -70,11 +70,12 @@
 }
 
 .filtro:hover {
-  background: #1B2420;
+  background: #F3F6F4;
 }
 
 .filtroActivo, .filtroActivo:hover {
   background: #1F8A5A;
+  border-color: #1F8A5A;
   color: #ffffff;
 }
 
@@ -89,30 +90,30 @@
 .empty {
   grid-column: 1 / -1;
   text-align: center;
-  color: #7E897F;
+  color: #8B958F;
   padding: 60px 0;
 }
 
 .card {
-  background: #141B17;
-  border: 1.5px solid #26332C;
+  background: #FFFFFF;
+  border: 1.5px solid #E3E8E5;
   border-radius: 14px;
   overflow: hidden;
-  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.25);
+  box-shadow: 0 2px 12px rgba(15, 23, 19, 0.08);
   transition: box-shadow 0.18s ease, transform 0.18s ease;
   display: flex;
   flex-direction: column;
 }
 
 .card:hover {
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+  box-shadow: 0 8px 24px rgba(15, 23, 19, 0.14);
   transform: translateY(-2px);
 }
 
 .imgWrap {
   position: relative;
   height: 170px;
-  background: #101512;
+  background: #F3F6F4;
 }
 
 .img {
@@ -135,13 +136,13 @@
   width: 30px;
   height: 30px;
   border-radius: 50%;
-  border: none;
-  background: rgba(20, 27, 23, 0.9);
-  color: #C7CFC9;
+  border: 1px solid #E3E8E5;
+  background: rgba(255, 255, 255, 0.9);
+  color: #5B6660;
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 2px 6px rgba(15, 23, 19, 0.12);
   cursor: pointer;
   z-index: 2;
   transition: color 0.15s ease, transform 0.15s ease;
@@ -163,7 +164,7 @@
 .cardTitle {
   font-size: 15px;
   font-weight: 700;
-  color: #F2F5F3;
+  color: #101512;
   display: flex;
   align-items: center;
   gap: 5px;
@@ -171,7 +172,7 @@
 }
 
 .verifiedBadge {
-  color: #34D399;
+  color: #146B45;
   display: inline-flex;
   align-items: center;
 }
@@ -179,7 +180,7 @@
 .inicia {
   margin-top: 6px;
   font-size: 12.5px;
-  color: #A9B3AD;
+  color: #5B6660;
   font-weight: 500;
 }
 
@@ -200,12 +201,12 @@
 .precio strong {
   font-size: 17px;
   font-weight: 800;
-  color: #F2F5F3;
+  color: #101512;
 }
 
 .precio span {
   font-size: 10.5px;
-  color: #7E897F;
+  color: #8B958F;
   margin-top: 1px;
 }
 
@@ -235,8 +236,8 @@
   align-items: center;
   justify-content: center;
   width: 100%;
-  background: #1B2420;
-  color: #C7CFC9;
+  background: #F3F6F4;
+  color: #3F4A44;
   font-weight: 700;
   font-size: 12.5px;
   padding: 9px 0;
@@ -247,7 +248,7 @@
 }
 
 .btnVerDetalles:hover {
-  background: #232E28;
+  background: #E9EEEC;
 }
 
 .btnAgotado {
@@ -255,8 +256,8 @@
   align-items: center;
   justify-content: center;
   width: 100%;
-  background: #141815;
-  color: #565F58;
+  background: #F0F2F1;
+  color: #9AA39D;
   font-weight: 700;
   font-size: 12.5px;
   padding: 9px 0;

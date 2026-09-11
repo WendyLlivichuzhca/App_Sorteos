@@ -16,7 +16,7 @@
 .colFacturacion h2 {
   font-size: 20px;
   font-weight: 800;
-  color: #F2F5F3;
+  color: #101512;
   margin-bottom: 20px;
 }
 
@@ -37,25 +37,25 @@
 .field span {
   font-size: 13px;
   font-weight: 700;
-  color: #C7CFC9;
+  color: #3F4A44;
 }
 
 .field input,
 .field select {
-  border: 1px solid #33403A;
+  border: 1px solid #D8DFDC;
   border-radius: 8px;
   padding: 10px 12px;
   font-size: 13.5px;
   outline: none;
   width: 100%;
-  background: #151B18;
-  color: #F2F5F3;
+  background: #FFFFFF;
+  color: #101512;
   transition: border-color 0.15s ease, box-shadow 0.15s ease;
 }
 
 .field input::placeholder,
 .field select::placeholder {
-  color: #6C766F;
+  color: #9AA39D;
 }
 
 .field input:focus,
@@ -64,11 +64,11 @@
 }
 
 .inputError {
-  border-color: #F87171 !important;
+  border-color: #DC2626 !important;
 }
 
 .inputValid {
-  border-color: #34D399 !important;
+  border-color: #1F8A5A !important;
 }
 
 .inputIconWrap {
@@ -89,26 +89,26 @@
 }
 
 .iconInvalid {
-  color: #F87171;
+  color: #DC2626;
 }
 
 .iconValid {
-  color: #34D399;
+  color: #1F8A5A;
 }
 
 .field em {
   font-style: normal;
   font-size: 12px;
-  color: #F87171;
+  color: #DC2626;
 }
 
 .field em.textoValido {
-  color: #34D399;
+  color: #146B45;
 }
 
 .readOnlyInput {
-  background: #101512 !important;
-  color: #7E897F;
+  background: #F3F6F4 !important;
+  color: #8B958F;
   cursor: not-allowed;
 }
 
@@ -121,8 +121,8 @@
 
 /* Tarjeta genérica (usada para "Tus datos" y como base del layout de cuentas) */
 .cardBox {
-  background: #141B17;
-  border: 1px solid #26332C;
+  background: #FFFFFF;
+  border: 1px solid #E3E8E5;
   border-radius: 12px;
   padding: 18px 20px;
 }
@@ -137,7 +137,7 @@
 .cardBoxHeader h3 {
   font-size: 15px;
   font-weight: 800;
-  color: #F2F5F3;
+  color: #101512;
   margin: 0;
 }
 
@@ -163,13 +163,13 @@
   padding: 9px 16px;
   border-radius: 50px;
   cursor: pointer;
-  box-shadow: 0 4px 14px rgba(31, 138, 90, 0.4);
+  box-shadow: 0 4px 14px rgba(31, 138, 90, 0.3);
   transition: transform 0.15s ease, box-shadow 0.15s ease;
 }
 
 .changeMethodBtn:hover {
   transform: translateY(-2px);
-  box-shadow: 0 6px 18px rgba(31, 138, 90, 0.55);
+  box-shadow: 0 6px 18px rgba(31, 138, 90, 0.4);
 }
 
 .datosRow {
@@ -177,9 +177,9 @@
   justify-content: space-between;
   gap: 12px;
   padding: 7px 0;
-  border-bottom: 1px dotted #26332C;
+  border-bottom: 1px dotted #E3E8E5;
   font-size: 13px;
-  color: #8A948C;
+  color: #5B6660;
 }
 
 .datosRow:last-child {
@@ -187,13 +187,13 @@
 }
 
 .datosRow strong {
-  color: #F2F5F3;
+  color: #101512;
   text-align: right;
 }
 
 .cuentaCard {
-  background: #101512;
-  border: 1px solid #26332C;
+  background: #F7FAF8;
+  border: 1px solid #E3E8E5;
   border-radius: 8px;
   padding: 12px 14px;
   margin-top: 10px;
@@ -202,7 +202,7 @@
 .cuentaBanco {
   font-size: 13.5px;
   font-weight: 800;
-  color: #4ADE80;
+  color: #146B45;
   margin-bottom: 6px;
 }
 
@@ -211,19 +211,19 @@
   justify-content: space-between;
   gap: 12px;
   font-size: 12.5px;
-  color: #8A948C;
+  color: #5B6660;
   padding: 2px 0;
 }
 
 .cuentaRow strong {
-  color: #F2F5F3;
+  color: #101512;
 }
 
 /* Tu Pedido Box */
 .tuPedidoBox h3 {
   font-size: 20px;
   font-weight: 800;
-  color: #F2F5F3;
+  color: #101512;
   margin-bottom: 16px;
 }
 
@@ -231,10 +231,10 @@
   display: flex;
   justify-content: space-between;
   padding-bottom: 8px;
-  border-bottom: 1px dotted #33403A;
+  border-bottom: 1px dotted #D8DFDC;
   font-size: 13px;
   font-weight: 700;
-  color: #C7CFC9;
+  color: #3F4A44;
 }
 
 .rightAlign {
@@ -246,13 +246,13 @@
   align-items: center;
   justify-content: space-between;
   padding: 16px 0;
-  border-bottom: 1px dotted #33403A;
+  border-bottom: 1px dotted #D8DFDC;
   font-size: 13.5px;
 }
 
 .productoText {
   flex: 1;
-  color: #C7CFC9;
+  color: #3F4A44;
   line-height: 1.4;
   padding-right: 14px;
 }
@@ -261,12 +261,12 @@
   width: 60px;
   text-align: center;
   font-weight: 600;
-  color: #8A948C;
+  color: #5B6660;
 }
 
 .colPrice {
   font-weight: 700;
-  color: #F2F5F3;
+  color: #101512;
 }
 
 .pedidoTableTotal {
@@ -279,32 +279,32 @@
 
 .pedidoTableTotal span {
   font-weight: 700;
-  color: #C7CFC9;
+  color: #3F4A44;
 }
 
 .pedidoTableTotal strong {
   font-size: 18px;
   font-weight: 800;
-  color: #34D399;
+  color: #146B45;
 }
 
 /* Selección de método de pago */
 .metodosBox h3 {
   font-size: 19px;
   font-weight: 800;
-  color: #F2F5F3;
+  color: #101512;
   margin-bottom: 16px;
 }
 
 .metodosList {
-  background: #141B17;
-  border: 1px solid #26332C;
+  background: #FFFFFF;
+  border: 1px solid #E3E8E5;
   border-radius: 10px;
   overflow: hidden;
 }
 
 .metodoItem {
-  border-bottom: 1px solid #26332C;
+  border-bottom: 1px solid #E3E8E5;
 }
 
 .metodoItem:last-child {
@@ -317,12 +317,12 @@
   gap: 12px;
   padding: 14px 18px;
   cursor: pointer;
-  background: #141B17;
+  background: #FFFFFF;
   transition: background 0.15s ease;
 }
 
 .radioLabel:hover {
-  background: #1B2420;
+  background: #F7FAF8;
 }
 
 .radioLabel input[type="radio"] {
@@ -343,7 +343,7 @@
 .radioText {
   font-size: 13.5px;
   font-weight: 600;
-  color: #E4E8E5;
+  color: #101512;
   line-height: 1.4;
 }
 
@@ -417,11 +417,11 @@
 
 /* Gray Expand Box */
 .expandGrayBox {
-  background: #101512;
+  background: #F7FAF8;
   padding: 14px 18px;
-  border-top: 1px solid #26332C;
+  border-top: 1px solid #E3E8E5;
   font-size: 13px;
-  color: #B7C0BB;
+  color: #4A554F;
   line-height: 1.5;
 }
 
@@ -431,8 +431,8 @@
 
 .instruccionesBox {
   margin-top: 10px;
-  background: #141B17;
-  border: 1px dashed #33403A;
+  background: #FFFFFF;
+  border: 1px dashed #D8DFDC;
   padding: 10px 12px;
   border-radius: 8px;
   white-space: pre-line;
@@ -448,13 +448,13 @@
 .fileUpload label {
   font-size: 12px;
   font-weight: 700;
-  color: #C7CFC9;
+  color: #3F4A44;
 }
 
 .privacyNote {
   margin-top: 14px;
   font-size: 12px;
-  color: #8A948C;
+  color: #5B6660;
   line-height: 1.4;
 }
 
@@ -467,7 +467,7 @@
   align-items: flex-start;
   gap: 8px;
   font-size: 13px;
-  color: #C7CFC9;
+  color: #3F4A44;
   cursor: pointer;
   line-height: 1.4;
 }
@@ -482,7 +482,7 @@
 
 .errorMessage {
   margin-top: 12px;
-  color: #F87171;
+  color: #DC2626;
   font-size: 13px;
   font-weight: 600;
 }
@@ -506,12 +506,12 @@
   justify-content: center;
   gap: 8px;
   transition: transform 0.15s ease, box-shadow 0.15s ease;
-  box-shadow: 0 8px 20px rgba(31, 138, 90, 0.35);
+  box-shadow: 0 8px 20px rgba(31, 138, 90, 0.28);
 }
 
 .blackBtn:hover:not(:disabled) {
   transform: translateY(-1px);
-  box-shadow: 0 10px 26px rgba(31, 138, 90, 0.45);
+  box-shadow: 0 10px 26px rgba(31, 138, 90, 0.38);
 }
 
 .blackBtn:disabled {

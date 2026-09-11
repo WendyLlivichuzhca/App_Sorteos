@@ -2,7 +2,7 @@
   position: sticky;
   top: 0;
   z-index: 40;
-  background: rgba(11, 15, 13, 0.85);
+  background: rgba(255, 255, 255, 0.85);
   backdrop-filter: blur(8px);
   border-bottom: 1px solid var(--color-border);
 }
@@ -33,7 +33,7 @@
 }
 
 .dark .logo {
-  color: #fff;
+  color: #0F1713;
 }
 
 .logoIcon {
@@ -58,7 +58,7 @@
 }
 
 .dark .logoAccent {
-  color: #6FCB9A;
+  color: #1F8A5A;
 }
 
 .nav {
@@ -72,7 +72,7 @@
 }
 
 .dark .nav {
-  color: rgba(255, 255, 255, 0.75);
+  color: rgba(15, 23, 19, 0.72);
 }
 
 .nav a:hover {
@@ -80,7 +80,7 @@
 }
 
 .dark .nav a:hover {
-  color: #fff;
+  color: #0F1713;
 }
 
 .actions {

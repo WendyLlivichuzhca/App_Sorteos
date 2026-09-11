@@ -123,7 +123,7 @@ export default function AdminConfiguracion() {
   return (
     <AdminLayout title="Configuración General" subtitle="Configura métodos de pago, redes sociales, datos de la empresa y políticas">
       {saved && (
-        <div style={{ background: "#10301F", color: "#4ADE80", padding: "12px 18px", borderRadius: "10px", fontWeight: "700", marginBottom: "20px" }}>
+        <div style={{ background: "#E8F7EF", color: "#146B45", padding: "12px 18px", borderRadius: "10px", fontWeight: "700", marginBottom: "20px" }}>
           ✅ Cambios guardados con éxito en la plataforma.
         </div>
       )}
@@ -141,7 +141,7 @@ export default function AdminConfiguracion() {
                     <img
                       src={config.logoUrl}
                       alt="Logo"
-                      style={{ width: "56px", height: "56px", objectFit: "contain", border: "1.5px solid #26332C", borderRadius: "10px", background: "#fff" }}
+                      style={{ width: "56px", height: "56px", objectFit: "contain", border: "1.5px solid #E3E8E5", borderRadius: "10px", background: "#fff" }}
                     />
                     <button
                       type="button"
@@ -168,7 +168,7 @@ export default function AdminConfiguracion() {
                 }}
                 style={{ fontSize: "13px" }}
               />
-              <span style={{ fontSize: "11.5px", color: "#7E897F" }}>
+              <span style={{ fontSize: "11.5px", color: "#8B958F" }}>
                 Reemplaza el ícono que aparece junto al nombre de la empresa en todo el sitio. Si no subes uno, se usa el ícono por defecto.
               </span>
             </div>
@@ -240,12 +240,12 @@ export default function AdminConfiguracion() {
           {/* Métodos de Pago Activos */}
           <div className={styles.tableCard} style={{ padding: "24px" }}>
             <h3 style={{ fontSize: "13.5px", fontWeight: "800", marginBottom: "14px" }}>Métodos de Pago Aceptados</h3>
-            <p style={{ fontSize: "13px", color: "#A9B3AD", marginBottom: "16px" }}>Activa o desactiva las pasarelas visibles para el cliente</p>
+            <p style={{ fontSize: "13px", color: "#5B6660", marginBottom: "16px" }}>Activa o desactiva las pasarelas visibles para el cliente</p>
 
             <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
               {metodosPagoNombres.map((m) => (
-                <label key={m.key} style={{ display: "flex", alignItems: "center", justifyContent: "space-between", background: "#101512", padding: "12px 16px", borderRadius: "10px", cursor: "pointer" }}>
-                  <span style={{ fontSize: "13.5px", fontWeight: "600", color: "#F2F5F3" }}>{m.name}</span>
+                <label key={m.key} style={{ display: "flex", alignItems: "center", justifyContent: "space-between", background: "#F7FAF8", padding: "12px 16px", borderRadius: "10px", cursor: "pointer" }}>
+                  <span style={{ fontSize: "13.5px", fontWeight: "600", color: "#101512" }}>{m.name}</span>
                   <input
                     type="checkbox"
                     checked={Boolean(metodos[m.key])}
@@ -260,7 +260,7 @@ export default function AdminConfiguracion() {
               <label>Cuentas Bancarias para Transferencias</label>
               <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
                 {cuentasBancarias.map((c, idx) => (
-                  <div key={idx} style={{ background: "#101512", border: "1.5px dashed #26332C", borderRadius: "10px", padding: "12px" }}>
+                  <div key={idx} style={{ background: "#F7FAF8", border: "1.5px dashed #E3E8E5", borderRadius: "10px", padding: "12px" }}>
                     <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "8px", marginBottom: "8px" }}>
                       <input
                         type="text"
@@ -312,7 +312,7 @@ export default function AdminConfiguracion() {
               >
                 + Agregar cuenta bancaria
               </button>
-              <span style={{ fontSize: "11.5px", color: "#7E897F", display: "block", marginTop: "8px" }}>
+              <span style={{ fontSize: "11.5px", color: "#8B958F", display: "block", marginTop: "8px" }}>
                 Cada cuenta se muestra como una tarjeta separada al cliente cuando elige pagar por transferencia. Puedes agregar varias.
               </span>
             </div>
@@ -324,9 +324,9 @@ export default function AdminConfiguracion() {
                 placeholder="Cualquier instrucción extra, ej: horario de atención, o a quién contactar por WhatsApp si tiene dudas."
                 value={config.instruccionesPago}
                 onChange={(e) => setConfig({ ...config, instruccionesPago: e.target.value })}
-                style={{ padding: "10px", borderRadius: "10px", border: "1.5px solid #26332C", background: "#101512", color: "#E4E8E5", fontSize: "13px", outline: "none" }}
+                style={{ padding: "10px", borderRadius: "10px", border: "1.5px solid #E3E8E5", background: "#FFFFFF", color: "#101512", fontSize: "13px", outline: "none" }}
               />
-              <span style={{ fontSize: "11.5px", color: "#7E897F" }}>
+              <span style={{ fontSize: "11.5px", color: "#8B958F" }}>
                 Si solo tienes texto libre y no quieres usar el formato de tarjetas de arriba, puedes escribir todo aquí en su lugar.
               </span>
             </div>
@@ -335,12 +335,12 @@ export default function AdminConfiguracion() {
               <label>Códigos QR de Pago (JEP Fácil u otros)</label>
               <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
                 {qrPagos.map((q, idx) => (
-                  <div key={idx} style={{ background: "#101512", border: "1.5px dashed #26332C", borderRadius: "10px", padding: "12px", display: "flex", gap: "12px", alignItems: "flex-start" }}>
+                  <div key={idx} style={{ background: "#F7FAF8", border: "1.5px dashed #E3E8E5", borderRadius: "10px", padding: "12px", display: "flex", gap: "12px", alignItems: "flex-start" }}>
                     {q.imagen && (
                       <img
                         src={q.imagen}
                         alt={q.etiqueta || "QR de pago"}
-                        style={{ width: "70px", height: "70px", objectFit: "contain", border: "1.5px solid #26332C", borderRadius: "8px", background: "#fff", flexShrink: 0 }}
+                        style={{ width: "70px", height: "70px", objectFit: "contain", border: "1.5px solid #E3E8E5", borderRadius: "8px", background: "#fff", flexShrink: 0 }}
                       />
                     )}
                     <div style={{ flex: 1, display: "flex", flexDirection: "column", gap: "8px" }}>
@@ -371,7 +371,7 @@ export default function AdminConfiguracion() {
               >
                 + Agregar código QR
               </button>
-              <span style={{ fontSize: "11.5px", color: "#7E897F", display: "block", marginTop: "8px" }}>
+              <span style={{ fontSize: "11.5px", color: "#8B958F", display: "block", marginTop: "8px" }}>
                 Cada QR se muestra como una tarjeta separada al cliente cuando elige pagar con QR. Puedes agregar varios.
               </span>
             </div>
@@ -387,7 +387,7 @@ export default function AdminConfiguracion() {
                 rows="3"
                 value={config.politicas}
                 onChange={(e) => setConfig({ ...config, politicas: e.target.value })}
-                style={{ padding: "10px", borderRadius: "10px", border: "1.5px solid #26332C", background: "#101512", color: "#E4E8E5", fontSize: "13px", outline: "none" }}
+                style={{ padding: "10px", borderRadius: "10px", border: "1.5px solid #E3E8E5", background: "#FFFFFF", color: "#101512", fontSize: "13px", outline: "none" }}
               />
             </div>
 
@@ -397,7 +397,7 @@ export default function AdminConfiguracion() {
                 rows="3"
                 value={config.faqTexto}
                 onChange={(e) => setConfig({ ...config, faqTexto: e.target.value })}
-                style={{ padding: "10px", borderRadius: "10px", border: "1.5px solid #26332C", background: "#101512", color: "#E4E8E5", fontSize: "13px", outline: "none" }}
+                style={{ padding: "10px", borderRadius: "10px", border: "1.5px solid #E3E8E5", background: "#FFFFFF", color: "#101512", fontSize: "13px", outline: "none" }}
               />
             </div>
           </div>

@@ -32,13 +32,13 @@ export default class ErrorBoundary extends Component {
             gap: "16px",
             padding: "24px",
             textAlign: "center",
-            background: "#0B0F0D",
-            color: "#F2F5F3",
+            background: "#F7FAF8",
+            color: "#101512",
             fontFamily: "system-ui, sans-serif",
           }}
         >
           <h1 style={{ fontSize: "20px", fontWeight: 800 }}>Algo salió mal</h1>
-          <p style={{ fontSize: "14px", color: "#A9B3AD", maxWidth: "380px" }}>
+          <p style={{ fontSize: "14px", color: "#5B6660", maxWidth: "380px" }}>
             Ocurrió un error inesperado. Si estabas realizando una compra, no te preocupes: no se hizo ningún cobro que no hayas confirmado. Intenta de nuevo o contáctanos si el problema sigue.
           </p>
           <button

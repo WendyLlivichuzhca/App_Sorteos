@@ -112,7 +112,7 @@ export default function AdminCompras() {
             )}
             {paginados.map((c) => (
               <tr key={c.id}>
-                <td><strong style={{ color: "#34D399" }}>{c.codigo}</strong></td>
+                <td><strong style={{ color: "#146B45" }}>{c.codigo}</strong></td>
                 <td>{c.comprador}</td>
                 <td>{c.sorteoNombre}</td>
                 <td>{c.boletos} boletos</td>
@@ -161,8 +161,8 @@ export default function AdminCompras() {
         </table>
 
         {listaFiltrada.length > 0 && (
-          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "14px 18px", borderTop: "1.5px solid #26332C" }}>
-            <span style={{ fontSize: "11.5px", color: "#A9B3AD" }}>
+          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "14px 18px", borderTop: "1.5px solid #E3E8E5" }}>
+            <span style={{ fontSize: "11.5px", color: "#5B6660" }}>
               Mostrando {(paginaSegura - 1) * POR_PAGINA + 1}–{Math.min(paginaSegura * POR_PAGINA, listaFiltrada.length)} de {listaFiltrada.length}
             </span>
             <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
@@ -175,7 +175,7 @@ export default function AdminCompras() {
               >
                 ← Anterior
               </button>
-              <span style={{ fontSize: "11.5px", fontWeight: 700, color: "#F2F5F3" }}>
+              <span style={{ fontSize: "11.5px", fontWeight: 700, color: "#101512" }}>
                 Página {paginaSegura} de {totalPaginas}
               </span>
               <button
@@ -211,12 +211,12 @@ export default function AdminCompras() {
                   href={selectedReceipt.comprobante_url}
                   target="_blank"
                   rel="noreferrer"
-                  style={{ display: "block", marginTop: "16px", padding: "16px", background: "#101512", borderRadius: "10px", textAlign: "center", border: "1px dashed #1F8A5A", color: "#34D399", fontWeight: 600 }}
+                  style={{ display: "block", marginTop: "16px", padding: "16px", background: "#F7FAF8", borderRadius: "10px", textAlign: "center", border: "1px dashed #1F8A5A", color: "#146B45", fontWeight: 600 }}
                 >
                   Ver comprobante subido ↗
                 </a>
               ) : (
-                <div style={{ marginTop: "16px", padding: "16px", background: "#101512", borderRadius: "10px", textAlign: "center", border: "1px dashed #26332C", color: "#7E897F" }}>
+                <div style={{ marginTop: "16px", padding: "16px", background: "#F7FAF8", borderRadius: "10px", textAlign: "center", border: "1px dashed #E3E8E5", color: "#8B958F" }}>
                   El cliente no subió comprobante
                 </div>
               )}

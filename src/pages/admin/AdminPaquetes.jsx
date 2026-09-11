@@ -177,7 +177,7 @@ export default function AdminPaquetes() {
                     value={formData.cantidadMinima}
                     onChange={(e) => setFormData({ ...formData, cantidadMinima: parseInt(e.target.value, 10) })}
                   />
-                  <small style={{ color: "#8A968E" }}>
+                  <small style={{ color: "#8B958F" }}>
                     Se crea sin descuento (0%). La compra mínima en el checkout es de {CANTIDAD_MINIMA_COMPRA} boletos, así que un combo por debajo nunca se podría comprar.
                     Si más adelante quieres darle un % de descuento a este combo, edítalo con el lápiz ✏️ en la tabla.
                   </small>
