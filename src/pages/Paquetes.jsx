@@ -97,6 +97,13 @@ export default function Paquetes() {
     <div className="page">
       <Navbar variant="cart" />
 
+      <div className={styles.decorWrap}>
+        <div className={`${styles.blob} ${styles.blob1}`} />
+        <div className={`${styles.blob} ${styles.blob2}`} />
+        <svg className={`${styles.leaf} ${styles.leaf1}`} viewBox="0 0 100 100" fill="none" aria-hidden="true"><path fill="currentColor" d="M50 5C25 15 10 40 15 65C20 88 45 98 68 90C88 83 95 60 85 40C75 20 60 8 50 5Z" /></svg>
+        <svg className={`${styles.leaf} ${styles.leaf2}`} viewBox="0 0 100 100" fill="none" aria-hidden="true"><path fill="currentColor" d="M50 5C25 15 10 40 15 65C20 88 45 98 68 90C88 83 95 60 85 40C75 20 60 8 50 5Z" /></svg>
+        <svg className={`${styles.leaf} ${styles.leaf3}`} viewBox="0 0 100 100" fill="none" aria-hidden="true"><path fill="currentColor" d="M50 5C25 15 10 40 15 65C20 88 45 98 68 90C88 83 95 60 85 40C75 20 60 8 50 5Z" /></svg>
+
       <div className={`container ${styles.wrap}`}>
         <Link to={`/sorteos/${sorteo.id}`} className={styles.volver}>
           <Icon name="chevronLeft" size={16} /> {sorteo.nombre}
@@ -105,7 +112,7 @@ export default function Paquetes() {
         <h1>Elige tu paquete o cantidad de boletos</h1>
 
         <div className={styles.notice}>
-          <Icon name="share" size={18} />
+          <Icon name="badgeCheck" size={18} />
           Tus números serán generados aleatoriamente al completar tu compra. Compra mínima: {CANTIDAD_MINIMA} boletos.
         </div>
 
@@ -201,8 +208,9 @@ export default function Paquetes() {
         </div>
 
         <button type="button" className={`btn btn-primary btn-block ${styles.continuarBtn}`} onClick={continuar}>
-          Continuar
+          <Icon name="ticket" size={17} /> Continuar <Icon name="arrowRight" size={16} />
         </button>
+      </div>
       </div>
 
       <Footer />
