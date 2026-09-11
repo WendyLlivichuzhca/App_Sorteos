@@ -19,12 +19,6 @@ export default function Sorteos() {
   const [sorteos, setSorteos] = useState([]);
   const [categorias, setCategorias] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [favoritos, setFavoritos] = useState({});
-
-  const toggleFavorito = (e, id) => {
-    e.preventDefault();
-    setFavoritos((prev) => ({ ...prev, [id]: !prev[id] }));
-  };
 
   useEffect(() => {
     setLoading(true);
@@ -104,14 +98,6 @@ export default function Sorteos() {
                 <div className={styles.badgeWrap}>
                   <Badge estado={s.estado} />
                 </div>
-                <button
-                  type="button"
-                  className={styles.favBtn}
-                  onClick={(e) => toggleFavorito(e, s.id)}
-                  aria-label="Marcar como favorito"
-                >
-                  <Icon name="heart" size={15} className={favoritos[s.id] ? styles.heartActive : ""} />
-                </button>
               </div>
 
               <div className={styles.body}>
