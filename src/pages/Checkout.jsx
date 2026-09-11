@@ -274,7 +274,13 @@ export default function Checkout() {
 
     return (
       <button type="submit" className={styles.blackBtn} disabled={procesando}>
-        {procesando ? "Procesando..." : "Pagar"}
+        {procesando ? (
+          "Procesando..."
+        ) : (
+          <>
+            <Icon name="lock" size={16} /> Pagar <Icon name="arrowRight" size={16} />
+          </>
+        )}
       </button>
     );
   };
@@ -295,12 +301,18 @@ export default function Checkout() {
         <form onSubmit={paso === 1 ? handleContinuar : handlePagar} noValidate className={styles.grid}>
           {/* Columna Izquierda: Datos de Facturación */}
           <div className={styles.colFacturacion}>
-            <h2>Datos de Facturación</h2>
+            <h2 className={styles.sectionTitle}>
+              <span className={styles.sectionIcon}><Icon name="id" size={18} /></span>
+              Datos de Facturación
+            </h2>
 
             {paso === 2 && (
               <div className={styles.cardBox}>
                 <div className={styles.cardBoxHeader}>
-                  <h3>👤 Tus datos</h3>
+                  <h3 className={styles.sectionTitleSm}>
+                    <span className={styles.sectionIcon}><Icon name="id" size={15} /></span>
+                    Tus datos
+                  </h3>
                   <button type="button" className={styles.editLink} onClick={() => setPaso(1)}>
                     ✏️ Editar
                   </button>
@@ -331,7 +343,10 @@ export default function Checkout() {
             {paso === 2 && metodoPago === "transferencia" && (
               <div className={styles.cardBox} style={{ marginTop: "20px" }}>
                 <div className={styles.cardBoxHeader}>
-                  <h3>🏦 Cuentas para tu transferencia</h3>
+                  <h3 className={styles.sectionTitleSm}>
+                    <span className={styles.sectionIcon}><Icon name="bank" size={15} /></span>
+                    Cuentas para tu transferencia
+                  </h3>
                 </div>
                 {cuentasBancarias.length > 0 ? (
                   cuentasBancarias.map((c, idx) => (
@@ -364,7 +379,10 @@ export default function Checkout() {
             {paso === 2 && metodoPago === "qr" && (
               <div className={styles.cardBox} style={{ marginTop: "20px" }}>
                 <div className={styles.cardBoxHeader}>
-                  <h3>📱 Códigos QR para pagar</h3>
+                  <h3 className={styles.sectionTitleSm}>
+                    <span className={styles.sectionIcon}><Icon name="qr" size={15} /></span>
+                    Códigos QR para pagar
+                  </h3>
                 </div>
                 {qrPagos.length > 0 ? (
                   <div style={{ display: "flex", flexWrap: "wrap", gap: "14px" }}>
@@ -607,7 +625,10 @@ export default function Checkout() {
           <div className={styles.colPedidoPago}>
             {/* Sección Tu Pedido */}
             <div className={styles.tuPedidoBox}>
-              <h3>Tu pedido</h3>
+              <h3 className={styles.sectionTitle}>
+                <span className={styles.sectionIcon}><Icon name="cart" size={18} /></span>
+                Tu pedido
+              </h3>
               <div className={styles.productoCard}>
                 <span className={styles.productoIcon}>
                   <Icon name="ticket" size={18} />
@@ -653,20 +674,29 @@ export default function Checkout() {
 
                   {paso === 2 && metodoPago === "transferencia" && (
                     <div className={styles.expandGrayBox}>
-                      <p>
-                        Por favor, <strong>NO PROCEDAS SI NO ESTÁS SEGURO</strong> de que quieres realizar la compra. Tu pedido no se procesará hasta que se haya recibido el importe en nuestra cuenta.
-                      </p>
-                      <label style={{ display: "block", marginTop: "12px", fontSize: "13px", fontWeight: 600 }}>
-                        Sube tu comprobante de pago *
+                      <div className={styles.avisoBox}>
+                        <span className={styles.avisoIcon}><Icon name="shield" size={16} /></span>
+                        <p>
+                          Por favor, <strong>NO PROCEDAS SI NO ESTÁS SEGURO</strong> de que quieres realizar la compra. Tu pedido no se procesará hasta que se haya recibido el importe en nuestra cuenta.
+                        </p>
+                      </div>
+                      <span className={styles.fileUploadLabelText}>Sube tu comprobante de pago *</span>
+                      <label className={styles.fileUploadRow}>
+                        <span className={styles.fileUploadBtn}>
+                          <Icon name="upload" size={15} /> Seleccionar archivo
+                        </span>
+                        <span className={styles.fileUploadName}>
+                          {comprobanteFile ? comprobanteFile.name : "Ningún archivo seleccionado"}
+                        </span>
                         <input
                           type="file"
                           accept="image/*,application/pdf"
                           onChange={(e) => setComprobanteFile(e.target.files[0] || null)}
-                          style={{ display: "block", marginTop: "6px", fontSize: "13px" }}
+                          className={styles.fileUploadInput}
                         />
                       </label>
                       {comprobanteFile && (
-                        <p style={{ fontSize: "12.5px", color: "#16a34a", marginTop: "4px" }}>✓ {comprobanteFile.name}</p>
+                        <p className={styles.fileUploadOk}>✓ Comprobante listo para enviar</p>
                       )}
                       {errores.comprobante && (
                         <p style={{ fontSize: "12.5px", color: "#dc2626", marginTop: "4px" }}>{errores.comprobante}</p>
@@ -729,20 +759,29 @@ export default function Checkout() {
 
                   {paso === 2 && metodoPago === "qr" && (
                     <div className={styles.expandGrayBox}>
-                      <p>
-                        Por favor, <strong>NO PROCEDAS SI NO ESTÁS SEGURO</strong> de que quieres realizar la compra. Escanea el código con tu app y realiza el pago. Tu pedido no se procesará hasta que se haya recibido el pago.
-                      </p>
-                      <label style={{ display: "block", marginTop: "12px", fontSize: "13px", fontWeight: 600 }}>
-                        Sube tu comprobante de pago *
+                      <div className={styles.avisoBox}>
+                        <span className={styles.avisoIcon}><Icon name="shield" size={16} /></span>
+                        <p>
+                          Por favor, <strong>NO PROCEDAS SI NO ESTÁS SEGURO</strong> de que quieres realizar la compra. Escanea el código con tu app y realiza el pago. Tu pedido no se procesará hasta que se haya recibido el pago.
+                        </p>
+                      </div>
+                      <span className={styles.fileUploadLabelText}>Sube tu comprobante de pago *</span>
+                      <label className={styles.fileUploadRow}>
+                        <span className={styles.fileUploadBtn}>
+                          <Icon name="upload" size={15} /> Seleccionar archivo
+                        </span>
+                        <span className={styles.fileUploadName}>
+                          {comprobanteFile ? comprobanteFile.name : "Ningún archivo seleccionado"}
+                        </span>
                         <input
                           type="file"
                           accept="image/*,application/pdf"
                           onChange={(e) => setComprobanteFile(e.target.files[0] || null)}
-                          style={{ display: "block", marginTop: "6px", fontSize: "13px" }}
+                          className={styles.fileUploadInput}
                         />
                       </label>
                       {comprobanteFile && (
-                        <p style={{ fontSize: "12.5px", color: "#16a34a", marginTop: "4px" }}>✓ {comprobanteFile.name}</p>
+                        <p className={styles.fileUploadOk}>✓ Comprobante listo para enviar</p>
                       )}
                       {errores.comprobante && (
                         <p style={{ fontSize: "12.5px", color: "#dc2626", marginTop: "4px" }}>{errores.comprobante}</p>

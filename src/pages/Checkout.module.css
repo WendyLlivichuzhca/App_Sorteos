@@ -64,6 +64,34 @@
   margin-bottom: 20px;
 }
 
+.sectionTitle {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.sectionTitleSm {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 15px;
+  font-weight: 800;
+  color: #101512;
+  margin: 0;
+}
+
+.sectionIcon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background: #EAF7F0;
+  color: #1F8A5A;
+  flex-shrink: 0;
+}
+
 .rowTwo {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -488,6 +516,90 @@
 
 .expandGrayBox p {
   margin: 0;
+}
+
+.avisoBox {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  background: var(--color-primary-soft);
+  border-radius: 10px;
+  padding: 12px 14px;
+}
+
+.avisoIcon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: #FFFFFF;
+  color: #1F8A5A;
+  flex-shrink: 0;
+}
+
+.avisoBox p {
+  color: #146B45;
+  font-size: 12.5px;
+  line-height: 1.5;
+}
+
+.fileUploadLabelText {
+  display: block;
+  margin-top: 14px;
+  font-size: 13px;
+  font-weight: 700;
+  color: #3F4A44;
+}
+
+.fileUploadRow {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 8px;
+  border: 1.5px solid #D8DFDC;
+  border-radius: 10px;
+  overflow: hidden;
+  background: #FFFFFF;
+  cursor: pointer;
+}
+
+.fileUploadBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  background: #F3F6F4;
+  color: #101512;
+  font-weight: 700;
+  font-size: 12.5px;
+  padding: 10px 14px;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.fileUploadName {
+  font-size: 12.5px;
+  color: #8B958F;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.fileUploadInput {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+  overflow: hidden;
+}
+
+.fileUploadOk {
+  font-size: 12.5px;
+  color: #146B45;
+  font-weight: 600;
+  margin-top: 6px;
 }
 
 .instruccionesBox {
