@@ -110,7 +110,7 @@ export default function Paquetes() {
 
       <div className={`container ${styles.wrap}`}>
         <Link to={`/sorteos/${sorteo.id}`} className={styles.volver}>
-          <Icon name="chevronLeft" size={16} /> {sorteo.nombre}
+          <Icon name="chevronLeft" size={16} /> Volver al sorteo
         </Link>
 
         <h1>Elige tu paquete o cantidad de boletos</h1>
