@@ -28,12 +28,11 @@ export default function Landing() {
     <div className="page">
       <Navbar variant="full" />
 
-      {/* ── HERO + zona decorativa (hojas y formas de fondo) ── */}
-      <div className={styles.decorWrap}>
+      {/* ── HERO ── */}
+      <section className={styles.hero}>
         {/* Formas orgánicas de fondo */}
         <div className={`${styles.blob} ${styles.blob1}`} />
         <div className={`${styles.blob} ${styles.blob2}`} />
-        <div className={`${styles.blob} ${styles.blob3}`} />
 
         {/* Hojitas decorativas */}
         <svg className={`${styles.leaf} ${styles.leaf1}`} viewBox="0 0 100 100" fill="none" aria-hidden="true">
@@ -48,19 +47,11 @@ export default function Landing() {
         <svg className={`${styles.leaf} ${styles.leaf4}`} viewBox="0 0 100 100" fill="none" aria-hidden="true">
           <path fill="currentColor" d="M50 5C25 15 10 40 15 65C20 88 45 98 68 90C88 83 95 60 85 40C75 20 60 8 50 5Z" />
         </svg>
-        <svg className={`${styles.leaf} ${styles.leaf5}`} viewBox="0 0 100 100" fill="none" aria-hidden="true">
-          <path fill="currentColor" d="M50 5C25 15 10 40 15 65C20 88 45 98 68 90C88 83 95 60 85 40C75 20 60 8 50 5Z" />
-        </svg>
-        <svg className={`${styles.leaf} ${styles.leaf6}`} viewBox="0 0 100 100" fill="none" aria-hidden="true">
-          <path fill="currentColor" d="M50 5C25 15 10 40 15 65C20 88 45 98 68 90C88 83 95 60 85 40C75 20 60 8 50 5Z" />
-        </svg>
 
         {/* Destellos de luz brillante */}
         <div className={styles.glitter1} />
         <div className={styles.glitter2} />
 
-        {/* ── HERO ── */}
-        <section className={styles.hero}>
         <div className={`container ${styles.heroInner}`}>
           {/* Columna izquierda: texto */}
           <div className={styles.heroCopy}>
@@ -110,58 +101,57 @@ export default function Landing() {
             </span>
           </div>
         </div>
-        </section>
+      </section>
 
-        {/* ── FEATURES ── */}
-        <section className={`container ${styles.featuresWrap}`}>
-          <div className={styles.features}>
-            {features.map((f, i) => (
-              <div key={f.title} className={`${styles.feature} ${i > 0 ? styles.featureSep : ""}`}>
-                <span className={styles.featureIcon}>
-                  <Icon name={f.icon} size={22} strokeWidth={1.6} />
-                </span>
-                <div>
-                  <h3>{f.title}</h3>
-                  <p>{f.text}</p>
-                </div>
+      {/* ── FEATURES ── */}
+      <section className={`container ${styles.featuresWrap}`}>
+        <div className={styles.features}>
+          {features.map((f, i) => (
+            <div key={f.title} className={`${styles.feature} ${i > 0 ? styles.featureSep : ""}`}>
+              <span className={styles.featureIcon}>
+                <Icon name={f.icon} size={22} strokeWidth={1.6} />
+              </span>
+              <div>
+                <h3>{f.title}</h3>
+                <p>{f.text}</p>
               </div>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* ── SORTEOS DESTACADOS ── */}
+      {destacados.length > 0 && (
+        <section className={`container ${styles.destacadosSection}`}>
+          <div className={styles.destacadosHeader}>
+            <h2>
+              <Icon name="star" size={22} className={styles.destacadosStarIcon} />
+              Sorteos destacados
+            </h2>
+            <Link to="/sorteos" className={styles.verTodos}>Ver todos →</Link>
+          </div>
+          <div className={styles.destacadosGrid}>
+            {destacados.map((s) => (
+              <Link key={s.id} to={`/sorteos/${s.id}`} className={styles.destacadoCard}>
+                <div className={styles.destacadoImg}>
+                  <PremioImage categoria={s.categoria} images={s.galeria} />
+                </div>
+                <div className={styles.destacadoBody}>
+                  <span className={styles.destacadoBadge}>{s.categoria}</span>
+                  <h4>{s.nombre}</h4>
+                  <div className={styles.destacadoPrecio}>
+                    <Icon name="ticket" size={16} />
+                    {formatMoney(s.precio)} por boleto
+                  </div>
+                  <span className={styles.destacadoCta}>
+                    Participar ahora <Icon name="arrowRight" size={15} />
+                  </span>
+                </div>
+              </Link>
             ))}
           </div>
         </section>
-
-        {/* ── SORTEOS DESTACADOS ── */}
-        {destacados.length > 0 && (
-          <section className={`container ${styles.destacadosSection}`}>
-            <div className={styles.destacadosHeader}>
-              <h2>
-                <Icon name="star" size={22} className={styles.destacadosStarIcon} />
-                Sorteos destacados
-              </h2>
-              <Link to="/sorteos" className={styles.verTodos}>Ver todos →</Link>
-            </div>
-            <div className={styles.destacadosGrid}>
-              {destacados.map((s) => (
-                <Link key={s.id} to={`/sorteos/${s.id}`} className={styles.destacadoCard}>
-                  <div className={styles.destacadoImg}>
-                    <PremioImage categoria={s.categoria} images={s.galeria} />
-                  </div>
-                  <div className={styles.destacadoBody}>
-                    <span className={styles.destacadoBadge}>{s.categoria}</span>
-                    <h4>{s.nombre}</h4>
-                    <div className={styles.destacadoPrecio}>
-                      <Icon name="ticket" size={16} />
-                      {formatMoney(s.precio)} por boleto
-                    </div>
-                    <span className={styles.destacadoCta}>
-                      Participar ahora <Icon name="arrowRight" size={15} />
-                    </span>
-                  </div>
-                </Link>
-              ))}
-            </div>
-          </section>
-        )}
-      </div>
+      )}
 
       <Footer />
     </div>

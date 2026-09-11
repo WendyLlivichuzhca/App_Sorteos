@@ -1,10 +1,6 @@
 /* ══════════════════════════════════════════
-   ZONA DECORATIVA (hero + features + destacados comparten hojas y blobs de fondo)
+   HERO (tema claro: blanco / negro / verde)
 ══════════════════════════════════════════ */
-.decorWrap {
-  position: relative;
-}
-
 .hero {
   position: relative;
   background: linear-gradient(160deg, #FFFFFF 0%, #F7FBF9 45%, #EEF8F2 100%);
@@ -31,17 +27,9 @@
 .blob2 {
   width: 340px;
   height: 340px;
-  top: 420px;
+  bottom: -120px;
   left: 6%;
   background: radial-gradient(circle, rgba(52, 179, 120, 0.14), rgba(52, 179, 120, 0) 70%);
-}
-
-.blob3 {
-  width: 320px;
-  height: 320px;
-  bottom: 4%;
-  right: -120px;
-  background: radial-gradient(circle, rgba(31, 138, 90, 0.13), rgba(31, 138, 90, 0) 70%);
 }
 
 /* Hojitas decorativas */
@@ -53,57 +41,39 @@
 }
 
 .leaf1 {
-  width: 36px;
-  height: 36px;
-  top: 150px;
+  width: 34px;
+  height: 34px;
+  top: 14%;
   left: 5%;
-  opacity: 0.4;
+  opacity: 0.35;
   transform: rotate(-20deg);
 }
 
 .leaf2 {
-  width: 24px;
-  height: 24px;
-  top: 600px;
+  width: 22px;
+  height: 22px;
+  top: 62%;
   left: 10%;
-  opacity: 0.35;
+  opacity: 0.3;
   transform: rotate(35deg);
 }
 
 .leaf3 {
   width: 26px;
   height: 26px;
-  top: 90px;
+  top: 10%;
   right: 30%;
-  opacity: 0.35;
+  opacity: 0.3;
   transform: rotate(15deg);
 }
 
 .leaf4 {
-  width: 32px;
-  height: 32px;
-  bottom: 22%;
+  width: 30px;
+  height: 30px;
+  bottom: 8%;
   right: 6%;
-  opacity: 0.3;
+  opacity: 0.28;
   transform: rotate(-10deg);
-}
-
-.leaf5 {
-  width: 26px;
-  height: 26px;
-  bottom: 10%;
-  left: 3%;
-  opacity: 0.32;
-  transform: rotate(20deg);
-}
-
-.leaf6 {
-  width: 22px;
-  height: 22px;
-  bottom: 2%;
-  right: 4%;
-  opacity: 0.3;
-  transform: rotate(-25deg);
 }
 
 /* ─ Destellos brillantes (puntos de luz) ─ */
@@ -119,14 +89,14 @@
   width: 6px; height: 6px;
   background: #34B378;
   box-shadow: 0 0 8px 3px rgba(52, 179, 120, 0.55);
-  top: 130px; left: 42%;
+  top: 18%; left: 42%;
   animation-delay: 0s;
 }
 .glitter2 {
   width: 5px; height: 5px;
   background: #1F8A5A;
   box-shadow: 0 0 8px 3px rgba(31, 138, 90, 0.5);
-  top: 220px; left: 55%;
+  top: 32%; left: 55%;
   animation-delay: 0.8s;
 }
 
@@ -229,17 +199,15 @@
 
 .scriptText {
   position: absolute;
-  top: 34%;
-  right: -14px;
+  top: 38%;
+  right: -18px;
   font-family: "Caveat", cursive;
-  font-size: 32px;
+  font-size: 24px;
   font-weight: 700;
-  line-height: 1.25;
-  letter-spacing: 0.3px;
+  line-height: 1.2;
   color: #146B45;
   transform: rotate(-6deg);
   pointer-events: none;
-  white-space: nowrap;
 }
 
 @media (max-width: 1300px) {
