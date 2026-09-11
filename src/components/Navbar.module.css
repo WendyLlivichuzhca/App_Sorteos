@@ -5,8 +5,7 @@
   background: rgba(255, 255, 255, 0.92);
   backdrop-filter: blur(8px);
   box-shadow: 0 2px 20px rgba(15, 23, 19, 0.06);
-  border-bottom: 2px solid transparent;
-  border-image: linear-gradient(90deg, #22A06A, #1F8A5A 40%, #EAF7F0) 1;
+  border-bottom: 1px solid var(--color-border);
 }
 
 .header.dark {
@@ -15,8 +14,7 @@
   background: rgba(255, 255, 255, 0.92);
   backdrop-filter: blur(8px);
   box-shadow: 0 2px 20px rgba(15, 23, 19, 0.06);
-  border-bottom: 2px solid transparent;
-  border-image: linear-gradient(90deg, #22A06A, #1F8A5A 40%, #EAF7F0) 1;
+  border-bottom: 1px solid var(--color-border);
 }
 
 .inner {
