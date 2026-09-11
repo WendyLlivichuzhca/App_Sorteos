@@ -16,6 +16,7 @@ export default function CompraExitosa() {
   const [instruccionesPago, setInstruccionesPago] = useState("");
   const [whatsapp, setWhatsapp] = useState("");
   const [qrPago, setQrPago] = useState("");
+  const [nombreEmpresa, setNombreEmpresa] = useState("El Trébol de Gaya");
 
   useEffect(() => {
     if (!ultimaCompra) {
@@ -28,6 +29,7 @@ export default function CompraExitosa() {
         setInstruccionesPago(config.instrucciones_pago || "");
         setWhatsapp(config.whatsapp || "");
         setQrPago(config.qr_pago || "");
+        setNombreEmpresa(config.nombre_empresa || "El Trébol de Gaya");
       })
       .catch((err) => console.error("Error cargando configuración:", err));
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -37,24 +39,69 @@ export default function CompraExitosa() {
 
   const metodo = metodosPago.find((m) => m.id === ultimaCompra.metodoPago);
 
-  const descargarComprobante = () => {
-    const contenido = `EL TRÉBOL DE GAYA - Comprobante de compra
-Código de orden: ${ultimaCompra.codigo}
-Boletos: ${ultimaCompra.boletos.join(", ")}
-Sorteo: ${ultimaCompra.sorteoNombre}
-Cantidad: ${ultimaCompra.paquete.boletos} boletos
-Total pagado: ${formatMoney(ultimaCompra.total)}
-Fecha: ${formatDate(ultimaCompra.fecha)}
-Método de pago: ${metodo?.nombre || ""}
-Comprador: ${ultimaCompra.comprador.nombre}
-`;
-    const blob = new Blob([contenido], { type: "text/plain;charset=utf-8" });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = `comprobante-${ultimaCompra.codigo}.txt`;
-    a.click();
-    URL.revokeObjectURL(url);
+  const descargarComprobante = async () => {
+    const { default: jsPDF } = await import("jspdf");
+    const verde = [31, 138, 90];
+    const oscuro = [16, 21, 18];
+    const gris = [91, 102, 96];
+    const margenX = 20;
+    const anchoValor = 190 - margenX - 52;
+
+    const doc = new jsPDF({ unit: "mm", format: "a4" });
+
+    doc.setFillColor(...verde);
+    doc.rect(0, 0, 210, 10, "F");
+
+    let y = 28;
+    doc.setTextColor(...oscuro);
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(19);
+    doc.text(nombreEmpresa, margenX, y);
+
+    y += 8;
+    doc.setTextColor(...verde);
+    doc.setFont("helvetica", "normal");
+    doc.setFontSize(12);
+    doc.text("Comprobante de compra", margenX, y);
+
+    y += 6;
+    doc.setDrawColor(220, 232, 226);
+    doc.line(margenX, y, 190, y);
+
+    const fila = (etiqueta, valor) => {
+      y += 10;
+      doc.setFont("helvetica", "normal");
+      doc.setFontSize(10.5);
+      doc.setTextColor(...gris);
+      doc.text(etiqueta, margenX, y);
+      doc.setFont("helvetica", "bold");
+      doc.setTextColor(...oscuro);
+      const lineas = doc.splitTextToSize(String(valor), anchoValor);
+      doc.text(lineas, margenX + 52, y);
+      y += (lineas.length - 1) * 5;
+    };
+
+    y += 4;
+    fila("Código de orden", ultimaCompra.codigo);
+    fila("Sorteo", ultimaCompra.sorteoNombre);
+    fila("Paquete", `${ultimaCompra.paquete.nombre} (${ultimaCompra.paquete.boletos} boleto${ultimaCompra.paquete.boletos > 1 ? "s" : ""})`);
+    fila("Números de boletos", ultimaCompra.boletos.map((n) => `#${n}`).join(", "));
+    fila("Total pagado", formatMoney(ultimaCompra.total));
+    fila("Fecha", formatDate(ultimaCompra.fecha));
+    fila("Método de pago", metodo?.nombre || "");
+    fila("Comprador", ultimaCompra.comprador.nombre);
+
+    y += 10;
+    doc.setDrawColor(220, 232, 226);
+    doc.line(margenX, y, 190, y);
+
+    y += 10;
+    doc.setFont("helvetica", "italic");
+    doc.setFontSize(9.5);
+    doc.setTextColor(...gris);
+    doc.text("Gracias por tu compra. Guarda este comprobante como respaldo de tu participación.", margenX, y);
+
+    doc.save(`comprobante-${ultimaCompra.codigo}.pdf`);
   };
 
   const compartir = async () => {
