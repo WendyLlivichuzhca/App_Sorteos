@@ -41,6 +41,7 @@ export default function PremioImage({ categoria, src, images, className = "", ic
   if (current) {
     return (
       <div className={`${styles.wrap} ${className}`} style={{ background: "#0B0F0D" }}>
+        <img key={`bg-${current}`} src={current} alt="" aria-hidden="true" className={styles.bgBlur} />
         <img key={`fg-${current}`} src={current} alt="Premio" className={styles.fgImg} />
         {gallery.length > 1 && (
           <div className={styles.dots}>
