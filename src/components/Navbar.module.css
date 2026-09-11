@@ -10,8 +10,9 @@
 .header.dark {
   position: absolute;
   width: 100%;
-  background: transparent;
-  border-bottom: none;
+  background: rgba(234, 247, 240, 0.92);
+  backdrop-filter: blur(8px);
+  border-bottom: 1px solid var(--color-border);
 }
 
 .inner {
