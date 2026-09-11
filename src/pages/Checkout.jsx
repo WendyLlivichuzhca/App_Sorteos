@@ -608,15 +608,14 @@ export default function Checkout() {
             {/* Sección Tu Pedido */}
             <div className={styles.tuPedidoBox}>
               <h3>Tu pedido</h3>
-              <div className={styles.pedidoTableHeader}>
-                <span>Producto</span>
-                <span className={styles.rightAlign}>Subtotal</span>
-              </div>
-              <div className={styles.pedidoTableBody}>
-                <div className={styles.productoText}>
-                  <strong>{sorteo.nombre}</strong> | Sorteo #{sorteo.id}
+              <div className={styles.productoCard}>
+                <span className={styles.productoIcon}>
+                  <Icon name="ticket" size={18} />
+                </span>
+                <div className={styles.productoInfo}>
+                  <strong>{sorteo.nombre}</strong>
+                  <span className={styles.productoMeta}>Sorteo #{sorteo.id} · × {paquete.boletos} boletos</span>
                 </div>
-                <div className={styles.colMult}>× {paquete.boletos}</div>
                 <div className={styles.colPrice}>{formatMoney(paquete.precio)}</div>
               </div>
               <div className={styles.pedidoTableTotal}>
