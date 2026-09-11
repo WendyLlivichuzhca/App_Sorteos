@@ -45,7 +45,7 @@ export default function Navbar({ variant = "full", step }) {
           {nombreEmpresa}
         </Link>
 
-        {variant === "full" && (
+        {(variant === "full" || variant === "nav") && (
           <>
             <nav className={styles.nav}>
               <Link to="/sorteos" className={isActive("/sorteos") ? styles.navActive : ""}>Sorteos</Link>
@@ -63,15 +63,6 @@ export default function Navbar({ variant = "full", step }) {
               </button>
             </div>
           </>
-        )}
-
-        {variant === "nav" && (
-          <nav className={styles.nav}>
-            <Link to="/sorteos" className={isActive("/sorteos") ? styles.navActive : ""}>Sorteos</Link>
-            <Link to="/como-funciona" className={isActive("/como-funciona") ? styles.navActive : ""}>Cómo funciona</Link>
-            <Link to="/resultados" className={isActive("/resultados") ? styles.navActive : ""}>Resultados</Link>
-            <Link to="/ayuda" className={isActive("/ayuda") ? styles.navActive : ""}>Ayuda</Link>
-          </nav>
         )}
 
         {variant === "checkout" && (
