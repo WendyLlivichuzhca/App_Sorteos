@@ -45,7 +45,7 @@ export default function Navbar({ variant = "full", step }) {
           {nombreEmpresa}
         </Link>
 
-        {(variant === "full" || variant === "nav") && (
+        {(variant === "full" || variant === "nav" || variant === "cart") && (
           <>
             <nav className={styles.nav}>
               <Link to="/sorteos" className={isActive("/sorteos") ? styles.navActive : ""}>Sorteos</Link>
@@ -63,18 +63,6 @@ export default function Navbar({ variant = "full", step }) {
               </button>
             </div>
           </>
-        )}
-
-        {variant === "cart" && (
-          <div className={styles.actions}>
-            <button
-              type="button"
-              className={`btn btn-primary btn-sm ${styles.consultarBtn}`}
-              onClick={() => navigate("/consultar-boletos")}
-            >
-              Consultar boletos
-            </button>
-          </div>
         )}
 
         {variant === "checkout" && (
