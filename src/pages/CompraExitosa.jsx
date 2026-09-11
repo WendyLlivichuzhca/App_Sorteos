@@ -39,83 +39,191 @@ export default function CompraExitosa() {
 
   const metodo = metodosPago.find((m) => m.id === ultimaCompra.metodoPago);
 
-  const descargarComprobante = async () => {
+  const generarComprobantePdf = async () => {
     const { default: jsPDF } = await import("jspdf");
     const verde = [31, 138, 90];
+    const verdeOscuro = [20, 107, 69];
     const oscuro = [16, 21, 18];
     const gris = [91, 102, 96];
+    const bordeGris = [222, 228, 224];
+    const fondoSuave = [237, 247, 241];
     const margenX = 20;
-    const anchoValor = 190 - margenX - 52;
+    const anchoPag = 210;
+    const anchoUtil = anchoPag - margenX * 2;
 
     const doc = new jsPDF({ unit: "mm", format: "a4" });
 
+    // Encabezado
     doc.setFillColor(...verde);
-    doc.rect(0, 0, 210, 10, "F");
+    doc.rect(0, 0, anchoPag, 12, "F");
 
-    let y = 28;
+    let y = 30;
     doc.setTextColor(...oscuro);
     doc.setFont("helvetica", "bold");
-    doc.setFontSize(19);
+    doc.setFontSize(18);
     doc.text(nombreEmpresa, margenX, y);
-
-    y += 8;
     doc.setTextColor(...verde);
     doc.setFont("helvetica", "normal");
-    doc.setFontSize(12);
-    doc.text("Comprobante de compra", margenX, y);
+    doc.setFontSize(11);
+    doc.text("Comprobante de compra", margenX, y + 7);
 
-    y += 6;
-    doc.setDrawColor(220, 232, 226);
-    doc.line(margenX, y, 190, y);
-
-    const fila = (etiqueta, valor) => {
-      y += 10;
-      doc.setFont("helvetica", "normal");
-      doc.setFontSize(10.5);
-      doc.setTextColor(...gris);
-      doc.text(etiqueta, margenX, y);
-      doc.setFont("helvetica", "bold");
-      doc.setTextColor(...oscuro);
-      const lineas = doc.splitTextToSize(String(valor), anchoValor);
-      doc.text(lineas, margenX + 52, y);
-      y += (lineas.length - 1) * 5;
-    };
-
-    y += 4;
-    fila("Código de orden", ultimaCompra.codigo);
-    fila("Sorteo", ultimaCompra.sorteoNombre);
-    fila("Paquete", `${ultimaCompra.paquete.nombre} (${ultimaCompra.paquete.boletos} boleto${ultimaCompra.paquete.boletos > 1 ? "s" : ""})`);
-    fila("Números de boletos", ultimaCompra.boletos.map((n) => `#${n}`).join(", "));
-    fila("Total pagado", formatMoney(ultimaCompra.total));
-    fila("Fecha", formatDate(ultimaCompra.fecha));
-    fila("Método de pago", metodo?.nombre || "");
-    fila("Comprador", ultimaCompra.comprador.nombre);
-
-    y += 10;
-    doc.setDrawColor(220, 232, 226);
-    doc.line(margenX, y, 190, y);
-
-    y += 10;
-    doc.setFont("helvetica", "italic");
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(13);
+    doc.setTextColor(...oscuro);
+    doc.text(`N.º ${ultimaCompra.codigo}`, anchoPag - margenX, y, { align: "right" });
+    doc.setFont("helvetica", "normal");
     doc.setFontSize(9.5);
     doc.setTextColor(...gris);
-    doc.text("Gracias por tu compra. Guarda este comprobante como respaldo de tu participación.", margenX, y);
+    doc.text(formatDate(ultimaCompra.fecha), anchoPag - margenX, y + 6, { align: "right" });
 
+    y += 16;
+    doc.setDrawColor(...bordeGris);
+    doc.line(margenX, y, anchoPag - margenX, y);
+
+    // Facturado a
+    y += 10;
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(8.5);
+    doc.setTextColor(...gris);
+    doc.text("FACTURADO A", margenX, y);
+    y += 6;
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(12);
+    doc.setTextColor(...oscuro);
+    doc.text(ultimaCompra.comprador.nombre, margenX, y);
+    y += 6;
+    doc.setFont("helvetica", "normal");
+    doc.setFontSize(9.5);
+    doc.setTextColor(...gris);
+    const datosComprador = [
+      ultimaCompra.comprador.cedula,
+      ultimaCompra.comprador.correo,
+      ultimaCompra.comprador.celular,
+    ].filter(Boolean).join("  ·  ");
+    doc.text(datosComprador, margenX, y);
+
+    // Tabla: encabezado
+    y += 12;
+    const colConcepto = margenX;
+    const colCantidad = margenX + 98;
+    const colPrecio = margenX + 122;
+    const colSubtotal = anchoPag - margenX;
+
+    doc.setFillColor(...verde);
+    doc.rect(margenX, y, anchoUtil, 9, "F");
+    doc.setTextColor(255, 255, 255);
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(9);
+    doc.text("CONCEPTO", colConcepto + 3, y + 6);
+    doc.text("CANT.", colCantidad, y + 6);
+    doc.text("P. UNITARIO", colPrecio, y + 6);
+    doc.text("SUBTOTAL", colSubtotal - 3, y + 6, { align: "right" });
+
+    // Tabla: fila de datos
+    y += 9;
+    const precioUnitario = ultimaCompra.total / ultimaCompra.paquete.boletos;
+    doc.setDrawColor(...bordeGris);
+    doc.rect(margenX, y, anchoUtil, 14);
+    doc.setTextColor(...oscuro);
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(10);
+    const nombreConcepto = doc.splitTextToSize(`${ultimaCompra.sorteoNombre}`, 92);
+    doc.text(nombreConcepto, colConcepto + 3, y + 6);
+    doc.setFont("helvetica", "normal");
+    doc.setFontSize(8.5);
+    doc.setTextColor(...gris);
+    doc.text("Boletos de participación", colConcepto + 3, y + 11);
+    doc.setFont("helvetica", "normal");
+    doc.setFontSize(10);
+    doc.setTextColor(...oscuro);
+    doc.text(String(ultimaCompra.paquete.boletos), colCantidad, y + 8);
+    doc.text(formatMoney(precioUnitario), colPrecio, y + 8);
+    doc.setFont("helvetica", "bold");
+    doc.text(formatMoney(ultimaCompra.total), colSubtotal - 3, y + 8, { align: "right" });
+
+    // Total
+    y += 14 + 4;
+    doc.setDrawColor(...bordeGris);
+    doc.line(margenX + 100, y, anchoPag - margenX, y);
+    y += 8;
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(11);
+    doc.setTextColor(...gris);
+    doc.text("TOTAL PAGADO", colPrecio, y);
+    doc.setFontSize(15);
+    doc.setTextColor(...verdeOscuro);
+    doc.text(formatMoney(ultimaCompra.total), colSubtotal - 3, y, { align: "right" });
+
+    // Números de boletos asignados
+    y += 14;
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(9.5);
+    doc.setTextColor(...oscuro);
+    doc.text("Números de boletos asignados", margenX, y);
+    y += 5;
+    const listaBoletos = doc.splitTextToSize(ultimaCompra.boletos.map((n) => `#${n}`).join("   "), anchoUtil - 10);
+    const altoCaja = listaBoletos.length * 5 + 8;
+    doc.setFillColor(...fondoSuave);
+    doc.roundedRect(margenX, y, anchoUtil, altoCaja, 2, 2, "F");
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(9.5);
+    doc.setTextColor(...verdeOscuro);
+    doc.text(listaBoletos, margenX + 5, y + 6);
+    y += altoCaja + 10;
+
+    // Método de pago
+    doc.setFont("helvetica", "normal");
+    doc.setFontSize(9.5);
+    doc.setTextColor(...gris);
+    doc.text("Método de pago", margenX, y);
+    doc.setFont("helvetica", "bold");
+    doc.setTextColor(...oscuro);
+    doc.text(metodo?.nombre || "", margenX + 40, y);
+
+    // Pie
+    y += 16;
+    doc.setDrawColor(...bordeGris);
+    doc.line(margenX, y, anchoPag - margenX, y);
+    y += 8;
+    doc.setFont("helvetica", "italic");
+    doc.setFontSize(9);
+    doc.setTextColor(...gris);
+    doc.text("Gracias por tu compra. Guarda este comprobante como respaldo de tu participación.", anchoPag / 2, y, { align: "center" });
+    y += 5;
+    doc.setFontSize(8);
+    doc.text("Documento generado automáticamente, no requiere firma.", anchoPag / 2, y, { align: "center" });
+
+    return doc;
+  };
+
+  const descargarComprobante = async () => {
+    const doc = await generarComprobantePdf();
     doc.save(`comprobante-${ultimaCompra.codigo}.pdf`);
   };
 
   const compartir = async () => {
-    const texto = `¡Ya estoy participando en el sorteo de ${ultimaCompra.sorteoNombre} en EL TRÉBOL DE GAYA! Mis boletos: ${ultimaCompra.boletos.join(", ")}`;
-    if (navigator.share) {
-      try {
-        await navigator.share({ text: texto, title: "El Trébol de Gaya" });
-      } catch {
-        // usuario canceló, no hacer nada
+    const texto = `¡Ya estoy participando en el sorteo de ${ultimaCompra.sorteoNombre} en ${nombreEmpresa}! Mis boletos: ${ultimaCompra.boletos.join(", ")}`;
+
+    try {
+      const doc = await generarComprobantePdf();
+      const blob = doc.output("blob");
+      const archivo = new File([blob], `comprobante-${ultimaCompra.codigo}.pdf`, { type: "application/pdf" });
+
+      if (navigator.canShare && navigator.canShare({ files: [archivo] })) {
+        await navigator.share({ text: texto, title: nombreEmpresa, files: [archivo] });
+        return;
       }
-    } else {
-      const waUrl = `https://wa.me/?text=${encodeURIComponent(texto)}`;
-      window.open(waUrl, "_blank");
+      if (navigator.share) {
+        await navigator.share({ text: texto, title: nombreEmpresa });
+        return;
+      }
+    } catch {
+      // usuario canceló el share nativo, no hacer nada
+      return;
     }
+
+    const waUrl = `https://wa.me/?text=${encodeURIComponent(texto)}`;
+    window.open(waUrl, "_blank");
   };
 
   const irAConsultarBoletos = () => navigate("/consultar-boletos");
