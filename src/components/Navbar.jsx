@@ -65,16 +65,39 @@ export default function Navbar({ variant = "full", step }) {
           </>
         )}
 
+        {variant === "cart" && (
+          <div className={styles.actions}>
+            <button
+              type="button"
+              className={`btn btn-primary btn-sm ${styles.consultarBtn}`}
+              onClick={() => navigate("/consultar-boletos")}
+            >
+              Consultar boletos
+            </button>
+          </div>
+        )}
+
         {variant === "checkout" && (
-          <ol className={styles.stepper}>
-            {STEPS.map((s, i) => (
-              <li key={s.id} className={i <= stepIndex ? styles.stepDone : ""}>
-                <span className={styles.stepDot}>{i < stepIndex ? <Icon name="check" size={12} strokeWidth={3} /> : i + 1}</span>
-                {s.label}
-                {i < STEPS.length - 1 && <span className={styles.stepLine} />}
-              </li>
-            ))}
-          </ol>
+          <>
+            <ol className={styles.stepper}>
+              {STEPS.map((s, i) => (
+                <li key={s.id} className={i <= stepIndex ? styles.stepDone : ""}>
+                  <span className={styles.stepDot}>{i < stepIndex ? <Icon name="check" size={12} strokeWidth={3} /> : i + 1}</span>
+                  {s.label}
+                  {i < STEPS.length - 1 && <span className={styles.stepLine} />}
+                </li>
+              ))}
+            </ol>
+            <div className={styles.actions}>
+              <button
+                type="button"
+                className={`btn btn-primary btn-sm ${styles.consultarBtn}`}
+                onClick={() => navigate("/consultar-boletos")}
+              >
+                Consultar boletos
+              </button>
+            </div>
+          </>
         )}
       </div>
     </header>
