@@ -9,19 +9,19 @@ const pasos = [
     icon: "search",
     titulo: "Elige tu sorteo",
     texto:
-      "Explora todos los sorteos activos: autos, motos, tecnología, efectivo, casas y más. Cada sorteo muestra el premio, el precio por boleto y cuántos boletos ya se vendieron.",
+      "Explora todos los sorteos activos: terrenos, automóviles y herramientas de campo. Cada sorteo muestra el premio, el precio por boleto y cuántos boletos ya se vendieron.",
   },
   {
     icon: "box",
     titulo: "Selecciona tus boletos",
     texto:
-      "Elige uno de nuestros paquetes con descuento o ingresa la cantidad exacta que quieras. Mientras más boletos compres, más ahorras.",
+      "Ingresa la cantidad de boletos que quieras comprar para el sorteo.",
   },
   {
     icon: "id",
     titulo: "Completa tus datos y paga",
     texto:
-      "Ingresa tus datos de contacto y elige tu método de pago preferido: transferencia bancaria o tarjeta de crédito/débito.",
+      "Ingresa tus datos de contacto y elige tu método de pago preferido: transferencia bancaria, tarjeta de crédito/débito o código QR.",
   },
   {
     icon: "ticket",
