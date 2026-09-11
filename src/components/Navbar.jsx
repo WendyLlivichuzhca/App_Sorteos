@@ -21,6 +21,7 @@ export default function Navbar({ variant = "full", step }) {
   const [logoUrl, setLogoUrl] = useState("");
 
   const stepIndex = STEPS.findIndex((s) => s.id === step);
+  const isActive = (to) => location.pathname === to || location.pathname.startsWith(`${to}/`);
 
   useEffect(() => {
     getConfiguracion()
@@ -47,10 +48,10 @@ export default function Navbar({ variant = "full", step }) {
         {variant === "full" && (
           <>
             <nav className={styles.nav}>
-              <Link to="/sorteos">Sorteos</Link>
-              <Link to="/como-funciona">Cómo funciona</Link>
-              <Link to="/resultados">Resultados</Link>
-              <Link to="/ayuda">Ayuda</Link>
+              <Link to="/sorteos" className={isActive("/sorteos") ? styles.navActive : ""}>Sorteos</Link>
+              <Link to="/como-funciona" className={isActive("/como-funciona") ? styles.navActive : ""}>Cómo funciona</Link>
+              <Link to="/resultados" className={isActive("/resultados") ? styles.navActive : ""}>Resultados</Link>
+              <Link to="/ayuda" className={isActive("/ayuda") ? styles.navActive : ""}>Ayuda</Link>
             </nav>
             <div className={styles.actions}>
               <button
@@ -66,10 +67,10 @@ export default function Navbar({ variant = "full", step }) {
 
         {variant === "nav" && (
           <nav className={styles.nav}>
-            <Link to="/sorteos">Sorteos</Link>
-            <Link to="/como-funciona">Cómo funciona</Link>
-            <Link to="/resultados">Resultados</Link>
-            <Link to="/ayuda">Ayuda</Link>
+            <Link to="/sorteos" className={isActive("/sorteos") ? styles.navActive : ""}>Sorteos</Link>
+            <Link to="/como-funciona" className={isActive("/como-funciona") ? styles.navActive : ""}>Cómo funciona</Link>
+            <Link to="/resultados" className={isActive("/resultados") ? styles.navActive : ""}>Resultados</Link>
+            <Link to="/ayuda" className={isActive("/ayuda") ? styles.navActive : ""}>Ayuda</Link>
           </nav>
         )}
 

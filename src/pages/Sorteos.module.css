@@ -1,5 +1,81 @@
+.decorWrap {
+  position: relative;
+  overflow: hidden;
+  background: linear-gradient(160deg, #FFFFFF 0%, #F7FBF9 45%, #EEF8F2 100%);
+}
+
+.blob {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(50px);
+  pointer-events: none;
+  z-index: 0;
+}
+
+.blob1 {
+  width: 380px;
+  height: 380px;
+  top: -120px;
+  left: -140px;
+  background: radial-gradient(circle, rgba(31, 138, 90, 0.14), rgba(31, 138, 90, 0) 70%);
+}
+
+.blob2 {
+  width: 320px;
+  height: 320px;
+  bottom: -100px;
+  right: -100px;
+  background: radial-gradient(circle, rgba(52, 179, 120, 0.13), rgba(52, 179, 120, 0) 70%);
+}
+
+.leaf {
+  position: absolute;
+  pointer-events: none;
+  color: #34B378;
+  z-index: 0;
+}
+
+.leaf1 { width: 34px; height: 34px; top: 12%; left: 4%; opacity: 0.35; transform: rotate(-20deg); }
+.leaf2 { width: 24px; height: 24px; top: 55%; left: 8%; opacity: 0.3; transform: rotate(30deg); }
+.leaf3 { width: 30px; height: 30px; top: 10%; right: 8%; opacity: 0.3; transform: rotate(18deg); }
+.leaf4 { width: 24px; height: 24px; bottom: 10%; right: 14%; opacity: 0.28; transform: rotate(-12deg); }
+
+.scriptText {
+  position: absolute;
+  top: 22%;
+  right: 40px;
+  font-family: "Caveat", cursive;
+  font-size: 26px;
+  font-weight: 700;
+  line-height: 1.25;
+  color: #146B45;
+  transform: rotate(-5deg);
+  text-align: center;
+  pointer-events: none;
+}
+
+@media (max-width: 1140px) {
+  .scriptText { display: none; }
+}
+
 .wrap {
+  position: relative;
+  z-index: 1;
   padding: 36px 24px 80px;
+}
+
+.eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(31, 138, 90, 0.1);
+  border: 1px solid rgba(31, 138, 90, 0.3);
+  color: #146B45;
+  font-size: 12.5px;
+  font-weight: 700;
+  padding: 6px 14px;
+  border-radius: 50px;
+  margin-bottom: 14px;
 }
 
 .wrap h1 {
@@ -7,6 +83,10 @@
   font-weight: 800;
   color: #101512;
   letter-spacing: -0.4px;
+}
+
+.highlight {
+  color: #1F8A5A;
 }
 
 .subtitle {
@@ -64,7 +144,7 @@
   font-weight: 600;
   font-size: 13.5px;
   padding: 9px 22px;
-  border-radius: 12px;
+  border-radius: 999px;
   transition: all 0.15s ease;
   cursor: pointer;
 }
@@ -153,6 +233,11 @@
   transform: scale(1.08);
 }
 
+.heartActive {
+  fill: #e63950;
+  stroke: #e63950;
+}
+
 .body {
   padding: 14px 16px 16px;
   display: flex;
@@ -194,32 +279,48 @@
 
 .precio {
   display: flex;
-  flex-direction: column;
+  align-items: center;
+  gap: 8px;
   line-height: 1.1;
+}
+
+.precioIcon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background: #EAF7F0;
+  color: #1F8A5A;
+  flex-shrink: 0;
 }
 
 .precio strong {
   font-size: 17px;
   font-weight: 800;
   color: #101512;
+  display: block;
 }
 
 .precio span {
   font-size: 10.5px;
   color: #8B958F;
   margin-top: 1px;
+  display: block;
 }
 
 .btnVerSorteo {
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  gap: 6px;
   background: #1F8A5A;
   color: #ffffff;
   font-weight: 700;
   font-size: 12.5px;
   padding: 8px 18px;
-  border-radius: 8px;
+  border-radius: 999px;
   text-decoration: none;
   box-shadow: 0 3px 10px rgba(31, 138, 90, 0.3);
   transition: background 0.15s ease, transform 0.15s ease;

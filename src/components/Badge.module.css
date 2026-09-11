@@ -1,20 +1,30 @@
 .badge {
   display: inline-flex;
   align-items: center;
-  padding: 4px 10px;
-  border-radius: 6px;
-  font-size: 11px;
+  gap: 5px;
+  padding: 5px 11px 5px 9px;
+  border-radius: 999px;
+  font-size: 10.5px;
   font-weight: 800;
   letter-spacing: 0.4px;
+  box-shadow: 0 2px 8px rgba(15, 23, 19, 0.18);
+}
+
+.badge::before {
+  content: "";
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: currentColor;
 }
 
 .activo {
-  background: #16a34a;
+  background: #1F8A5A;
   color: #ffffff;
 }
 
 .proximamente {
-  background: #ea580c;
+  background: #B45309;
   color: #ffffff;
 }
 
@@ -24,6 +34,6 @@
 }
 
 .agotado {
-  background: #374151;
+  background: #4B5563;
   color: #ffffff;
 }

@@ -10,6 +10,8 @@ import { getSorteos, getCategorias } from "../services/api.js";
 import { formatMoney } from "../utils/format.js";
 import styles from "./Sorteos.module.css";
 
+const leafPath = "M50 5C25 15 10 40 15 65C20 88 45 98 68 90C88 83 95 60 85 40C75 20 60 8 50 5Z";
+
 export default function Sorteos() {
   const [searchParams] = useSearchParams();
   const [query, setQuery] = useState("");
@@ -17,6 +19,12 @@ export default function Sorteos() {
   const [sorteos, setSorteos] = useState([]);
   const [categorias, setCategorias] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [favoritos, setFavoritos] = useState({});
+
+  const toggleFavorito = (e, id) => {
+    e.preventDefault();
+    setFavoritos((prev) => ({ ...prev, [id]: !prev[id] }));
+  };
 
   useEffect(() => {
     setLoading(true);
@@ -44,9 +52,19 @@ export default function Sorteos() {
     <div className="page">
       <Navbar variant="nav" />
 
-      <div className={`container ${styles.wrap}`}>
-        <h1>Todos los sorteos</h1>
-        <p className={styles.subtitle}>Elige tu favorito y participa</p>
+      <div className={styles.decorWrap}>
+        <div className={`${styles.blob} ${styles.blob1}`} />
+        <div className={`${styles.blob} ${styles.blob2}`} />
+        <svg className={`${styles.leaf} ${styles.leaf1}`} viewBox="0 0 100 100" fill="none" aria-hidden="true"><path fill="currentColor" d={leafPath} /></svg>
+        <svg className={`${styles.leaf} ${styles.leaf2}`} viewBox="0 0 100 100" fill="none" aria-hidden="true"><path fill="currentColor" d={leafPath} /></svg>
+        <svg className={`${styles.leaf} ${styles.leaf3}`} viewBox="0 0 100 100" fill="none" aria-hidden="true"><path fill="currentColor" d={leafPath} /></svg>
+        <svg className={`${styles.leaf} ${styles.leaf4}`} viewBox="0 0 100 100" fill="none" aria-hidden="true"><path fill="currentColor" d={leafPath} /></svg>
+        <span className={styles.scriptText}>La suerte también<br />se elige ♡</span>
+
+        <div className={`container ${styles.wrap}`}>
+          <span className={styles.eyebrow}>🍀 Todos los sorteos</span>
+          <h1>Todos los <span className={styles.highlight}>sorteos</span></h1>
+          <p className={styles.subtitle}>Elige tu favorito y participa</p>
 
         <div className={styles.searchBox}>
           <Icon name="search" size={18} className={styles.searchIcon} />
@@ -86,6 +104,14 @@ export default function Sorteos() {
                 <div className={styles.badgeWrap}>
                   <Badge estado={s.estado} />
                 </div>
+                <button
+                  type="button"
+                  className={styles.favBtn}
+                  onClick={(e) => toggleFavorito(e, s.id)}
+                  aria-label="Marcar como favorito"
+                >
+                  <Icon name="heart" size={15} className={favoritos[s.id] ? styles.heartActive : ""} />
+                </button>
               </div>
 
               <div className={styles.body}>
@@ -105,11 +131,16 @@ export default function Sorteos() {
                   {s.estado === "activo" && (
                     <>
                       <div className={styles.precio}>
-                        <strong>{formatMoney(s.precio)}</strong>
-                        <span>por boleto</span>
+                        <span className={styles.precioIcon}>
+                          <Icon name="ticket" size={15} />
+                        </span>
+                        <div>
+                          <strong>{formatMoney(s.precio)}</strong>
+                          <span>por boleto</span>
+                        </div>
                       </div>
                       <Link to={`/sorteos/${s.id}`} className={styles.btnVerSorteo}>
-                        Ver sorteo
+                        Ver sorteo <Icon name="arrowRight" size={14} />
                       </Link>
                     </>
                   )}
@@ -136,6 +167,7 @@ export default function Sorteos() {
           {filtrados.length === 0 && (
             <p className={styles.empty}>No se encontraron sorteos con esos filtros.</p>
           )}
+        </div>
         </div>
       </div>
 
