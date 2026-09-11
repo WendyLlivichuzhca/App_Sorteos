@@ -1,4 +1,48 @@
+.decorWrap {
+  position: relative;
+  overflow: hidden;
+  background: linear-gradient(160deg, #FFFFFF 0%, #F7FBF9 45%, #EEF8F2 100%);
+}
+
+.blob {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(50px);
+  pointer-events: none;
+  z-index: 0;
+}
+
+.blob1 {
+  width: 400px;
+  height: 400px;
+  top: -130px;
+  left: -150px;
+  background: radial-gradient(circle, rgba(31, 138, 90, 0.16), rgba(31, 138, 90, 0) 70%);
+}
+
+.blob2 {
+  width: 360px;
+  height: 360px;
+  bottom: -110px;
+  right: -120px;
+  background: radial-gradient(circle, rgba(52, 179, 120, 0.14), rgba(52, 179, 120, 0) 70%);
+}
+
+.leaf {
+  position: absolute;
+  pointer-events: none;
+  color: #34B378;
+  z-index: 0;
+}
+
+.leaf1 { width: 34px; height: 34px; top: 8%; left: 3%; opacity: 0.4; transform: rotate(-20deg); }
+.leaf2 { width: 26px; height: 26px; top: 55%; left: 2%; opacity: 0.35; transform: rotate(30deg); }
+.leaf3 { width: 30px; height: 30px; top: 10%; right: 3%; opacity: 0.35; transform: rotate(18deg); }
+.leaf4 { width: 24px; height: 24px; bottom: 8%; right: 4%; opacity: 0.32; transform: rotate(-14deg); }
+
 .wrap {
+  position: relative;
+  z-index: 1;
   max-width: 1140px;
   margin: 0 auto;
   padding: 30px 20px 90px;
@@ -341,10 +385,18 @@
 }
 
 .radioText {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
   font-size: 13.5px;
   font-weight: 600;
   color: #101512;
   line-height: 1.4;
+}
+
+.radioIcon {
+  flex-shrink: 0;
+  color: #1F8A5A;
 }
 
 /* Badges: se dejan en tarjetas blancas a proposito, es como se

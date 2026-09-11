@@ -283,6 +283,14 @@ export default function Checkout() {
     <div className="page">
       <Navbar variant="checkout" step={paso === 1 ? "datos" : "pago"} />
 
+      <div className={styles.decorWrap}>
+        <div className={`${styles.blob} ${styles.blob1}`} />
+        <div className={`${styles.blob} ${styles.blob2}`} />
+        <svg className={`${styles.leaf} ${styles.leaf1}`} viewBox="0 0 100 100" fill="none" aria-hidden="true"><path fill="currentColor" d="M50 5C25 15 10 40 15 65C20 88 45 98 68 90C88 83 95 60 85 40C75 20 60 8 50 5Z" /></svg>
+        <svg className={`${styles.leaf} ${styles.leaf2}`} viewBox="0 0 100 100" fill="none" aria-hidden="true"><path fill="currentColor" d="M50 5C25 15 10 40 15 65C20 88 45 98 68 90C88 83 95 60 85 40C75 20 60 8 50 5Z" /></svg>
+        <svg className={`${styles.leaf} ${styles.leaf3}`} viewBox="0 0 100 100" fill="none" aria-hidden="true"><path fill="currentColor" d="M50 5C25 15 10 40 15 65C20 88 45 98 68 90C88 83 95 60 85 40C75 20 60 8 50 5Z" /></svg>
+        <svg className={`${styles.leaf} ${styles.leaf4}`} viewBox="0 0 100 100" fill="none" aria-hidden="true"><path fill="currentColor" d="M50 5C25 15 10 40 15 65C20 88 45 98 68 90C88 83 95 60 85 40C75 20 60 8 50 5Z" /></svg>
+
       <div className={`container ${styles.wrap}`}>
         <form onSubmit={paso === 1 ? handleContinuar : handlePagar} noValidate className={styles.grid}>
           {/* Columna Izquierda: Datos de Facturación */}
@@ -640,7 +648,7 @@ export default function Checkout() {
                       checked={metodoPago === "transferencia"}
                       onChange={() => setMetodoPago("transferencia")}
                     />
-                    <span className={styles.radioText}>Transferencia bancaria o depósito</span>
+                    <span className={styles.radioText}><Icon name="bank" size={16} className={styles.radioIcon} /> Transferencia bancaria o depósito</span>
                   </label>
                   )}
 
@@ -682,7 +690,7 @@ export default function Checkout() {
                     />
                     <div className={styles.radioTextContent}>
                       <span className={styles.radioText}>
-                        Pagar con tarjeta de crédito o débito Visa, Mastercard, Diners o Discover
+                        <Icon name="card" size={16} className={styles.radioIcon} /> Pagar con tarjeta de crédito o débito Visa, Mastercard, Diners o Discover
                       </span>
                       <div className={styles.badgesRow}>
                         <span className={styles.visaBadge}>VISA</span>
@@ -716,7 +724,7 @@ export default function Checkout() {
                       checked={metodoPago === "qr"}
                       onChange={() => setMetodoPago("qr")}
                     />
-                    <span className={styles.radioText}>Pagar con código QR (JEP Fácil)</span>
+                    <span className={styles.radioText}><Icon name="qr" size={16} className={styles.radioIcon} /> Pagar con código QR (JEP Fácil)</span>
                   </label>
                   )}
 
@@ -780,6 +788,7 @@ export default function Checkout() {
             </div>
           </div>
         </form>
+      </div>
       </div>
 
       <Footer />
