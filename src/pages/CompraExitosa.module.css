@@ -1,4 +1,48 @@
+.decorWrap {
+  position: relative;
+  overflow: hidden;
+  background: linear-gradient(160deg, #FFFFFF 0%, #F7FBF9 45%, #EEF8F2 100%);
+}
+
+.blob {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(50px);
+  pointer-events: none;
+  z-index: 0;
+}
+
+.blob1 {
+  width: 380px;
+  height: 380px;
+  top: -120px;
+  left: -150px;
+  background: radial-gradient(circle, rgba(31, 138, 90, 0.16), rgba(31, 138, 90, 0) 70%);
+}
+
+.blob2 {
+  width: 340px;
+  height: 340px;
+  bottom: -110px;
+  right: -110px;
+  background: radial-gradient(circle, rgba(52, 179, 120, 0.14), rgba(52, 179, 120, 0) 70%);
+}
+
+.leaf {
+  position: absolute;
+  pointer-events: none;
+  color: #34B378;
+  z-index: 0;
+}
+
+.leaf1 { width: 34px; height: 34px; top: 10%; left: 5%; opacity: 0.4; transform: rotate(-20deg); }
+.leaf2 { width: 26px; height: 26px; top: 55%; left: 4%; opacity: 0.35; transform: rotate(30deg); }
+.leaf3 { width: 30px; height: 30px; top: 12%; right: 5%; opacity: 0.35; transform: rotate(18deg); }
+.leaf4 { width: 24px; height: 24px; bottom: 10%; right: 6%; opacity: 0.32; transform: rotate(-14deg); }
+
 .wrap {
+  position: relative;
+  z-index: 1;
   max-width: 560px;
   padding: 40px 24px 90px;
 }
