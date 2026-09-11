@@ -57,10 +57,21 @@ export default function SorteoDetalle() {
 
   const pctVendido = Math.round((sorteo.vendidos / sorteo.total) * 100);
   const CANTIDAD_MINIMA = 10;
+  const galeria = sorteo.galeria && sorteo.galeria.length > 0 ? sorteo.galeria : [1, 2, 3, 4];
+  const irAnterior = () => setActiveImg((i) => (i - 1 + galeria.length) % galeria.length);
+  const irSiguiente = () => setActiveImg((i) => (i + 1) % galeria.length);
 
   return (
     <div className="page">
       <Navbar variant="nav" />
+
+      <div className={styles.decorWrap}>
+        <div className={`${styles.blob} ${styles.blob1}`} />
+        <div className={`${styles.blob} ${styles.blob2}`} />
+        <svg className={`${styles.leaf} ${styles.leaf1}`} viewBox="0 0 100 100" fill="none" aria-hidden="true"><path fill="currentColor" d="M50 5C25 15 10 40 15 65C20 88 45 98 68 90C88 83 95 60 85 40C75 20 60 8 50 5Z" /></svg>
+        <svg className={`${styles.leaf} ${styles.leaf2}`} viewBox="0 0 100 100" fill="none" aria-hidden="true"><path fill="currentColor" d="M50 5C25 15 10 40 15 65C20 88 45 98 68 90C88 83 95 60 85 40C75 20 60 8 50 5Z" /></svg>
+        <svg className={`${styles.leaf} ${styles.leaf3}`} viewBox="0 0 100 100" fill="none" aria-hidden="true"><path fill="currentColor" d="M50 5C25 15 10 40 15 65C20 88 45 98 68 90C88 83 95 60 85 40C75 20 60 8 50 5Z" /></svg>
+        <svg className={`${styles.leaf} ${styles.leaf4}`} viewBox="0 0 100 100" fill="none" aria-hidden="true"><path fill="currentColor" d="M50 5C25 15 10 40 15 65C20 88 45 98 68 90C88 83 95 60 85 40C75 20 60 8 50 5Z" /></svg>
 
       <div className={`container ${styles.wrap}`}>
         <Link to="/sorteos" className={styles.volver}>
@@ -74,9 +85,19 @@ export default function SorteoDetalle() {
               <div className={styles.mainBadge}>
                 <Badge estado={sorteo.estado} />
               </div>
+              {galeria.length > 1 && (
+                <>
+                  <button type="button" className={`${styles.navArrow} ${styles.navArrowLeft}`} onClick={irAnterior} aria-label="Foto anterior">
+                    <Icon name="chevronLeft" size={18} strokeWidth={2.4} />
+                  </button>
+                  <button type="button" className={`${styles.navArrow} ${styles.navArrowRight}`} onClick={irSiguiente} aria-label="Foto siguiente">
+                    <Icon name="chevronRight" size={18} strokeWidth={2.4} />
+                  </button>
+                </>
+              )}
             </div>
             <div className={styles.thumbs}>
-              {(sorteo.galeria && sorteo.galeria.length > 0 ? sorteo.galeria : [1, 2, 3, 4]).map((g, i) => (
+              {galeria.map((g, i) => (
                 <button
                   key={typeof g === "string" ? g : i}
                   type="button"
@@ -96,18 +117,22 @@ export default function SorteoDetalle() {
 
             <div className={styles.stats}>
               <div className={styles.stat}>
+                <span className={styles.statIcon}><Icon name="users" size={17} /></span>
                 <strong>{sorteo.vendidos}</strong>
                 <span>Vendidos</span>
               </div>
               <div className={styles.stat}>
+                <span className={styles.statIcon}><Icon name="percent" size={17} /></span>
                 <strong>{pctVendido}%</strong>
                 <span>Vendido</span>
               </div>
               <div className={styles.stat}>
+                <span className={styles.statIcon}><Icon name="cart" size={17} /></span>
                 <strong>{CANTIDAD_MINIMA}</strong>
                 <span>Compra mínima</span>
               </div>
               <div className={styles.stat}>
+                <span className={styles.statIcon}><Icon name="ticket" size={17} /></span>
                 <strong>{formatMoney(sorteo.precio)}</strong>
                 <span>Por boleto</span>
               </div>
@@ -138,14 +163,14 @@ export default function SorteoDetalle() {
             {sorteo.estado !== "proximamente" ? (
               <>
                 <div className={styles.sorteoAvisoBox}>
-                  <Icon name="clock" size={15} /> Se sortea al vender el 100% de los boletos
+                  <Icon name="badgeCheck" size={15} /> Se sortea al vender el 100% de los boletos
                 </div>
                 <button
                   type="button"
                   className={`btn btn-primary btn-block ${styles.comprarBtn}`}
                   onClick={() => navigate(`/sorteos/${sorteo.id}/paquetes`)}
                 >
-                  Comprar boletos
+                  <Icon name="ticket" size={17} /> Comprar boletos <Icon name="arrowRight" size={16} />
                 </button>
               </>
             ) : (
@@ -173,6 +198,7 @@ export default function SorteoDetalle() {
             </div>
           </div>
         )}
+      </div>
       </div>
 
       <Footer />

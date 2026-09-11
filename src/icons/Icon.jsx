@@ -41,6 +41,7 @@ const paths = {
   instagram: "M7 2h10a5 5 0 0 1 5 5v10a5 5 0 0 1-5 5H7a5 5 0 0 1-5-5V7a5 5 0 0 1 5-5ZM8.5 12a3.5 3.5 0 1 1 7 0 3.5 3.5 0 0 1-7 0ZM17.5 6.5h.01",
   facebook: "M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3Z",
   tiktok: "M9 3v10.5a2.5 2.5 0 1 1-2.5-2.5c.2 0 .3 0 .5.03V8.5a5 5 0 1 0 5 5V9.24a6.5 6.5 0 0 0 4 1.36V7.6a4 4 0 0 1-4-4H9Z",
+  percent: "M19 5 5 19M7.5 9a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3Zm9 9a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3Z",
 };
 
 export default function Icon({ name, size = 20, strokeWidth = 1.8, className = "" }) {
