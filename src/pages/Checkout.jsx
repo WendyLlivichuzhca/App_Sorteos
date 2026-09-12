@@ -86,6 +86,28 @@ export default function Checkout() {
   const [qrPagos, setQrPagos] = useState([]);
   const [metodosHabilitados, setMetodosHabilitados] = useState({ transferencia: true, payphone: true, qr: false });
   const [aceptaTerminos, setAceptaTerminos] = useState(false);
+  const [provinciasExtranjero, setProvinciasExtranjero] = useState([]);
+
+  useEffect(() => {
+    if (form.pais === "Ecuador") {
+      setProvinciasExtranjero([]);
+      return;
+    }
+    const paisSeleccionado = paises.find((p) => p.nombre === form.pais);
+    if (!paisSeleccionado || !paisSeleccionado.isoCode) {
+      setProvinciasExtranjero([]);
+      return;
+    }
+    let cancelado = false;
+    import("country-state-city").then(({ State }) => {
+      if (cancelado) return;
+      setProvinciasExtranjero(State.getStatesOfCountry(paisSeleccionado.isoCode));
+    });
+    return () => {
+      cancelado = true;
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [form.pais]);
 
   useEffect(() => {
     if (!metodoPago || metodoPago === "deuna" || metodoPago === "paypal" || metodoPago === "tarjeta") {
@@ -604,7 +626,7 @@ export default function Checkout() {
                 }}
               >
                 {paises.map((p) => (
-                  <option key={p} value={p}>{p}</option>
+                  <option key={p.nombre} value={p.nombre}>{p.nombre}</option>
                 ))}
               </select>
             </label>
@@ -617,6 +639,15 @@ export default function Checkout() {
                     {PROVINCIAS_ECUADOR.map((p) => (
                       <option key={p} value={p}>
                         {p}
+                      </option>
+                    ))}
+                  </select>
+                ) : provinciasExtranjero.length > 0 ? (
+                  <select value={form.provincia} onChange={handleChange("provincia")}>
+                    <option value="">Selecciona...</option>
+                    {provinciasExtranjero.map((p) => (
+                      <option key={p.isoCode} value={p.name}>
+                        {p.name}
                       </option>
                     ))}
                   </select>
