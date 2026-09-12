@@ -180,6 +180,7 @@ export default function Checkout() {
     errs.celular = validarCampoVivo("celular", form.celular);
     if (!form.direccion.trim()) errs.direccion = "Ingresa tu dirección de la calle";
     if (!form.ciudad.trim()) errs.ciudad = "Ingresa tu ciudad";
+    if (form.pais !== "Ecuador" && !form.provincia.trim()) errs.provincia = "Ingresa tu provincia, estado o región";
 
     Object.keys(errs).forEach((k) => !errs[k] && delete errs[k]);
     setErrores(errs);
@@ -591,7 +592,17 @@ export default function Checkout() {
 
             <label className={styles.field}>
               <span>País / Región *</span>
-              <select value={form.pais} onChange={handleChange("pais")}>
+              <select
+                value={form.pais}
+                onChange={(e) => {
+                  const nuevoPais = e.target.value;
+                  setForm((f) => ({
+                    ...f,
+                    pais: nuevoPais,
+                    provincia: nuevoPais === "Ecuador" ? PROVINCIAS_ECUADOR[0] : "",
+                  }));
+                }}
+              >
                 {paises.map((p) => (
                   <option key={p} value={p}>{p}</option>
                 ))}
@@ -600,14 +611,25 @@ export default function Checkout() {
 
             <div className={styles.rowTwo}>
               <label className={styles.field}>
-                <span>Provincia *</span>
-                <select value={form.provincia} onChange={handleChange("provincia")}>
-                  {PROVINCIAS_ECUADOR.map((p) => (
-                    <option key={p} value={p}>
-                      {p}
-                    </option>
-                  ))}
-                </select>
+                <span>{form.pais === "Ecuador" ? "Provincia *" : "Provincia / Estado *"}</span>
+                {form.pais === "Ecuador" ? (
+                  <select value={form.provincia} onChange={handleChange("provincia")}>
+                    {PROVINCIAS_ECUADOR.map((p) => (
+                      <option key={p} value={p}>
+                        {p}
+                      </option>
+                    ))}
+                  </select>
+                ) : (
+                  <input
+                    type="text"
+                    placeholder="Provincia, estado o región"
+                    value={form.provincia}
+                    onChange={handleChange("provincia")}
+                    className={errores.provincia ? styles.inputError : ""}
+                  />
+                )}
+                {errores.provincia && <em>{errores.provincia}</em>}
               </label>
 
               <label className={styles.field}>
