@@ -143,6 +143,44 @@
   border-color: #1F8A5A !important;
 }
 
+.phoneInput,
+.phoneInputError,
+.phoneInputValid {
+  border: 1px solid #D8DFDC;
+  border-radius: 8px;
+  padding: 10px 12px;
+  background: #FFFFFF;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.phoneInput:focus-within {
+  border-color: #1F8A5A;
+}
+
+.phoneInputError {
+  border-color: #DC2626 !important;
+}
+
+.phoneInputValid {
+  border-color: #1F8A5A !important;
+}
+
+.phoneInput :global(.PhoneInputInput),
+.phoneInputError :global(.PhoneInputInput),
+.phoneInputValid :global(.PhoneInputInput) {
+  border: none;
+  outline: none;
+  font-size: 13.5px;
+  color: #101512;
+  background: transparent;
+}
+
+.phoneInput :global(.PhoneInputCountrySelectArrow),
+.phoneInputError :global(.PhoneInputCountrySelectArrow),
+.phoneInputValid :global(.PhoneInputCountrySelectArrow) {
+  color: #5B6660;
+}
+
 .inputIconWrap {
   position: relative;
 }

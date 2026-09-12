@@ -11,7 +11,7 @@ import { formatMoney } from "../utils/format.js";
 import { validarDocumento } from "../utils/validarDocumento.js";
 import { validarNombre, limpiarNombre } from "../utils/validarNombre.js";
 import { validarCorreo } from "../utils/validarCorreo.js";
-import { validarTelefono, limpiarTelefono } from "../utils/validarTelefono.js";
+import "react-phone-number-input/style.css";
 import styles from "./Checkout.module.css";
 
 const DOCUMENTO_INFO = {
@@ -87,6 +87,17 @@ export default function Checkout() {
   const [metodosHabilitados, setMetodosHabilitados] = useState({ transferencia: true, payphone: true, qr: false });
   const [aceptaTerminos, setAceptaTerminos] = useState(false);
   const [provinciasExtranjero, setProvinciasExtranjero] = useState([]);
+  const [telefonoLib, setTelefonoLib] = useState(null);
+
+  useEffect(() => {
+    let activo = true;
+    import("react-phone-number-input").then((mod) => {
+      if (activo) setTelefonoLib({ PhoneInput: mod.default, isValidPhoneNumber: mod.isValidPhoneNumber });
+    });
+    return () => {
+      activo = false;
+    };
+  }, []);
 
   useEffect(() => {
     if (form.pais === "Ecuador") {
@@ -156,8 +167,8 @@ export default function Checkout() {
   };
   const handleChangeNombre = (field) => (e) =>
     setForm((f) => ({ ...f, [field]: limpiarNombre(e.target.value) }));
-  const handleChangeTelefono = (field) => (e) =>
-    setForm((f) => ({ ...f, [field]: limpiarTelefono(e.target.value, f.pais) }));
+  const handleChangeCelular = (value) =>
+    setForm((f) => ({ ...f, celular: value || "" }));
 
   const validarCampoVivo = (field, valor) => {
     if (field === "cedula") {
@@ -178,8 +189,11 @@ export default function Checkout() {
       return valor === form.correo ? "" : "Los correos no coinciden";
     }
     if (field === "celular") {
-      const t = validarTelefono(valor, form.pais);
-      return t.valido ? "" : t.mensaje;
+      if (!valor) return "Ingresa tu número de teléfono";
+      if (telefonoLib && !telefonoLib.isValidPhoneNumber(valor)) {
+        return "Ingresa un número de teléfono válido";
+      }
+      return "";
     }
     return "";
   };
@@ -577,25 +591,24 @@ export default function Checkout() {
 
             <label className={styles.field}>
               <span>Teléfono *</span>
-              <div className={styles.inputIconWrap}>
-                <input
-                  type="tel"
-                  placeholder={form.pais === "Ecuador" ? "Ej: 0991234567" : "Ej: 13477920027"}
-                  maxLength={form.pais === "Ecuador" ? 10 : 15}
+              {telefonoLib ? (
+                <telefonoLib.PhoneInput
+                  international
+                  defaultCountry="EC"
                   value={form.celular}
-                  onChange={handleChangeTelefono("celular")}
+                  onChange={handleChangeCelular}
                   onBlur={handleBlurVivo("celular")}
                   className={
                     tocados.celular && errores.celular
-                      ? styles.inputError
+                      ? styles.phoneInputError
                       : esCampoValido("celular")
-                      ? styles.inputValid
-                      : ""
+                      ? styles.phoneInputValid
+                      : styles.phoneInput
                   }
                 />
-                {tocados.celular && errores.celular && <Icon name="x" size={16} className={styles.iconInvalid} />}
-                {esCampoValido("celular") && <Icon name="check" size={16} className={styles.iconValid} />}
-              </div>
+              ) : (
+                <input type="tel" disabled placeholder="Cargando..." />
+              )}
               {tocados.celular && errores.celular && <em>{errores.celular}</em>}
               {esCampoValido("celular") && <em className={styles.textoValido}>¡Correcto!</em>}
             </label>
