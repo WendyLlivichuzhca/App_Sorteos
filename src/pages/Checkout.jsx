@@ -5,6 +5,7 @@ import Footer from "../components/Footer.jsx";
 import Icon from "../icons/Icon.jsx";
 import { useApp } from "../context/AppContext.jsx";
 import { metodosPago as todosLosMetodosPago } from "../data/sorteos.js";
+import { paises } from "../data/paises.js";
 import { getConfiguracion, iniciarPagoPayphone } from "../services/api.js";
 import { formatMoney } from "../utils/format.js";
 import { validarDocumento } from "../utils/validarDocumento.js";
@@ -134,7 +135,7 @@ export default function Checkout() {
   const handleChangeNombre = (field) => (e) =>
     setForm((f) => ({ ...f, [field]: limpiarNombre(e.target.value) }));
   const handleChangeTelefono = (field) => (e) =>
-    setForm((f) => ({ ...f, [field]: limpiarTelefono(e.target.value) }));
+    setForm((f) => ({ ...f, [field]: limpiarTelefono(e.target.value, f.pais) }));
 
   const validarCampoVivo = (field, valor) => {
     if (field === "cedula") {
@@ -155,7 +156,7 @@ export default function Checkout() {
       return valor === form.correo ? "" : "Los correos no coinciden";
     }
     if (field === "celular") {
-      const t = validarTelefono(valor);
+      const t = validarTelefono(valor, form.pais);
       return t.valido ? "" : t.mensaje;
     }
     return "";
@@ -556,8 +557,8 @@ export default function Checkout() {
               <div className={styles.inputIconWrap}>
                 <input
                   type="tel"
-                  placeholder="Ej: 0991234567"
-                  maxLength={10}
+                  placeholder={form.pais === "Ecuador" ? "Ej: 0991234567" : "Ej: 13477920027"}
+                  maxLength={form.pais === "Ecuador" ? 10 : 15}
                   value={form.celular}
                   onChange={handleChangeTelefono("celular")}
                   onBlur={handleBlurVivo("celular")}
@@ -590,7 +591,11 @@ export default function Checkout() {
 
             <label className={styles.field}>
               <span>País / Región *</span>
-              <input type="text" value={form.pais} readOnly className={styles.readOnlyInput} />
+              <select value={form.pais} onChange={handleChange("pais")}>
+                {paises.map((p) => (
+                  <option key={p} value={p}>{p}</option>
+                ))}
+              </select>
             </label>
 
             <div className={styles.rowTwo}>
