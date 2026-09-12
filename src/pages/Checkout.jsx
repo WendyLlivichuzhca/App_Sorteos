@@ -91,8 +91,17 @@ export default function Checkout() {
 
   useEffect(() => {
     let activo = true;
-    import("react-phone-number-input").then((mod) => {
-      if (activo) setTelefonoLib({ PhoneInput: mod.default, isValidPhoneNumber: mod.isValidPhoneNumber });
+    Promise.all([
+      import("react-phone-number-input"),
+      import("react-phone-number-input/locale/es.json"),
+    ]).then(([mod, esLabels]) => {
+      if (activo) {
+        setTelefonoLib({
+          PhoneInput: mod.default,
+          isValidPhoneNumber: mod.isValidPhoneNumber,
+          labels: esLabels.default || esLabels,
+        });
+      }
     });
     return () => {
       activo = false;
@@ -595,6 +604,7 @@ export default function Checkout() {
                 <telefonoLib.PhoneInput
                   international
                   defaultCountry="EC"
+                  labels={telefonoLib.labels}
                   value={form.celular}
                   onChange={handleChangeCelular}
                   onBlur={handleBlurVivo("celular")}
