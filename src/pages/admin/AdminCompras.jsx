@@ -5,7 +5,7 @@ import { getAdminCompras, updateEstadoCompra } from "../../services/api.js";
 import { formatMoney } from "../../utils/format.js";
 import styles from "./AdminSorteos.module.css";
 
-const POR_PAGINA = 30;
+const POR_PAGINA = 10;
 
 export default function AdminCompras() {
   const [list, setList] = useState([]);
