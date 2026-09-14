@@ -192,6 +192,8 @@ export const toggleBloqueoCliente = (id, bloqueado) =>
     body: JSON.stringify({ bloqueado }),
   });
 
+export const eliminarCliente = (id) => fetchApi(`/admin/clientes/${id}`, { method: 'DELETE' });
+
 // Reportes (admin) API
 export const getAdminReportes = () => fetchApi('/admin/reportes');
 

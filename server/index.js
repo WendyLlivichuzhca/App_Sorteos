@@ -1282,6 +1282,31 @@ app.put('/api/admin/clientes/:id/bloqueo', requireAuth, async (req, res) => {
   }
 });
 
+// Borrar un cliente borra en cascada todas sus compras (asi esta definida la
+// tabla). Para no perder ventas reales por accidente -- por ejemplo al
+// limpiar clientes de prueba -- se bloquea el borrado si el cliente tiene
+// alguna compra aprobada, o un pago de PayPhone real sin boletos entregados
+// todavia pendiente de resolver.
+app.delete('/api/admin/clientes/:id', requireAuth, async (req, res) => {
+  try {
+    const pool = getPool();
+    const [compras] = await pool.query(
+      "SELECT COUNT(*) as count FROM compras WHERE cliente_id = ? AND estado IN ('aprobado', 'pagado_sin_boletos')",
+      [req.params.id]
+    );
+    if (compras[0].count > 0) {
+      return res.status(400).json({
+        error: 'Este cliente tiene compras aprobadas o un pago real sin resolver -- no se puede eliminar para no perder ese historial. Si quieres, bloquéalo en su lugar.',
+      });
+    }
+    const [resultado] = await pool.query('DELETE FROM clientes WHERE id = ?', [req.params.id]);
+    if (resultado.affectedRows === 0) return res.status(404).json({ error: 'Cliente no encontrado' });
+    res.json({ message: 'Cliente eliminado' });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
 // Reportes (admin)
 app.get('/api/admin/reportes', requireAuth, async (req, res) => {
   try {

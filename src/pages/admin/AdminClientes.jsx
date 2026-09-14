@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import AdminLayout from "../../components/admin/AdminLayout.jsx";
 import Icon from "../../icons/Icon.jsx";
-import { getAdminClientes, getClienteHistorial, toggleBloqueoCliente } from "../../services/api.js";
+import { getAdminClientes, getClienteHistorial, toggleBloqueoCliente, eliminarCliente } from "../../services/api.js";
 import { formatMoney } from "../../utils/format.js";
 import styles from "./AdminSorteos.module.css";
 
@@ -38,6 +38,16 @@ export default function AdminClientes() {
       cargarClientes();
     } catch (err) {
       alert(err.message || "No se pudo actualizar el bloqueo del cliente");
+    }
+  };
+
+  const eliminar = async (c) => {
+    if (!window.confirm(`¿Eliminar a "${c.nombre}" y todo su historial de compras? Esto no se puede deshacer.`)) return;
+    try {
+      await eliminarCliente(c.id);
+      cargarClientes();
+    } catch (err) {
+      alert(err.message || "No se pudo eliminar el cliente");
     }
   };
 
@@ -143,6 +153,9 @@ export default function AdminClientes() {
                     </button>
                     <button type="button" className={styles.iconBtn} onClick={() => toggleBloqueo(c)} title={c.bloqueado ? "Desbloquear" : "Bloquear"}>
                       <Icon name={c.bloqueado ? "unlock" : "ban"} size={14} />
+                    </button>
+                    <button type="button" className={styles.iconBtn} onClick={() => eliminar(c)} title="Eliminar cliente">
+                      <Icon name="trash" size={14} />
                     </button>
                   </div>
                 </td>
