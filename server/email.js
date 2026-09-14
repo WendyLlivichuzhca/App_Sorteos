@@ -54,3 +54,31 @@ export async function enviarCorreoNumerosComprados({ correo, nombre, sorteoNombr
     console.error('[email] Error enviando correo de números comprados:', err.message);
   }
 }
+
+// Avisa a un correo administrativo (ADMIN_ALERT_EMAIL) de un problema que
+// necesita revisión manual. Si esa variable no está configurada, se salta en
+// silencio -- el aviso en consola (console.error donde se llama) sigue
+// quedando igual para cuando se revisen los logs del servidor.
+export async function enviarCorreoAlertaAdmin({ asunto, mensaje }) {
+  const t = getTransporter();
+  const destino = process.env.ADMIN_ALERT_EMAIL;
+  if (!t || !destino) return;
+
+  const nombreEmpresa = process.env.SMTP_FROM_NAME || 'Sorteos en Línea';
+
+  try {
+    await t.sendMail({
+      from: `"${nombreEmpresa}" <${process.env.SMTP_USER}>`,
+      to: destino,
+      subject: asunto,
+      html: `
+        <div style="font-family: Arial, sans-serif; max-width: 480px; margin: 0 auto; color: #1a1a1a;">
+          <h2 style="color:#c0392b;">⚠️ Atención requerida</h2>
+          <p style="white-space: pre-line;">${mensaje}</p>
+        </div>
+      `,
+    });
+  } catch (err) {
+    console.error('[email] Error enviando alerta admin:', err.message);
+  }
+}

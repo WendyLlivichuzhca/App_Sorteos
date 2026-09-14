@@ -14,7 +14,7 @@ import { validarDocumento } from './validarDocumento.js';
 import { validarNombre } from './validarNombre.js';
 import { validarCorreo } from './validarCorreo.js';
 import { validarTelefono } from './validarTelefono.js';
-import { enviarCorreoNumerosComprados } from './email.js';
+import { enviarCorreoNumerosComprados, enviarCorreoAlertaAdmin } from './email.js';
 
 const PAYPHONE_API_BASE = 'https://pay.payphonetodoesposible.com';
 
@@ -65,41 +65,116 @@ const upload = multer({
 // Aprueba/rechaza una compra: marca boletos vendido/disponible y ajusta sorteos.vendidos.
 // Se usa tanto desde el panel admin como desde la confirmacion automatica de PayPhone,
 // para que el comportamiento sea identico sin importar quien aprueba.
+//
+// Las compras con PayPhone NO reservan boletos especificos al crearse (ver
+// /api/compras/checkout) -- para no dejar boletos atascados en "reservado"
+// para siempre si el cliente abandona el pago a mitad de camino. Por eso,
+// aqui mismo -- ya con el pago confirmado como real -- es donde recien se
+// eligen y apartan los numeros, de forma atomica (con bloqueo de fila) para
+// que sea imposible que dos compras se lleven el mismo boleto.
+//
+// Caso raro pero posible: que justo en ese instante ya no queden boletos
+// suficientes (alguien mas se los llevo mientras este cliente pagaba con
+// PayPhone). Como el cobro con PayPhone ya es real y no se puede deshacer
+// desde aqui, la compra se deja en un estado aparte ("pagado_sin_boletos")
+// bien visible en el panel, y se avisa por correo -- nunca se finge una
+// venta que no se pudo completar.
 async function aprobarCompra(pool, compraId) {
-  const [compras] = await pool.query('SELECT * FROM compras WHERE id = ?', [compraId]);
-  if (compras.length === 0) return null;
-  const compra = compras[0];
-  if (compra.estado !== 'pendiente') return compra; // ya procesada, no duplicar
+  const conn = await pool.getConnection();
+  try {
+    await conn.beginTransaction();
 
-  await pool.query("UPDATE compras SET estado = 'aprobado' WHERE id = ?", [compraId]);
-  await pool.query("UPDATE boletos SET estado = 'vendido' WHERE compra_id = ?", [compraId]);
-  await pool.query('UPDATE sorteos SET vendidos = vendidos + ? WHERE id = ?', [compra.cantidad_boletos, compra.sorteo_id]);
+    const [compras] = await conn.query('SELECT * FROM compras WHERE id = ? FOR UPDATE', [compraId]);
+    if (compras.length === 0) {
+      await conn.rollback();
+      return null;
+    }
+    const compra = compras[0];
+    if (compra.estado !== 'pendiente') {
+      await conn.rollback();
+      return compra; // ya procesada, no duplicar
+    }
 
-  // Revisa si alguno de los boletos recién vendidos coincide con un número premiado
-  // (premio instantáneo) todavía sin ganador, y lo marca automáticamente.
-  const [boletosVendidos] = await pool.query('SELECT numero FROM boletos WHERE compra_id = ?', [compraId]);
-  const numeros = boletosVendidos.map((b) => b.numero);
-  if (numeros.length > 0) {
-    const placeholders = numeros.map(() => '?').join(',');
-    await pool.query(
-      `UPDATE numeros_premiados SET ganado = 1, cliente_id = ?, cliente_nombre = ?, fecha_ganado = NOW()
-       WHERE sorteo_id = ? AND numero IN (${placeholders}) AND ganado = 0`,
-      [compra.cliente_id, compra.cliente_nombre, compra.sorteo_id, ...numeros]
-    );
+    const necesitaAsignarBoletos = compra.metodo_pago === 'payphone' && !compra.boletos_asignados;
+    let numerosAsignados;
+
+    if (necesitaAsignarBoletos) {
+      const [disponibles] = await conn.query(
+        "SELECT id, numero FROM boletos WHERE sorteo_id = ? AND estado = 'disponible' ORDER BY RAND() LIMIT ? FOR UPDATE",
+        [compra.sorteo_id, compra.cantidad_boletos]
+      );
+
+      if (disponibles.length < compra.cantidad_boletos) {
+        await conn.query("UPDATE compras SET estado = 'pagado_sin_boletos' WHERE id = ?", [compraId]);
+        await conn.commit();
+
+        console.error(
+          `🚨 PayPhone confirmo un pago real (orden ${compra.codigo}, $${compra.total_pagado}) pero ya no hay boletos ` +
+          `suficientes disponibles del sorteo "${compra.sorteo_nombre}" (se necesitaban ${compra.cantidad_boletos}). ` +
+          `Revisar manualmente y resolver con el cliente (reembolso u otro sorteo).`
+        );
+        enviarCorreoAlertaAdmin({
+          asunto: `⚠️ Pago recibido sin boletos disponibles — Orden ${compra.codigo}`,
+          mensaje:
+            `Un cliente pagó $${compra.total_pagado} con PayPhone por ${compra.cantidad_boletos} boletos del sorteo ` +
+            `"${compra.sorteo_nombre}" (orden ${compra.codigo}), pero justo en ese momento ya no había boletos ` +
+            `suficientes disponibles.\n\n` +
+            `Cliente: ${compra.cliente_nombre}\nCorreo: ${compra.cliente_correo}\nTeléfono: ${compra.cliente_celular}\n\n` +
+            `El cobro con PayPhone ya se realizó de verdad. Revisa esta orden en el panel de administración ` +
+            `(aparece en rojo como "Pago sin boletos") y contacta al cliente para resolverlo -- reembolso desde el ` +
+            `panel de PayPhone, o asignarle boletos de otro sorteo si el cliente está de acuerdo.`,
+        });
+
+        return { ...compra, estado: 'pagado_sin_boletos' };
+      }
+
+      numerosAsignados = disponibles.map((b) => b.numero);
+      const ids = disponibles.map((b) => b.id);
+      await conn.query(
+        "UPDATE boletos SET estado = 'vendido', compra_id = ?, cliente_id = ? WHERE id IN (?) AND estado = 'disponible'",
+        [compraId, compra.cliente_id, ids]
+      );
+      await conn.query('UPDATE compras SET boletos_asignados = ? WHERE id = ?', [JSON.stringify(numerosAsignados), compraId]);
+    } else {
+      await conn.query("UPDATE boletos SET estado = 'vendido' WHERE compra_id = ?", [compraId]);
+      numerosAsignados =
+        typeof compra.boletos_asignados === 'string' ? JSON.parse(compra.boletos_asignados || '[]') : compra.boletos_asignados || [];
+    }
+
+    await conn.query("UPDATE compras SET estado = 'aprobado' WHERE id = ?", [compraId]);
+    await conn.query('UPDATE sorteos SET vendidos = vendidos + ? WHERE id = ?', [compra.cantidad_boletos, compra.sorteo_id]);
+
+    // Revisa si alguno de los boletos recién vendidos coincide con un número premiado
+    // (premio instantáneo) todavía sin ganador, y lo marca automáticamente.
+    if (numerosAsignados.length > 0) {
+      const placeholders = numerosAsignados.map(() => '?').join(',');
+      await conn.query(
+        `UPDATE numeros_premiados SET ganado = 1, cliente_id = ?, cliente_nombre = ?, fecha_ganado = NOW()
+         WHERE sorteo_id = ? AND numero IN (${placeholders}) AND ganado = 0`,
+        [compra.cliente_id, compra.cliente_nombre, compra.sorteo_id, ...numerosAsignados]
+      );
+    }
+
+    await conn.commit();
+
+    // No se espera (await) esta promesa a propósito: si el correo falla o tarda,
+    // no debe retrasar ni tumbar la aprobación de la compra en sí.
+    enviarCorreoNumerosComprados({
+      correo: compra.cliente_correo,
+      nombre: compra.cliente_nombre,
+      sorteoNombre: compra.sorteo_nombre,
+      codigo: compra.codigo,
+      numeros: numerosAsignados,
+      totalPagado: compra.total_pagado,
+    });
+
+    return { ...compra, estado: 'aprobado', boletos_asignados: JSON.stringify(numerosAsignados) };
+  } catch (err) {
+    await conn.rollback();
+    throw err;
+  } finally {
+    conn.release();
   }
-
-  // No se espera (await) esta promesa a propósito: si el correo falla o tarda,
-  // no debe retrasar ni tumbar la aprobación de la compra en sí.
-  enviarCorreoNumerosComprados({
-    correo: compra.cliente_correo,
-    nombre: compra.cliente_nombre,
-    sorteoNombre: compra.sorteo_nombre,
-    codigo: compra.codigo,
-    numeros,
-    totalPagado: compra.total_pagado,
-  });
-
-  return { ...compra, estado: 'aprobado' };
 }
 
 async function rechazarCompra(pool, compraId, estadoFinal = 'rechazado') {
@@ -748,19 +823,42 @@ app.post('/api/compras/checkout', async (req, res) => {
       clienteId = clientes[0].id;
     }
 
-    // 2. Lock and pick random available tickets inside the transaction
-    const [disponibles] = await conn.query(
-      "SELECT id, numero FROM boletos WHERE sorteo_id = ? AND estado = 'disponible' ORDER BY RAND() LIMIT ? FOR UPDATE",
-      [sId, cant]
-    );
+    const esPayphone = (metodoPago || 'transferencia') === 'payphone';
 
-    if (disponibles.length < cant) {
-      await conn.rollback();
-      return res.status(409).json({ error: 'No hay suficientes boletos disponibles para este sorteo' });
+    // 2. Lock and pick random available tickets inside the transaction.
+    // Con PayPhone NO se reservan boletos especificos todavia: el pago con
+    // tarjeta puede abandonarse a mitad de camino (se sale de la pagina, se
+    // le va el internet, etc.), y antes eso dejaba esos boletos "reservado"
+    // para siempre sin que nadie los liberara. Ahora, para PayPhone, solo se
+    // comprueba que ahora mismo haya suficientes disponibles (para no
+    // mandarlo a pagar algo ya agotado); los boletos reales recien se eligen
+    // y apartan en aprobarCompra(), cuando PayPhone confirma que el pago fue
+    // de verdad aprobado.
+    let numerosAsignados = [];
+    let boletosIds = [];
+
+    if (esPayphone) {
+      const [cantRows] = await conn.query(
+        "SELECT COUNT(*) as disponibles FROM boletos WHERE sorteo_id = ? AND estado = 'disponible'",
+        [sId]
+      );
+      if (cantRows[0].disponibles < cant) {
+        await conn.rollback();
+        return res.status(409).json({ error: 'No hay suficientes boletos disponibles para este sorteo' });
+      }
+    } else {
+      const [disponibles] = await conn.query(
+        "SELECT id, numero FROM boletos WHERE sorteo_id = ? AND estado = 'disponible' ORDER BY RAND() LIMIT ? FOR UPDATE",
+        [sId, cant]
+      );
+      if (disponibles.length < cant) {
+        await conn.rollback();
+        return res.status(409).json({ error: 'No hay suficientes boletos disponibles para este sorteo' });
+      }
+      numerosAsignados = disponibles.map((b) => b.numero);
+      boletosIds = disponibles.map((b) => b.id);
     }
 
-    const numerosAsignados = disponibles.map((b) => b.numero);
-    const boletosIds = disponibles.map((b) => b.id);
     const [tramos] = await conn.query('SELECT cantidad_minima, porcentaje FROM descuentos_volumen');
     const totalPagado = calcularTotal(parseFloat(sorteo.precio), cant, tramos);
     const codigoOrden = `ORD-${Math.floor(100000 + Math.random() * 900000)}`;
@@ -782,21 +880,24 @@ app.post('/api/compras/checkout', async (req, res) => {
         cant,
         totalPagado,
         metodoPago || 'transferencia',
-        JSON.stringify(numerosAsignados),
+        esPayphone ? null : JSON.stringify(numerosAsignados),
       ]
     );
 
     const compraId = insCompra.insertId;
 
-    // 4. Claim the tickets atomically — re-checks estado='disponible' to guard against races
-    const [updateResult] = await conn.query(
-      "UPDATE boletos SET estado = 'reservado', compra_id = ?, cliente_id = ? WHERE id IN (?) AND estado = 'disponible'",
-      [compraId, clienteId, boletosIds]
-    );
+    // 4. Claim the tickets atomically — re-checks estado='disponible' to guard against races.
+    // Con PayPhone no hay nada que reclamar todavia (ver punto 2).
+    if (!esPayphone) {
+      const [updateResult] = await conn.query(
+        "UPDATE boletos SET estado = 'reservado', compra_id = ?, cliente_id = ? WHERE id IN (?) AND estado = 'disponible'",
+        [compraId, clienteId, boletosIds]
+      );
 
-    if (updateResult.affectedRows !== cant) {
-      await conn.rollback();
-      return res.status(409).json({ error: 'Algunos boletos ya no están disponibles, intenta de nuevo' });
+      if (updateResult.affectedRows !== cant) {
+        await conn.rollback();
+        return res.status(409).json({ error: 'Algunos boletos ya no están disponibles, intenta de nuevo' });
+      }
     }
 
     await conn.commit();
@@ -1007,10 +1108,19 @@ app.post('/api/compras/payphone/confirmar', async (req, res) => {
     const pagoValido = confirmRes.ok && confirmData.transactionStatus === 'Approved' && montoCoincide && codigoCoincide;
     let aprobado = false;
     let revisarManualmente = false;
+    let compraFinal = compra;
     if (pagoValido) {
       if (compra.estado === 'pendiente') {
-        await aprobarCompra(pool, compra.id);
-        aprobado = true;
+        const resultado = await aprobarCompra(pool, compra.id);
+        if (resultado && resultado.estado === 'aprobado') {
+          aprobado = true;
+          compraFinal = resultado;
+        } else {
+          // aprobarCompra no pudo completar la asignacion (ya no habia boletos
+          // suficientes en ese instante -- caso raro con dinero real de por
+          // medio). Se avisa igual que el caso de abajo, para resolverlo a mano.
+          revisarManualmente = true;
+        }
       } else {
         revisarManualmente = true;
         // El pago es real y valido, pero esta compra ya no esta "pendiente"
@@ -1032,10 +1142,13 @@ app.post('/api/compras/payphone/confirmar', async (req, res) => {
       aprobado,
       revisarManualmente,
       compra: {
-        codigo: compra.codigo,
-        sorteoNombre: compra.sorteo_nombre,
-        total: parseFloat(compra.total_pagado),
-        boletos: typeof compra.boletos_asignados === 'string' ? JSON.parse(compra.boletos_asignados || '[]') : compra.boletos_asignados || [],
+        codigo: compraFinal.codigo,
+        sorteoNombre: compraFinal.sorteo_nombre,
+        total: parseFloat(compraFinal.total_pagado),
+        boletos:
+          typeof compraFinal.boletos_asignados === 'string'
+            ? JSON.parse(compraFinal.boletos_asignados || '[]')
+            : compraFinal.boletos_asignados || [],
       },
     });
   } catch (err) {

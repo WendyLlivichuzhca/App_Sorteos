@@ -88,6 +88,7 @@ export default function AdminCompras() {
             <option value="pendiente">Pendiente</option>
             <option value="aprobado">Aprobado</option>
             <option value="rechazado">Rechazado</option>
+            <option value="pagado_sin_boletos">⚠️ Pago sin boletos</option>
           </select>
         </div>
         <table className={styles.table}>
@@ -119,8 +120,19 @@ export default function AdminCompras() {
                 <td><strong>{formatMoney(c.total)}</strong></td>
                 <td><span className={styles.categoryBadge}>{c.metodo}</span></td>
                 <td>
-                  <span className={`${styles.statusPill} ${c.estado === "aprobado" ? styles.activo : c.estado === "pendiente" ? styles.proximamente : styles.agotado}`}>
-                    {c.estado.toUpperCase()}
+                  <span
+                    className={`${styles.statusPill} ${
+                      c.estado === "aprobado"
+                        ? styles.activo
+                        : c.estado === "pendiente"
+                        ? styles.proximamente
+                        : c.estado === "pagado_sin_boletos"
+                        ? styles.finalizado
+                        : styles.agotado
+                    }`}
+                    title={c.estado === "pagado_sin_boletos" ? "El cliente pagó de verdad con PayPhone pero ya no había boletos disponibles en ese momento. Revisar y resolver a mano." : undefined}
+                  >
+                    {c.estado === "pagado_sin_boletos" ? "⚠️ PAGO SIN BOLETOS" : c.estado.toUpperCase()}
                   </span>
                 </td>
                 <td>
