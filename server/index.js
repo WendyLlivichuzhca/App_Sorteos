@@ -1239,7 +1239,7 @@ app.get('/api/admin/clientes', requireAuth, async (req, res) => {
     const pool = getPool();
     const [rows] = await pool.query(`
       SELECT cl.*,
-        COUNT(co.id) AS compras,
+        COALESCE(SUM(CASE WHEN co.estado = 'aprobado' THEN 1 ELSE 0 END), 0) AS compras,
         COALESCE(SUM(CASE WHEN co.estado = 'aprobado' THEN co.total_pagado ELSE 0 END), 0) AS total_gastado
       FROM clientes cl
       LEFT JOIN compras co ON co.cliente_id = cl.id
