@@ -31,10 +31,14 @@ export default function AdminCompras() {
   }, [filtroEstado]);
 
   const cambiarEstado = async (compra, estado) => {
-    const mensaje =
-      estado === "aprobado"
-        ? `¿Confirmas que el pago de ${formatMoney(compra.total)} de "${compra.comprador}" (orden ${compra.codigo}) ya llegó a tu cuenta? Al aprobar, los boletos quedan marcados como vendidos.`
-        : `¿Seguro que quieres rechazar la orden ${compra.codigo} de "${compra.comprador}"? Sus boletos volverán a estar disponibles.`;
+    let mensaje;
+    if (estado === "aprobado") {
+      mensaje = `¿Confirmas que el pago de ${formatMoney(compra.total)} de "${compra.comprador}" (orden ${compra.codigo}) ya llegó a tu cuenta? Al aprobar, los boletos quedan marcados como vendidos.`;
+    } else if (compra.estado === "pago_abandonado") {
+      mensaje = `¿Descartar la orden ${compra.codigo} de "${compra.comprador}"? El cliente nunca completó el pago, así que no hay boletos que liberar — solo se limpia el registro.`;
+    } else {
+      mensaje = `¿Seguro que quieres rechazar la orden ${compra.codigo} de "${compra.comprador}"? Sus boletos volverán a estar disponibles.`;
+    }
     if (!window.confirm(mensaje)) return;
     try {
       await updateEstadoCompra(compra.id, estado);
@@ -89,6 +93,7 @@ export default function AdminCompras() {
             <option value="aprobado">Aprobado</option>
             <option value="rechazado">Rechazado</option>
             <option value="pagado_sin_boletos">⚠️ Pago sin boletos</option>
+            <option value="pago_abandonado">Pago abandonado</option>
           </select>
         </div>
         <table className={styles.table}>
@@ -130,9 +135,19 @@ export default function AdminCompras() {
                         ? styles.finalizado
                         : styles.agotado
                     }`}
-                    title={c.estado === "pagado_sin_boletos" ? "El cliente pagó de verdad con PayPhone pero ya no había boletos disponibles en ese momento. Revisar y resolver a mano." : undefined}
+                    title={
+                      c.estado === "pagado_sin_boletos"
+                        ? "El cliente pagó de verdad con PayPhone pero ya no había boletos disponibles en ese momento. Revisar y resolver a mano."
+                        : c.estado === "pago_abandonado"
+                        ? "El cliente llenó sus datos y llegó hasta Payphone, pero nunca terminó de pagar (se salió, canceló, o se le cortó la conexión). No apartó ningún boleto — no necesita tu revisión."
+                        : undefined
+                    }
                   >
-                    {c.estado === "pagado_sin_boletos" ? "⚠️ PAGO SIN BOLETOS" : c.estado.toUpperCase()}
+                    {c.estado === "pagado_sin_boletos"
+                      ? "⚠️ PAGO SIN BOLETOS"
+                      : c.estado === "pago_abandonado"
+                      ? "PAGO ABANDONADO"
+                      : c.estado.toUpperCase()}
                   </span>
                 </td>
                 <td>
@@ -156,6 +171,16 @@ export default function AdminCompras() {
                           <Icon name="x" size={14} />
                         </button>
                       </>
+                    )}
+                    {c.estado === "pago_abandonado" && (
+                      <button
+                        type="button"
+                        className={styles.iconBtn}
+                        onClick={() => cambiarEstado(c, "rechazado")}
+                        title="Descartar (el cliente nunca pagó, no hay boletos que liberar)"
+                      >
+                        <Icon name="x" size={14} />
+                      </button>
                     )}
                     <button
                       type="button"

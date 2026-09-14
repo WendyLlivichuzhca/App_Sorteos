@@ -90,7 +90,7 @@ async function aprobarCompra(pool, compraId) {
       return null;
     }
     const compra = compras[0];
-    if (compra.estado !== 'pendiente') {
+    if (compra.estado !== 'pendiente' && compra.estado !== 'pago_abandonado') {
       await conn.rollback();
       return compra; // ya procesada, no duplicar
     }
@@ -181,7 +181,7 @@ async function rechazarCompra(pool, compraId, estadoFinal = 'rechazado') {
   const [compras] = await pool.query('SELECT * FROM compras WHERE id = ?', [compraId]);
   if (compras.length === 0) return null;
   const compra = compras[0];
-  if (compra.estado !== 'pendiente') return compra;
+  if (compra.estado !== 'pendiente' && compra.estado !== 'pago_abandonado') return compra;
 
   await pool.query('UPDATE compras SET estado = ? WHERE id = ?', [estadoFinal, compraId]);
   await pool.query("UPDATE boletos SET estado = 'disponible', compra_id = NULL, cliente_id = NULL WHERE compra_id = ?", [compraId]);
@@ -863,11 +863,16 @@ app.post('/api/compras/checkout', async (req, res) => {
     const totalPagado = calcularTotal(parseFloat(sorteo.precio), cant, tramos);
     const codigoOrden = `ORD-${Math.floor(100000 + Math.random() * 900000)}`;
 
-    // 3. Create purchase record
+    // 3. Create purchase record.
+    // Con PayPhone arranca directo como "pago_abandonado" en vez de "pendiente"
+    // -- todavia no sabemos si el cliente va a terminar de pagar, y ese estado
+    // deja claro en el panel que esta orden no necesita revision (no hay nada
+    // que aprobar todavia). Si el cliente si paga, PayPhone la mueve sola a
+    // "aprobado"; si no, se queda ahi sin molestar, sin haber apartado boletos.
     const [insCompra] = await conn.query(
       `INSERT INTO compras
        (codigo, sorteo_id, sorteo_nombre, cliente_id, cliente_nombre, cliente_cedula, cliente_correo, cliente_celular, cantidad_boletos, total_pagado, metodo_pago, estado, boletos_asignados)
-       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'pendiente', ?)`,
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
       [
         codigoOrden,
         sId,
@@ -880,6 +885,7 @@ app.post('/api/compras/checkout', async (req, res) => {
         cant,
         totalPagado,
         metodoPago || 'transferencia',
+        esPayphone ? 'pago_abandonado' : 'pendiente',
         esPayphone ? null : JSON.stringify(numerosAsignados),
       ]
     );
@@ -1029,7 +1035,7 @@ app.post('/api/compras/:id/payphone/iniciar', async (req, res) => {
     const [compras] = await pool.query('SELECT * FROM compras WHERE id = ?', [req.params.id]);
     if (compras.length === 0) return res.status(404).json({ error: 'Compra no encontrada' });
     const compra = compras[0];
-    if (compra.estado !== 'pendiente') {
+    if (compra.estado !== 'pago_abandonado') {
       return res.status(400).json({ error: 'Esta compra ya fue procesada' });
     }
 
@@ -1110,7 +1116,7 @@ app.post('/api/compras/payphone/confirmar', async (req, res) => {
     let revisarManualmente = false;
     let compraFinal = compra;
     if (pagoValido) {
-      if (compra.estado === 'pendiente') {
+      if (compra.estado === 'pago_abandonado') {
         const resultado = await aprobarCompra(pool, compra.id);
         if (resultado && resultado.estado === 'aprobado') {
           aprobado = true;
@@ -1123,18 +1129,18 @@ app.post('/api/compras/payphone/confirmar', async (req, res) => {
         }
       } else {
         revisarManualmente = true;
-        // El pago es real y valido, pero esta compra ya no esta "pendiente"
+        // El pago es real y valido, pero esta compra ya no esta "pago_abandonado"
         // (ya se habia marcado aprobada o rechazada antes, por ejemplo en un
         // primer intento fallido). No se vuelve a aprobar automaticamente
         // porque sus boletos originales pudieron haberse liberado y vendido
         // a otra persona mientras tanto -- se deja un aviso claro para
         // resolverlo a mano en vez de fingir un exito que no paso.
         console.error(
-          `🚨 PayPhone confirmo un pago real para la compra ${compra.codigo}, pero esa compra ya estaba en estado "${compra.estado}" (no pendiente). ` +
+          `🚨 PayPhone confirmo un pago real para la compra ${compra.codigo}, pero esa compra ya estaba en estado "${compra.estado}". ` +
           `Revisar manualmente: el cliente probablemente pago sin recibir boletos. payphone_transaction_id=${id}`
         );
       }
-    } else if (compra.estado === 'pendiente') {
+    } else if (compra.estado === 'pago_abandonado') {
       await rechazarCompra(pool, compra.id, 'rechazado');
     }
 
