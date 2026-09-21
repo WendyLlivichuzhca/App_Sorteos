@@ -36,13 +36,13 @@ export default function Navbar({ variant = "full", step }) {
   }, []);
 
   return (
-    <header className={`${styles.header} ${dark ? styles.dark : ""}`}>
+    <header className={`${styles.header} ${dark ? styles.dark : ""} ${variant === "checkout" ? styles.headerCheckout : ""}`}>
       <div className={`container ${styles.inner}`}>
         <Link to="/" className={styles.logo}>
           <span className={styles.logoIcon}>
             <img src={logoUrl || "/logo-icon.svg"} alt="" className={styles.logoImg} />
           </span>
-          {nombreEmpresa}
+          <span className={styles.logoText}>{nombreEmpresa}</span>
         </Link>
 
         {(variant === "full" || variant === "nav" || variant === "cart") && (
@@ -59,7 +59,8 @@ export default function Navbar({ variant = "full", step }) {
                 className={`btn btn-primary btn-sm ${styles.consultarBtn}`}
                 onClick={() => navigate("/consultar-boletos")}
               >
-                Consultar boletos
+                <span className={styles.btnLong}>Consultar boletos</span>
+                <span className={styles.btnShort}>Mis boletos</span>
               </button>
             </div>
           </>
@@ -69,9 +70,9 @@ export default function Navbar({ variant = "full", step }) {
           <>
             <ol className={styles.stepper}>
               {STEPS.map((s, i) => (
-                <li key={s.id} className={i <= stepIndex ? styles.stepDone : ""}>
+                <li key={s.id} className={`${i <= stepIndex ? styles.stepDone : ""} ${i === stepIndex ? styles.stepCurrent : ""}`}>
                   <span className={styles.stepDot}>{i < stepIndex ? <Icon name="check" size={12} strokeWidth={3} /> : i + 1}</span>
-                  {s.label}
+                  <span className={styles.stepLabel}>{s.label}</span>
                   {i < STEPS.length - 1 && <span className={styles.stepLine} />}
                 </li>
               ))}
@@ -82,7 +83,8 @@ export default function Navbar({ variant = "full", step }) {
                 className={`btn btn-primary btn-sm ${styles.consultarBtn}`}
                 onClick={() => navigate("/consultar-boletos")}
               >
-                Consultar boletos
+                <span className={styles.btnLong}>Consultar boletos</span>
+                <span className={styles.btnShort}>Mis boletos</span>
               </button>
             </div>
           </>

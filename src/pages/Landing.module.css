@@ -5,6 +5,7 @@
   position: relative;
   background: linear-gradient(160deg, #FFFFFF 0%, #F7FBF9 45%, #EEF8F2 100%);
   overflow: visible;
+  overflow-x: clip;
 }
 
 /* Formas orgánicas de fondo (blobs suaves) */

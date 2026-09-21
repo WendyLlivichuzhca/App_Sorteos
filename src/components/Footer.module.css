@@ -147,8 +147,24 @@
   color: rgba(255, 255, 255, 0.45);
 }
 
+.col a {
+  overflow-wrap: anywhere;
+}
+
 @media (max-width: 720px) {
   .inner {
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .brand {
+    grid-column: 1 / -1;
+  }
+}
+
+@media (max-width: 480px) {
+  .inner {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 24px;
+    padding: 22px 16px 28px;
   }
 }

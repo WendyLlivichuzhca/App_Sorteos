@@ -218,8 +218,101 @@
   display: inline-block;
 }
 
+.logoText {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.btnShort {
+  display: none;
+}
+
 @media (max-width: 860px) {
   .nav {
     display: none;
+  }
+}
+
+/* Celular: la cabecera se parte en dos filas (logo + botón arriba, pasos de
+   compra abajo) en vez de salirse de la pantalla. */
+@media (max-width: 640px) {
+  .inner {
+    height: auto;
+    min-height: 64px;
+    flex-wrap: wrap;
+    gap: 6px 10px;
+    padding-top: 9px;
+    padding-bottom: 9px;
+  }
+
+  .logo {
+    flex: 1 1 0;
+    min-width: 0;
+    font-size: 15px;
+  }
+
+  .logoIcon {
+    width: 40px;
+    height: 40px;
+  }
+
+  .actions {
+    margin-left: auto;
+    flex: none;
+  }
+
+  .consultarBtn {
+    padding: 8px 14px;
+    font-size: 13px;
+  }
+
+  .stepper {
+    order: 3;
+    flex: 1 0 100%;
+    margin-left: 0;
+    justify-content: center;
+    font-size: 12.5px;
+  }
+
+  .stepLine {
+    width: 20px;
+  }
+
+  .headerCheckout {
+    position: static;
+  }
+}
+
+@media (max-width: 480px) {
+  .btnLong {
+    display: none;
+  }
+
+  .btnShort {
+    display: inline;
+  }
+}
+
+@media (max-width: 380px) {
+  .stepper li:not(.stepCurrent) .stepLabel {
+    display: none;
+  }
+}
+
+@media (max-width: 360px) {
+  .logo {
+    font-size: 13px;
+    gap: 6px;
+  }
+
+  .logoIcon {
+    width: 36px;
+    height: 36px;
+  }
+
+  .consultarBtn {
+    padding: 7px 12px;
+    font-size: 12.5px;
   }
 }

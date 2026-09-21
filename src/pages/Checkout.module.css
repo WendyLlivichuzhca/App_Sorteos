@@ -241,6 +241,8 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 8px 12px;
   margin-bottom: 10px;
 }
 
@@ -762,7 +764,12 @@
 
 @media (max-width: 860px) {
   .grid {
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(0, 1fr);
     gap: 30px;
+  }
+
+  .colFacturacion,
+  .colPedidoPago {
+    min-width: 0;
   }
 }
