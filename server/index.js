@@ -3,6 +3,7 @@ import cors from 'cors';
 import multer from 'multer';
 import path from 'path';
 import fs from 'fs';
+import crypto from 'crypto';
 import jwt from 'jsonwebtoken';
 import bcrypt from 'bcryptjs';
 import fetch from 'node-fetch';
@@ -42,7 +43,52 @@ const uploadsDir = path.join(__dirname, 'uploads');
 if (!fs.existsSync(uploadsDir)) {
   fs.mkdirSync(uploadsDir, { recursive: true });
 }
-app.use('/uploads', express.static(uploadsDir));
+app.use('/uploads', express.static(uploadsDir, { maxAge: '30d' }));
+
+// Las fotos (galeria de sorteos, logo, QR de pago) llegaban incrustadas como
+// texto base64 dentro del JSON, y la pagina pesaba ~14 MB antes de mostrar
+// nada. Ahora se guardan como archivos y el JSON solo lleva su direccion; el
+// nombre sale del contenido, asi una misma foto nunca se guarda dos veces.
+const EXT_IMAGEN = { 'image/jpeg': 'jpg', 'image/png': 'png', 'image/webp': 'webp', 'image/gif': 'gif', 'image/svg+xml': 'svg' };
+
+function aArchivo(valor, carpeta) {
+  if (typeof valor !== 'string') return valor;
+  const m = valor.match(/^data:(image\/[a-z0-9.+-]+);base64,(.+)$/is);
+  if (!m || !EXT_IMAGEN[m[1].toLowerCase()]) return valor;
+  const buffer = Buffer.from(m[2], 'base64');
+  const hash = crypto.createHash('sha1').update(buffer).digest('hex').slice(0, 16);
+  const nombre = `${hash}.${EXT_IMAGEN[m[1].toLowerCase()]}`;
+  const dir = path.join(uploadsDir, carpeta);
+  fs.mkdirSync(dir, { recursive: true });
+  const destino = path.join(dir, nombre);
+  if (!fs.existsSync(destino)) fs.writeFileSync(destino, buffer);
+  return `/uploads/${carpeta}/${nombre}`;
+}
+
+async function migrarImagenesAArchivos() {
+  const pool = getPool();
+  const [sorteos] = await pool.query('SELECT id, galeria FROM sorteos');
+  for (const s of sorteos) {
+    const galeria = typeof s.galeria === 'string' ? JSON.parse(s.galeria || '[]') : s.galeria || [];
+    if (!galeria.some((g) => typeof g === 'string' && g.startsWith('data:'))) continue;
+    await pool.query('UPDATE sorteos SET galeria = ? WHERE id = ?', [JSON.stringify(galeria.map((g) => aArchivo(g, 'galeria'))), s.id]);
+  }
+  const [rows] = await pool.query('SELECT qr_pago, logo_url, qr_pagos FROM configuracion WHERE id = 1');
+  if (rows.length > 0) {
+    const c = rows[0];
+    const qrPagos = typeof c.qr_pagos === 'string' ? JSON.parse(c.qr_pagos || '[]') : c.qr_pagos || [];
+    await pool.query('UPDATE configuracion SET qr_pago = ?, logo_url = ?, qr_pagos = ? WHERE id = 1', [
+      aArchivo(c.qr_pago, 'config'),
+      aArchivo(c.logo_url, 'config'),
+      JSON.stringify(qrPagos.map((q) => ({ ...q, imagen: aArchivo(q.imagen, 'config') }))),
+    ]);
+  }
+}
+try {
+  await migrarImagenesAArchivos();
+} catch (err) {
+  console.error('No se pudieron convertir las imagenes a archivos (el sitio sigue funcionando igual):', err.message);
+}
 
 // Storage configuration for Multer
 const storage = multer.diskStorage({
@@ -362,7 +408,7 @@ app.post('/api/sorteos', requireAuth, async (req, res) => {
           parseInt(total),
           estado || 'activo',
           fechaSorteo || '2026-08-30',
-          JSON.stringify(galeria || []),
+          JSON.stringify((galeria || []).map((g) => aArchivo(g, 'galeria'))),
           JSON.stringify(incluye || []),
         ]
       );
@@ -447,7 +493,7 @@ app.put('/api/sorteos/:id', requireAuth, async (req, res) => {
           nuevoTotal,
           estado,
           fechaSorteo || sorteoActual.fecha_sorteo || '2026-08-30',
-          JSON.stringify(galeria || []),
+          JSON.stringify((galeria || []).map((g) => aArchivo(g, 'galeria'))),
           JSON.stringify(incluye || []),
           req.params.id,
         ]
@@ -1386,8 +1432,8 @@ app.put('/api/admin/configuracion', requireAuth, async (req, res) => {
        WHERE id = 1`,
       [
         nombreEmpresa, whatsapp, correo, facebook, instagram, tiktok,
-        colorTema, politicas, faqTexto, JSON.stringify(metodosPago || {}), instruccionesPago || '', qrPago || null, logoUrl || null,
-        JSON.stringify(cuentasBancarias || []), JSON.stringify(qrPagos || []),
+        colorTema, politicas, faqTexto, JSON.stringify(metodosPago || {}), instruccionesPago || '', aArchivo(qrPago, 'config') || null, aArchivo(logoUrl, 'config') || null,
+        JSON.stringify(cuentasBancarias || []), JSON.stringify((qrPagos || []).map((q) => ({ ...q, imagen: aArchivo(q.imagen, 'config') }))),
       ]
     );
     res.json({ message: 'Configuración actualizada' });
