@@ -3,6 +3,7 @@ import { useEffect } from "react";
 import { AppProvider } from "./context/AppContext.jsx";
 import { AuthProvider } from "./context/AuthContext.jsx";
 import ProtectedRoute from "./components/ProtectedRoute.jsx";
+import WhatsAppFloat from "./components/WhatsAppFloat.jsx";
 
 // Cliente Pages
 import Landing from "./pages/Landing.jsx";
@@ -48,6 +49,7 @@ export default function App() {
       <AuthProvider>
         <AppProvider>
           <ScrollToTop />
+          <WhatsAppFloat />
           <Routes>
             {/* Rutas Cliente */}
             <Route path="/" element={<Landing />} />

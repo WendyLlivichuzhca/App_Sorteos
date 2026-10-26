@@ -1,0 +1,35 @@
+.btn {
+  position: fixed;
+  right: 22px;
+  bottom: 22px;
+  z-index: 90;
+  width: 58px;
+  height: 58px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #ffffff;
+  border: 2px solid rgba(255, 255, 255, 0.9);
+  background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-dark) 100%);
+  box-shadow: 0 8px 22px rgba(31, 138, 90, 0.45), 0 2px 6px rgba(15, 23, 19, 0.25);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.btn:hover {
+  transform: translateY(-3px) scale(1.06);
+  box-shadow: 0 12px 28px rgba(31, 138, 90, 0.55), 0 3px 8px rgba(15, 23, 19, 0.28);
+}
+
+.btn:active {
+  transform: scale(0.96);
+}
+
+@media (max-width: 640px) {
+  .btn {
+    right: 16px;
+    bottom: 16px;
+    width: 54px;
+    height: 54px;
+  }
+}
