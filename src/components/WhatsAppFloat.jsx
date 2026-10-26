@@ -3,13 +3,34 @@ import { useLocation } from "react-router-dom";
 import { getConfiguracion } from "../services/api.js";
 import styles from "./WhatsAppFloat.module.css";
 
-const ESPERA_INICIAL_MS = 2500;
 const VISIBLE_MS = 12000;
 const REPETIR_CADA_MS = 40000;
+const CLAVE_CONFIG = "wa_config";
+
+// El número se guarda en el navegador para que, desde la segunda visita, el botón y el
+// mensaje salgan al instante sin esperar a que responda el servidor.
+function leerConfigGuardada() {
+  try {
+    return JSON.parse(localStorage.getItem(CLAVE_CONFIG));
+  } catch {
+    return null;
+  }
+}
+
+function guardarConfig(config) {
+  try {
+    localStorage.setItem(
+      CLAVE_CONFIG,
+      JSON.stringify({ whatsapp: config.whatsapp, nombre_empresa: config.nombre_empresa })
+    );
+  } catch {
+    // sin almacenamiento disponible: solo se pierde la carga instantánea
+  }
+}
 
 export default function WhatsAppFloat() {
   const { pathname } = useLocation();
-  const [config, setConfig] = useState(null);
+  const [config, setConfig] = useState(leerConfigGuardada);
   const [burbuja, setBurbuja] = useState(false);
   const cerradaEnEstaPagina = useRef(false);
 
@@ -18,7 +39,10 @@ export default function WhatsAppFloat() {
 
   useEffect(() => {
     getConfiguracion()
-      .then(setConfig)
+      .then((data) => {
+        setConfig(data);
+        guardarConfig(data);
+      })
       .catch((err) => console.error("Error cargando configuración:", err));
   }, []);
 
@@ -36,10 +60,9 @@ export default function WhatsAppFloat() {
       ocultar = setTimeout(() => setBurbuja(false), VISIBLE_MS);
     };
 
-    const primera = setTimeout(mostrar, ESPERA_INICIAL_MS);
+    mostrar();
     const ciclo = setInterval(mostrar, REPETIR_CADA_MS);
     return () => {
-      clearTimeout(primera);
       clearTimeout(ocultar);
       clearInterval(ciclo);
       setBurbuja(false);
