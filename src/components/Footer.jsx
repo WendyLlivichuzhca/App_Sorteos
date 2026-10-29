@@ -74,6 +74,7 @@ export default function Footer() {
           <Link to="/ayuda">Ayuda</Link>
           <Link to="/consultar-boletos">Consultar boletos</Link>
           <a href="/ayuda">Términos y condiciones</a>
+          <Link to="/privacidad">Política de privacidad</Link>
         </div>
 
         <div className={styles.col}>

@@ -19,6 +19,7 @@ import ConsultarBoletos from "./pages/ConsultarBoletos.jsx";
 import Resultados from "./pages/Resultados.jsx";
 import Ayuda from "./pages/Ayuda.jsx";
 import ComoFunciona from "./pages/ComoFunciona.jsx";
+import Privacidad from "./pages/Privacidad.jsx";
 
 // Admin Pages (Separated Folders)
 import AdminLogin from "./pages/admin/AdminLogin.jsx";
@@ -79,6 +80,7 @@ export default function App() {
             <Route path="/resultados" element={<Resultados />} />
             <Route path="/ayuda" element={<Ayuda />} />
             <Route path="/como-funciona" element={<ComoFunciona />} />
+            <Route path="/privacidad" element={<Privacidad />} />
 
             {/* Login Administrador */}
             <Route path="/admin/login" element={<AdminLogin />} />

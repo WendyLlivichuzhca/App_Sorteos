@@ -280,7 +280,7 @@ export default function Checkout() {
     }
 
     if (!aceptaTerminos) {
-      setErrorGlobal("Debes estar de acuerdo con los términos y condiciones de la web para continuar.");
+      setErrorGlobal("Debes aceptar los términos y condiciones y confirmar que eres mayor de 18 años para continuar.");
       return;
     }
 
@@ -889,7 +889,7 @@ export default function Checkout() {
               </div>
 
               <p className={styles.privacyNote}>
-                Tus datos personales se utilizarán para procesar tu pedido, mejorar tu experiencia en esta web y otros propósitos descritos en nuestra <strong>política de privacidad</strong>.
+                Tus datos personales se utilizarán para procesar tu pedido, mejorar tu experiencia en esta web y otros propósitos descritos en nuestra <Link to="/privacidad" target="_blank" rel="noopener noreferrer"><strong>política de privacidad</strong></Link>.
               </p>
 
               {paso === 2 && (
@@ -901,7 +901,7 @@ export default function Checkout() {
                     onChange={(e) => setAceptaTerminos(e.target.checked)}
                   />
                   <span>
-                    He leído y estoy de acuerdo con los <strong>términos y condiciones</strong> de la web *
+                    He leído y estoy de acuerdo con los <strong>términos y condiciones</strong> de la web, y declaro que soy <strong>mayor de 18 años</strong> *
                   </span>
                 </label>
               </div>

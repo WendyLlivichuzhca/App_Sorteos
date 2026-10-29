@@ -23,7 +23,7 @@ export default function CookieBanner() {
       <p>
         Usamos cookies y herramientas de Meta (Facebook e Instagram) para medir qué publicidad funciona y mostrarte
         anuncios relevantes. No usamos tu cédula, correo ni teléfono para esto. Más información en{" "}
-        <Link to="/ayuda">Ayuda</Link>.
+        <Link to="/privacidad">Política de privacidad</Link>.
       </p>
       <div className={styles.acciones}>
         <button type="button" className={styles.rechazar} onClick={() => decidir("rechazado")}>
