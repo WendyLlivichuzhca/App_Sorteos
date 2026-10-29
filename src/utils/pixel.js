@@ -1,7 +1,7 @@
 // Píxel de Meta (Facebook / Instagram). Solo se carga si el visitante aceptó las cookies
 // y nunca en el panel de administración ni en localhost, para no ensuciar las métricas.
 // No se envían datos personales (cédula, correo, teléfono, nombre): solo valor y cantidades.
-export const PIXEL_ID = import.meta.env.VITE_META_PIXEL_ID || "4623175398001195";
+export const PIXEL_ID = import.meta.env.VITE_META_PIXEL_ID || "1814187299903267";
 
 const CLAVE_CONSENTIMIENTO = "cookies_consent";
 const CLAVE_DEBUG = "pixel_debug";
