@@ -116,12 +116,12 @@
 }
 
 .wheelGirando {
-  animation: girarRuleta 4.8s cubic-bezier(0.14, 0.7, 0.2, 1) forwards;
+  animation: girarRuleta 12s cubic-bezier(0.14, 0.7, 0.2, 1) forwards;
 }
 
 @keyframes girarRuleta {
   from { transform: rotate(0deg); }
-  to { transform: rotate(2160deg); }
+  to { transform: rotate(5400deg); }
 }
 
 .hub {

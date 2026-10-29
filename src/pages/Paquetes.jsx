@@ -5,7 +5,7 @@ import Footer from "../components/Footer.jsx";
 import Icon from "../icons/Icon.jsx";
 import { useApp } from "../context/AppContext.jsx";
 import { getSorteoById, getDescuentos } from "../services/api.js";
-import { formatMoney } from "../utils/format.js";
+import { formatMoney, momentoCierre } from "../utils/format.js";
 import styles from "./Paquetes.module.css";
 
 export default function Paquetes() {
@@ -50,6 +50,20 @@ export default function Paquetes() {
         <div className={`container ${styles.wrap}`}>
           <p>No encontramos este sorteo.</p>
           <Link to="/sorteos" className="btn btn-primary">Volver a sorteos</Link>
+        </div>
+      </div>
+    );
+  }
+
+  // Sorteo por fecha cuyo cierre ya pasó: no se puede entrar a comprar ni por el enlace directo.
+  const cierre = momentoCierre(sorteo.fechaCierre);
+  if (sorteo.tipo === "por_fecha" && (sorteo.ventasCerradas || (cierre !== null && Date.now() >= cierre))) {
+    return (
+      <div className="page">
+        <Navbar variant="cart" />
+        <div className={`container ${styles.wrap}`}>
+          <p>Las ventas de este sorteo ya cerraron. ¡Gracias por participar!</p>
+          <Link to={`/sorteos/${sorteo.id}`} className="btn btn-primary">Volver al sorteo</Link>
         </div>
       </div>
     );

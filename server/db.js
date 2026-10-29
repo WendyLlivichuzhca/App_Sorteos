@@ -65,6 +65,13 @@ export async function initDB() {
       ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
     `);
     await ensureColumn(pool, 'sorteos', 'incluye', 'JSON NULL');
+    // Sorteos "por fecha": venden hasta una fecha de cierre (aunque ya se haya cumplido la meta)
+    // y se sortean en una fecha fija. Los sorteos que ya existían quedan como 'venta_total'
+    // (se sortean al vender el 100%) y no cambian en nada.
+    await ensureColumn(pool, 'sorteos', 'tipo', "VARCHAR(20) NOT NULL DEFAULT 'venta_total'");
+    await ensureColumn(pool, 'sorteos', 'meta', 'INT NULL');
+    // Hora de Ecuador, formato 'YYYY-MM-DDTHH:mm' (se guarda como texto para evitar líos de zona horaria).
+    await ensureColumn(pool, 'sorteos', 'fecha_cierre', 'VARCHAR(25) NULL');
 
     await pool.query(`
       CREATE TABLE IF NOT EXISTS paquetes (

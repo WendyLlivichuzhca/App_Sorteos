@@ -5,9 +5,10 @@ import Footer from "../components/Footer.jsx";
 import Badge from "../components/Badge.jsx";
 import StarRating from "../components/StarRating.jsx";
 import PremioImage from "../components/PremioImage.jsx";
+import CuentaRegresiva from "../components/CuentaRegresiva.jsx";
 import Icon from "../icons/Icon.jsx";
 import { getSorteoById, getPremiadosPublic } from "../services/api.js";
-import { formatMoney } from "../utils/format.js";
+import { formatMoney, formatCierre, formatFechaLarga, momentoCierre } from "../utils/format.js";
 import { pixelTrack } from "../utils/pixel.js";
 import styles from "./SorteoDetalle.module.css";
 
@@ -18,6 +19,7 @@ export default function SorteoDetalle() {
   const [loading, setLoading] = useState(true);
   const [activeImg, setActiveImg] = useState(0);
   const [premiados, setPremiados] = useState([]);
+  const [cierreAlcanzado, setCierreAlcanzado] = useState(false);
 
   useEffect(() => {
     setLoading(true);
@@ -63,7 +65,16 @@ export default function SorteoDetalle() {
     );
   }
 
-  const pctVendido = Math.round((sorteo.vendidos / sorteo.total) * 100);
+  // Sorteo por fecha: el avance se mide contra la meta (no contra el tope de boletos)
+  // y la venta sigue abierta hasta la fecha de cierre, aunque ya se haya cumplido la meta.
+  const porFecha = sorteo.tipo === "por_fecha";
+  const meta = porFecha ? sorteo.meta || sorteo.total : sorteo.total;
+  const metaCumplida = porFecha && sorteo.vendidos >= meta;
+  const momentoFin = momentoCierre(sorteo.fechaCierre);
+  const ventasCerradas = porFecha && (sorteo.ventasCerradas || cierreAlcanzado || (momentoFin !== null && Date.now() >= momentoFin));
+  const pctVendido = porFecha
+    ? Math.min(100, Math.round((sorteo.vendidos / meta) * 100))
+    : Math.round((sorteo.vendidos / sorteo.total) * 100);
   const CANTIDAD_MINIMA = 10;
   const galeria = sorteo.galeria && sorteo.galeria.length > 0 ? sorteo.galeria : [1, 2, 3, 4];
   const irAnterior = () => setActiveImg((i) => (i - 1 + galeria.length) % galeria.length);
@@ -132,7 +143,7 @@ export default function SorteoDetalle() {
               <div className={styles.stat}>
                 <span className={styles.statIcon}><Icon name="percent" size={17} /></span>
                 <strong>{pctVendido}%</strong>
-                <span>Vendido</span>
+                <span>{porFecha ? "De la meta" : "Vendido"}</span>
               </div>
               <div className={styles.stat}>
                 <span className={styles.statIcon}><Icon name="cart" size={17} /></span>
@@ -151,7 +162,14 @@ export default function SorteoDetalle() {
                 <div className={styles.progressTrack}>
                   <div className={styles.progressFill} style={{ width: `${pctVendido}%` }} />
                 </div>
-                <span>{pctVendido}% vendido</span>
+                <span>{porFecha ? `${sorteo.vendidos} de ${meta} de la meta` : `${pctVendido}% vendido`}</span>
+              </div>
+            )}
+
+            {porFecha && metaCumplida && sorteo.estado !== "proximamente" && (
+              <div className={styles.sorteoAvisoBox}>
+                <Icon name="badgeCheck" size={15} />{" "}
+                {ventasCerradas ? "¡Meta cumplida!" : "¡Meta cumplida! Aún puedes participar hasta el cierre de ventas"}
               </div>
             )}
 
@@ -170,16 +188,33 @@ export default function SorteoDetalle() {
 
             {sorteo.estado !== "proximamente" ? (
               <>
-                <div className={styles.sorteoAvisoBox}>
-                  <Icon name="badgeCheck" size={15} /> Se sortea al vender el 100% de los boletos
-                </div>
-                <button
-                  type="button"
-                  className={`btn btn-primary btn-block ${styles.comprarBtn}`}
-                  onClick={() => navigate(`/sorteos/${sorteo.id}/paquetes`)}
-                >
-                  <Icon name="ticket" size={17} /> Comprar boletos <Icon name="arrowRight" size={16} />
-                </button>
+                {porFecha ? (
+                  <>
+                    <div className={styles.sorteoAvisoBox}>
+                      <Icon name="badgeCheck" size={15} />{" "}
+                      {ventasCerradas ? "Ventas cerradas" : `Las ventas cierran el ${formatCierre(sorteo.fechaCierre)}`}
+                      {sorteo.fechaSorteo && ` · Sorteo: ${formatFechaLarga(sorteo.fechaSorteo)}`}
+                    </div>
+                    {!ventasCerradas && <CuentaRegresiva fechaCierre={sorteo.fechaCierre} onFin={() => setCierreAlcanzado(true)} />}
+                  </>
+                ) : (
+                  <div className={styles.sorteoAvisoBox}>
+                    <Icon name="badgeCheck" size={15} /> Se sortea al vender el 100% de los boletos
+                  </div>
+                )}
+                {ventasCerradas ? (
+                  <div className={styles.proximamenteBox}>
+                    Las ventas de este sorteo ya cerraron. ¡Gracias por participar! Consulta tus boletos en "Consultar boletos".
+                  </div>
+                ) : (
+                  <button
+                    type="button"
+                    className={`btn btn-primary btn-block ${styles.comprarBtn}`}
+                    onClick={() => navigate(`/sorteos/${sorteo.id}/paquetes`)}
+                  >
+                    <Icon name="ticket" size={17} /> Comprar boletos <Icon name="arrowRight" size={16} />
+                  </button>
+                )}
               </>
             ) : (
               <div className={styles.proximamenteBox}>

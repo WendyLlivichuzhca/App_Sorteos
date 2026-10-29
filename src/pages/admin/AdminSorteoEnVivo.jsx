@@ -2,15 +2,29 @@ import { useEffect, useState } from "react";
 import { Link, useSearchParams } from "react-router-dom";
 import Icon from "../../icons/Icon.jsx";
 import { getSorteos, getBoletosAdmin, getLugaresAdmin, sortearLugar } from "../../services/api.js";
+import { formatCierre, momentoCierre } from "../../utils/format.js";
 import styles from "./AdminSorteoEnVivo.module.css";
 
 const confettiColors = ["#ffffff", "#f5c518", "#22d3ee", "#5FBE8E", "#4ade80"];
+// Un sorteo por fecha ya se puede sortear cuando llegó su hora de cierre de ventas;
+// uno de venta total, cuando se vendió el 100% de los boletos.
+const estaListoParaSortear = (s) => {
+  if (s.tipo === "por_fecha") {
+    const cierre = momentoCierre(s.fechaCierre);
+    return Boolean(s.ventasCerradas) || (cierre !== null && Date.now() >= cierre);
+  }
+  return s.vendidos >= s.total;
+};
+
 const NOMBRES_LUGAR = ["1er Lugar", "2do Lugar", "3er Lugar", "4to Lugar", "5to Lugar"];
 const nombreLugar = (orden) => NOMBRES_LUGAR[orden - 1] || `${orden}° Lugar`;
 
-// Genera una secuencia de pausas crecientes para el efecto de "máquina tragamonedas":
-// rápido al inicio, cada vez más lento, como si el número se fuera frenando solo.
-const PAUSAS = [55, 55, 60, 65, 70, 80, 90, 105, 120, 140, 165, 195, 230, 270, 320, 380, 450, 540, 650, 780];
+// Secuencia de pausas para el efecto de "máquina tragamonedas" (dura unos 12 segundos):
+// 40 cambios rápidos al inicio y luego cada vez más lentos, como si el número se fuera frenando solo.
+const PAUSAS = [
+  ...Array.from({ length: 40 }, () => 60),
+  ...Array.from({ length: 22 }, (_, k) => Math.round(70 * 1.15 ** k)),
+];
 
 function animarNumeros(pool, setNumero) {
   return new Promise((resolve) => {
@@ -44,7 +58,7 @@ export default function AdminSorteoEnVivo() {
       .then((data) => {
         setSorteos(data);
         if (!sorteoId) {
-          const elegible = data.find((s) => s.estado !== "finalizado" && s.vendidos >= s.total);
+          const elegible = data.find((s) => s.estado !== "finalizado" && estaListoParaSortear(s));
           if (elegible) setSorteoId(String(elegible.id));
         }
       })
@@ -71,8 +85,9 @@ export default function AdminSorteoEnVivo() {
 
   const sorteoActual = sorteos.find((s) => String(s.id) === sorteoId);
   const lugarActual = lugares.find((l) => !l.boleto_numero);
-  const vendidoTotal = Boolean(sorteoActual) && sorteoActual.vendidos >= sorteoActual.total;
-  const puedeSortear = Boolean(lugarActual) && vendidos.length > 0 && vendidoTotal;
+  const porFecha = sorteoActual?.tipo === "por_fecha";
+  const listoParaSortear = Boolean(sorteoActual) && estaListoParaSortear(sorteoActual);
+  const puedeSortear = Boolean(lugarActual) && vendidos.length > 0 && listoParaSortear;
 
   const iniciarSorteo = async () => {
     if (!puedeSortear || estado === "girando") return;
@@ -150,9 +165,16 @@ export default function AdminSorteoEnVivo() {
           {lugarActual && vendidos.length === 0 && (
             <p className={styles.aviso}>Este sorteo todavía no tiene boletos vendidos.</p>
           )}
-          {lugarActual && vendidos.length > 0 && sorteoActual && !vendidoTotal && (
+          {lugarActual && vendidos.length > 0 && sorteoActual && !listoParaSortear && (
             <p className={styles.aviso}>
-              Faltan {sorteoActual.total - sorteoActual.vendidos} boletos por vender. Debes vender el 100% antes de poder sortear.
+              {porFecha
+                ? `Las ventas siguen abiertas hasta el ${formatCierre(sorteoActual.fechaCierre)}. Podrás sortear cuando cierren.`
+                : `Faltan ${sorteoActual.total - sorteoActual.vendidos} boletos por vender. Debes vender el 100% antes de poder sortear.`}
+            </p>
+          )}
+          {lugarActual && porFecha && listoParaSortear && sorteoActual.vendidos < (sorteoActual.meta || 0) && (
+            <p className={styles.aviso}>
+              Ojo: no se llegó a la meta ({sorteoActual.vendidos} de {sorteoActual.meta} boletos). Confirma antes de sortear.
             </p>
           )}
           {error && <p className={styles.error}>⚠️ {error}</p>}

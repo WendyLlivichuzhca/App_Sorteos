@@ -4,7 +4,7 @@ import AdminLayout from "../../components/admin/AdminLayout.jsx";
 import Icon from "../../icons/Icon.jsx";
 import PremioImage from "../../components/PremioImage.jsx";
 import { getSorteos, createSorteo, updateSorteo, deleteSorteo, getCategorias } from "../../services/api.js";
-import { formatMoney } from "../../utils/format.js";
+import { formatMoney, formatCierre } from "../../utils/format.js";
 import styles from "./AdminSorteos.module.css";
 
 const GUIA_KEY = "sorteos_guia_cerrada";
@@ -43,6 +43,8 @@ export default function AdminSorteos() {
   const [categorias, setCategorias] = useState([]);
   const [loading, setLoading] = useState(true);
   const [filtroEstado, setFiltroEstado] = useState("todos");
+  // "venta_total": se sortean al vender el 100% (los de siempre). "por_fecha": venden hasta una fecha de cierre.
+  const [pestana, setPestana] = useState("venta_total");
   const [showModal, setShowModal] = useState(false);
   const [editingItem, setEditingItem] = useState(null);
   const [guardando, setGuardando] = useState(false);
@@ -71,6 +73,9 @@ export default function AdminSorteos() {
     galeria: [],
     imagenUrl: "",
     incluyeTexto: "",
+    meta: 3000,
+    fechaCierre: "",
+    fechaSorteo: "",
   });
 
   const cargarSorteos = () => {
@@ -90,7 +95,20 @@ export default function AdminSorteos() {
 
   const handleOpenCreate = () => {
     setEditingItem(null);
-    setFormData({ nombre: "", categoria: categorias[0]?.slug || "", precio: 2.0, total: 1000, estado: "activo", galeria: [], imagenUrl: "", incluyeTexto: "" });
+    const porFecha = pestana === "por_fecha";
+    setFormData({
+      nombre: "",
+      categoria: categorias[0]?.slug || "",
+      precio: porFecha ? 1.0 : 2.0,
+      total: porFecha ? 5000 : 1000,
+      estado: "activo",
+      galeria: [],
+      imagenUrl: "",
+      incluyeTexto: "",
+      meta: 3000,
+      fechaCierre: "",
+      fechaSorteo: "",
+    });
     setShowModal(true);
   };
 
@@ -112,6 +130,9 @@ export default function AdminSorteos() {
       galeria: item.galeria || [],
       imagenUrl: "",
       incluyeTexto: (item.incluye || []).join("\n"),
+      meta: item.meta || item.total,
+      fechaCierre: item.fechaCierre || "",
+      fechaSorteo: item.tipo === "por_fecha" ? String(item.fechaSorteo || "").slice(0, 10) : "",
     });
     setShowModal(true);
   };
@@ -128,8 +149,15 @@ export default function AdminSorteos() {
         .split("\n")
         .map((linea) => linea.trim())
         .filter(Boolean);
-      const { incluyeTexto, ...resto } = formData;
-      const payload = { ...resto, galeria, incluye };
+      const { incluyeTexto, meta, fechaCierre, fechaSorteo, ...resto } = formData;
+      const tipoSorteo = editingItem ? editingItem.tipo || "venta_total" : pestana;
+      const payload = { ...resto, galeria, incluye, tipo: tipoSorteo };
+      // Los datos de "por fecha" solo se envían a ese tipo: los sorteos de venta total quedan exactamente como antes.
+      if (tipoSorteo === "por_fecha") {
+        payload.meta = meta;
+        payload.fechaCierre = fechaCierre;
+        payload.fechaSorteo = fechaSorteo;
+      }
 
       if (editingItem) {
         await updateSorteo(editingItem.id, payload);
@@ -155,21 +183,46 @@ export default function AdminSorteos() {
     }
   };
 
+  const esPorFecha = pestana === "por_fecha";
+  const listaPestana = list.filter((s) => (s.tipo || "venta_total") === pestana);
+  const cuentaPestana = (tipo) => list.filter((s) => (s.tipo || "venta_total") === tipo).length;
+
   const kpis = [
-    { label: "Total Sorteos", value: list.length, subtitle: "Sorteos creados", icon: "ticket", color: "purple" },
-    { label: "Activos", value: list.filter((s) => s.estado === "activo").length, subtitle: "En progreso", icon: "chart", color: "green" },
-    { label: "Finalizados", value: list.filter((s) => s.estado === "finalizado").length, subtitle: "Completados", icon: "award", color: "blue" },
-    { label: "Participaciones", value: list.reduce((acc, s) => acc + (s.vendidos || 0), 0), subtitle: "Total registradas", icon: "users", color: "orange" },
+    { label: "Total Sorteos", value: listaPestana.length, subtitle: "Sorteos creados", icon: "ticket", color: "purple" },
+    { label: "Activos", value: listaPestana.filter((s) => s.estado === "activo").length, subtitle: "En progreso", icon: "chart", color: "green" },
+    { label: "Finalizados", value: listaPestana.filter((s) => s.estado === "finalizado").length, subtitle: "Completados", icon: "award", color: "blue" },
+    { label: "Participaciones", value: listaPestana.reduce((acc, s) => acc + (s.vendidos || 0), 0), subtitle: "Total registradas", icon: "users", color: "orange" },
   ];
 
-  const listaFiltrada = filtroEstado === "todos" ? list : list.filter((s) => s.estado === filtroEstado);
+  const listaFiltrada = filtroEstado === "todos" ? listaPestana : listaPestana.filter((s) => s.estado === filtroEstado);
 
   return (
     <AdminLayout title="Gestión de Sorteos" subtitle="Administra y controla todos los sorteos de la plataforma">
       <div className={styles.topRow}>
         <div />
         <button type="button" className={styles.createBtn} onClick={handleOpenCreate}>
-          <Icon name="plus" size={18} /> Crear Nuevo Sorteo
+          <Icon name="plus" size={18} /> {esPorFecha ? "Crear Sorteo por Fecha" : "Crear Nuevo Sorteo"}
+        </button>
+      </div>
+
+      <div className={styles.tabs} role="tablist">
+        <button
+          type="button"
+          role="tab"
+          aria-selected={!esPorFecha}
+          className={`${styles.tab} ${!esPorFecha ? styles.tabActiva : ""}`}
+          onClick={() => setPestana("venta_total")}
+        >
+          Por venta total <span className={styles.tabCount}>{cuentaPestana("venta_total")}</span>
+        </button>
+        <button
+          type="button"
+          role="tab"
+          aria-selected={esPorFecha}
+          className={`${styles.tab} ${esPorFecha ? styles.tabActiva : ""}`}
+          onClick={() => setPestana("por_fecha")}
+        >
+          Por fecha <span className={styles.tabCount}>{cuentaPestana("por_fecha")}</span>
         </button>
       </div>
 
@@ -206,8 +259,12 @@ export default function AdminSorteos() {
       <div className={styles.tableCard}>
         <div className={styles.tableCardHeader}>
           <div>
-            <h3>Todos los Sorteos</h3>
-            <p>Crea, edita, activa o finaliza tus sorteos</p>
+            <h3>{esPorFecha ? "Sorteos por Fecha" : "Todos los Sorteos"}</h3>
+            <p>
+              {esPorFecha
+                ? "Venden hasta su fecha de cierre, aunque ya se haya cumplido la meta, y se sortean en una fecha fija"
+                : "Crea, edita, activa o finaliza tus sorteos. Se sortean al vender el 100% de los boletos"}
+            </p>
           </div>
           <select
             className={styles.filterSelect}
@@ -244,18 +301,29 @@ export default function AdminSorteos() {
                 <td>
                   <div className={styles.nameCell}>
                     <PremioImage categoria={s.categoria} src={s.galeria?.[0]} className={styles.thumb} iconSize={18} />
-                    <strong className={styles.nameText}>{s.nombre}</strong>
+                    <div>
+                      <strong className={styles.nameText}>{s.nombre}</strong>
+                      {esPorFecha && (
+                        <span className={styles.cierreText}>
+                          {s.ventasCerradas ? "Ventas cerradas" : `Cierra: ${formatCierre(s.fechaCierre)}`}
+                        </span>
+                      )}
+                    </div>
                   </div>
                 </td>
                 <td><span className={styles.categoryBadge}>{s.categoria}</span></td>
                 <td><strong>{formatMoney(s.precio)}</strong></td>
                 <td>
                   <div className={styles.progressCell}>
-                    <span>{s.vendidos} / {s.total}</span>
+                    <span>
+                      {esPorFecha ? `${s.vendidos} / ${s.meta || s.total} meta` : `${s.vendidos} / ${s.total}`}
+                    </span>
                     <div className={styles.miniTrack}>
                       <div
                         className={styles.miniFill}
-                        style={{ width: `${Math.round((s.vendidos / (s.total || 1)) * 100)}%` }}
+                        style={{
+                          width: `${Math.min(100, Math.round((s.vendidos / ((esPorFecha ? s.meta : s.total) || s.total || 1)) * 100))}%`,
+                        }}
                       />
                     </div>
                   </div>
@@ -292,7 +360,9 @@ export default function AdminSorteos() {
         <div className={styles.modalOverlay}>
           <div className={styles.modal}>
             <div className={styles.modalHeader}>
-              <h3>{editingItem ? "Editar Sorteo" : "Crear Nuevo Sorteo"}</h3>
+              <h3>
+                {editingItem ? "Editar Sorteo" : esPorFecha ? "Crear Sorteo por Fecha" : "Crear Nuevo Sorteo"}
+              </h3>
               <button type="button" className={styles.closeBtn} onClick={() => setShowModal(false)}>×</button>
             </div>
 
@@ -411,7 +481,7 @@ export default function AdminSorteos() {
                 </div>
 
                 <div className={styles.formGroup}>
-                  <label>Total de boletos</label>
+                  <label>{esPorFecha ? "Tope máximo de boletos" : "Total de boletos"}</label>
                   <input
                     type="number"
                     required
@@ -422,6 +492,44 @@ export default function AdminSorteos() {
                   />
                 </div>
               </div>
+
+              {esPorFecha && (
+                <>
+                  <div className={styles.formRow}>
+                    <div className={styles.formGroup}>
+                      <label>Meta de boletos</label>
+                      <input
+                        type="number"
+                        required
+                        min="1"
+                        value={formData.meta}
+                        onChange={(e) => setFormData({ ...formData, meta: parseInt(e.target.value, 10) })}
+                      />
+                      <span className={styles.hint}>Los boletos que cubren los gastos. Pasada la meta, la venta sigue abierta.</span>
+                    </div>
+                    <div className={styles.formGroup}>
+                      <label>Cierre de ventas (hora de Ecuador)</label>
+                      <input
+                        type="datetime-local"
+                        required
+                        value={formData.fechaCierre}
+                        onChange={(e) => setFormData({ ...formData, fechaCierre: e.target.value })}
+                      />
+                      <span className={styles.hint}>Al llegar esta hora ya no se venden más boletos, solo.</span>
+                    </div>
+                  </div>
+                  <div className={styles.formGroup}>
+                    <label>Fecha del sorteo</label>
+                    <input
+                      type="date"
+                      required
+                      value={formData.fechaSorteo}
+                      onChange={(e) => setFormData({ ...formData, fechaSorteo: e.target.value })}
+                    />
+                    <span className={styles.hint}>La ruleta se habilita cuando cierran las ventas.</span>
+                  </div>
+                </>
+              )}
 
               <div className={styles.formRow}>
                 <div className={styles.formGroup}>

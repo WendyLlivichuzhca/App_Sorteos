@@ -7,7 +7,7 @@ import ProgressBar from "../components/ProgressBar.jsx";
 import PremioImage from "../components/PremioImage.jsx";
 import Icon from "../icons/Icon.jsx";
 import { getSorteos, getCategorias } from "../services/api.js";
-import { formatMoney } from "../utils/format.js";
+import { formatMoney, formatCierre } from "../utils/format.js";
 import styles from "./Sorteos.module.css";
 
 const leafPath = "M50 5C25 15 10 40 15 65C20 88 45 98 68 90C88 83 95 60 85 40C75 20 60 8 50 5Z";
@@ -109,6 +109,13 @@ export default function Sorteos() {
                   <p className={styles.inicia}>Sorteo finalizado</p>
                 ) : s.estado === "agotado" ? (
                   <p className={styles.inicia}>Boletos 100% agotados</p>
+                ) : s.tipo === "por_fecha" ? (
+                  <>
+                    <ProgressBar vendidos={s.vendidos} total={s.meta || s.total} />
+                    <p className={styles.inicia}>
+                      {s.ventasCerradas ? "Ventas cerradas" : `Cierra: ${formatCierre(s.fechaCierre)}`}
+                    </p>
+                  </>
                 ) : (
                   <ProgressBar vendidos={s.vendidos} total={s.total} />
                 )}

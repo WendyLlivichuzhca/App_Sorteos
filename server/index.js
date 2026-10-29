@@ -307,6 +307,44 @@ const CANTIDAD_MINIMA_COMPRA = 10;
 // 1. SORTEOS ENDPOINTS (MySQL)
 // ==========================================
 const ESTADOS_SORTEO_VALIDOS = ['activo', 'proximamente', 'agotado', 'finalizado'];
+const TIPOS_SORTEO_VALIDOS = ['venta_total', 'por_fecha'];
+
+// La fecha de cierre se guarda como 'YYYY-MM-DDTHH:mm' en hora de Ecuador (UTC-5, sin horario de verano).
+const FORMATO_FECHA_CIERRE = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}$/;
+
+function momentoCierre(fechaCierre) {
+  if (!fechaCierre || !FORMATO_FECHA_CIERRE.test(fechaCierre)) return null;
+  const ms = Date.parse(`${fechaCierre}:00-05:00`);
+  return Number.isNaN(ms) ? null : ms;
+}
+
+// Un sorteo "por fecha" deja de vender solo cuando llega su fecha de cierre,
+// aunque todavía queden boletos o ya se haya cumplido la meta.
+function ventasCerradas(sorteo) {
+  if (sorteo.tipo !== 'por_fecha') return false;
+  const cierre = momentoCierre(sorteo.fecha_cierre);
+  return cierre !== null && Date.now() >= cierre;
+}
+
+// Campos extra que se agregan a cada sorteo que se envía al panel y a la web.
+function camposPorFecha(row) {
+  return {
+    tipo: row.tipo || 'venta_total',
+    meta: row.meta ?? null,
+    fechaCierre: row.fecha_cierre || null,
+    ventasCerradas: ventasCerradas(row),
+  };
+}
+
+// Valida y normaliza los datos propios de un sorteo "por fecha" (meta y fecha de cierre).
+// Devuelve { error } o { meta, fechaCierre }.
+function validarPorFecha({ meta, fechaCierre, total }) {
+  const metaNum = parseInt(meta);
+  if (!metaNum || metaNum <= 0) return { error: 'La meta de boletos debe ser mayor a 0' };
+  if (metaNum > total) return { error: 'La meta no puede ser mayor que el tope máximo de boletos' };
+  if (momentoCierre(fechaCierre) === null) return { error: 'Indica la fecha y hora de cierre de ventas' };
+  return { meta: metaNum, fechaCierre };
+}
 
 // Endpoint publico: solo expone el total agregado de boletos vendidos,
 // sin ningun dato de ventas, clientes ni compras individuales.
@@ -341,6 +379,7 @@ app.get('/api/sorteos', async (req, res) => {
     const parsed = rows.map((r) => ({
       ...r,
       fechaSorteo: r.fecha_sorteo,
+      ...camposPorFecha(r),
       galeria: typeof r.galeria === 'string' ? JSON.parse(r.galeria || '[]') : r.galeria || [],
       incluye: typeof r.incluye === 'string' ? JSON.parse(r.incluye || '[]') : r.incluye || [],
     }));
@@ -363,6 +402,7 @@ app.get('/api/sorteos/:id', async (req, res) => {
     res.json({
       ...row,
       fechaSorteo: row.fecha_sorteo,
+      ...camposPorFecha(row),
       galeria: typeof row.galeria === 'string' ? JSON.parse(row.galeria || '[]') : row.galeria || [],
       incluye: typeof row.incluye === 'string' ? JSON.parse(row.incluye || '[]') : row.incluye || [],
       disponibles: disp[0].count,
@@ -375,7 +415,7 @@ app.get('/api/sorteos/:id', async (req, res) => {
 app.post('/api/sorteos', requireAuth, async (req, res) => {
   try {
     const pool = getPool();
-    const { nombre, categoria, precio, total, estado, fechaSorteo, galeria, incluye } = req.body;
+    const { nombre, categoria, precio, total, estado, fechaSorteo, galeria, incluye, tipo, meta, fechaCierre } = req.body;
 
     if (!nombre || !nombre.trim()) {
       return res.status(400).json({ error: 'El nombre del sorteo es obligatorio' });
@@ -392,6 +432,16 @@ app.post('/api/sorteos', requireAuth, async (req, res) => {
     if (estado && !ESTADOS_SORTEO_VALIDOS.includes(estado)) {
       return res.status(400).json({ error: 'Estado de sorteo no válido' });
     }
+    const tipoSorteo = tipo || 'venta_total';
+    if (!TIPOS_SORTEO_VALIDOS.includes(tipoSorteo)) {
+      return res.status(400).json({ error: 'Tipo de sorteo no válido' });
+    }
+    let datosPorFecha = { meta: null, fechaCierre: null };
+    if (tipoSorteo === 'por_fecha') {
+      datosPorFecha = validarPorFecha({ meta, fechaCierre, total: parseInt(total) });
+      if (datosPorFecha.error) return res.status(400).json({ error: datosPorFecha.error });
+      if (!fechaSorteo) return res.status(400).json({ error: 'Indica la fecha del sorteo' });
+    }
 
     const conn = await pool.getConnection();
     let newId;
@@ -399,8 +449,8 @@ app.post('/api/sorteos', requireAuth, async (req, res) => {
       await conn.beginTransaction();
 
       const [result] = await conn.query(
-        `INSERT INTO sorteos (nombre, categoria, precio, total, vendidos, estado, fecha_sorteo, galeria, incluye)
-         VALUES (?, ?, ?, ?, 0, ?, ?, ?, ?)`,
+        `INSERT INTO sorteos (nombre, categoria, precio, total, vendidos, estado, fecha_sorteo, galeria, incluye, tipo, meta, fecha_cierre)
+         VALUES (?, ?, ?, ?, 0, ?, ?, ?, ?, ?, ?, ?)`,
         [
           nombre,
           categoria || 'autos',
@@ -410,6 +460,9 @@ app.post('/api/sorteos', requireAuth, async (req, res) => {
           fechaSorteo || '2026-08-30',
           JSON.stringify((galeria || []).map((g) => aArchivo(g, 'galeria'))),
           JSON.stringify(incluye || []),
+          tipoSorteo,
+          datosPorFecha.meta,
+          datosPorFecha.fechaCierre,
         ]
       );
 
@@ -433,7 +486,7 @@ app.post('/api/sorteos', requireAuth, async (req, res) => {
 app.put('/api/sorteos/:id', requireAuth, async (req, res) => {
   try {
     const pool = getPool();
-    const { nombre, categoria, precio, total, estado, fechaSorteo, galeria, incluye } = req.body;
+    const { nombre, categoria, precio, total, estado, fechaSorteo, galeria, incluye, meta, fechaCierre } = req.body;
     const nuevoTotal = parseInt(total);
 
     if (!nombre || !nombre.trim()) {
@@ -455,6 +508,13 @@ app.put('/api/sorteos/:id', requireAuth, async (req, res) => {
     const [sorteos] = await pool.query('SELECT * FROM sorteos WHERE id = ?', [req.params.id]);
     if (sorteos.length === 0) return res.status(404).json({ error: 'Sorteo no encontrado' });
     const sorteoActual = sorteos[0];
+
+    // El tipo de sorteo no se cambia al editar: los de venta total solo guardan sus datos de siempre.
+    let datosPorFecha = { meta: sorteoActual.meta, fechaCierre: sorteoActual.fecha_cierre };
+    if (sorteoActual.tipo === 'por_fecha') {
+      datosPorFecha = validarPorFecha({ meta, fechaCierre, total: nuevoTotal });
+      if (datosPorFecha.error) return res.status(400).json({ error: datosPorFecha.error });
+    }
 
     // Se compara contra los boletos que de verdad existen (no contra sorteos.total) para que,
     // si alguna vez quedaron desincronizados por un error a mitad de camino, este guardado
@@ -484,7 +544,8 @@ app.put('/api/sorteos/:id', requireAuth, async (req, res) => {
 
       await conn.query(
         `UPDATE sorteos
-         SET nombre = ?, categoria = ?, precio = ?, total = ?, estado = ?, fecha_sorteo = ?, galeria = ?, incluye = ?
+         SET nombre = ?, categoria = ?, precio = ?, total = ?, estado = ?, fecha_sorteo = ?, galeria = ?, incluye = ?,
+             meta = ?, fecha_cierre = ?
          WHERE id = ?`,
         [
           nombre,
@@ -495,6 +556,8 @@ app.put('/api/sorteos/:id', requireAuth, async (req, res) => {
           fechaSorteo || sorteoActual.fecha_sorteo || '2026-08-30',
           JSON.stringify((galeria || []).map((g) => aArchivo(g, 'galeria'))),
           JSON.stringify(incluye || []),
+          datosPorFecha.meta,
+          datosPorFecha.fechaCierre,
           req.params.id,
         ]
       );
@@ -850,6 +913,11 @@ app.post('/api/compras/checkout', async (req, res) => {
     if (sorteo.estado === 'finalizado') {
       await conn.rollback();
       return res.status(400).json({ error: 'Este sorteo ya finalizó y tiene un ganador' });
+    }
+    // Sorteo por fecha: al llegar la fecha de cierre ya no se vende más, aunque queden boletos.
+    if (ventasCerradas(sorteo)) {
+      await conn.rollback();
+      return res.status(400).json({ error: 'Las ventas de este sorteo ya cerraron. ¡Gracias por participar!' });
     }
 
     // 1. Get or create Customer
@@ -1603,8 +1671,15 @@ app.post('/api/admin/lugares/:id/sortear', requireAuth, async (req, res) => {
     const [sorteos] = await pool.query('SELECT * FROM sorteos WHERE id = ?', [lugar.sorteo_id]);
     const sorteo = sorteos[0];
 
-    // No se puede sortear hasta que se hayan vendido todos los boletos del sorteo.
-    if (sorteo.vendidos < sorteo.total) {
+    if (sorteo.tipo === 'por_fecha') {
+      // Sorteo por fecha: se sortea una vez cerradas las ventas, venda lo que venda.
+      if (!ventasCerradas(sorteo)) {
+        return res.status(400).json({
+          error: 'Las ventas de este sorteo siguen abiertas. Podrás sortear cuando llegue la fecha de cierre.',
+        });
+      }
+    } else if (sorteo.vendidos < sorteo.total) {
+      // Sorteo de venta total: no se puede sortear hasta vender todos los boletos.
       return res.status(400).json({
         error: `Todavía faltan ${sorteo.total - sorteo.vendidos} boletos por vender. Debes vender el 100% antes de sortear.`,
       });
