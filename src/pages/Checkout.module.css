@@ -671,6 +671,11 @@
   line-height: 1.4;
 }
 
+.privacyNote a {
+  color: #146B45;
+  text-decoration: underline;
+}
+
 .termsRow {
   margin-top: 14px;
 }
