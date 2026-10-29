@@ -8,6 +8,7 @@ import PremioImage from "../components/PremioImage.jsx";
 import Icon from "../icons/Icon.jsx";
 import { getSorteoById, getPremiadosPublic } from "../services/api.js";
 import { formatMoney } from "../utils/format.js";
+import { pixelTrack } from "../utils/pixel.js";
 import styles from "./SorteoDetalle.module.css";
 
 export default function SorteoDetalle() {
@@ -24,6 +25,13 @@ export default function SorteoDetalle() {
       .then((data) => {
         setSorteo(data);
         setLoading(false);
+        pixelTrack("ViewContent", {
+          content_ids: [String(data.id)],
+          content_name: data.nombre,
+          content_type: "product",
+          value: Number(data.precio) || 0,
+          currency: "USD",
+        });
       })
       .catch((err) => {
         console.error("Error al obtener sorteo:", err);

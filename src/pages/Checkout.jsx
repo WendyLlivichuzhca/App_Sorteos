@@ -8,6 +8,7 @@ import { metodosPago as todosLosMetodosPago } from "../data/sorteos.js";
 import { paises } from "../data/paises.js";
 import { getConfiguracion, iniciarPagoPayphone } from "../services/api.js";
 import { formatMoney } from "../utils/format.js";
+import { pixelTrack } from "../utils/pixel.js";
 import { validarDocumento } from "../utils/validarDocumento.js";
 import { validarNombre, limpiarNombre } from "../utils/validarNombre.js";
 import { validarCorreo } from "../utils/validarCorreo.js";
@@ -160,6 +161,19 @@ export default function Checkout() {
   useEffect(() => {
     if (!seleccion) navigate("/sorteos", { replace: true });
   }, [seleccion, navigate]);
+
+  useEffect(() => {
+    if (!seleccion) return;
+    pixelTrack("InitiateCheckout", {
+      content_ids: [String(seleccion.sorteo.id)],
+      content_type: "product",
+      num_items: seleccion.paquete.boletos,
+      value: Number(seleccion.paquete.precio) || 0,
+      currency: "USD",
+    });
+    // solo al entrar al checkout, no cada vez que cambia el formulario
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   if (!seleccion) return null;
 

@@ -6,6 +6,7 @@ import { useApp } from "../context/AppContext.jsx";
 import { metodosPago } from "../data/sorteos.js";
 import { getConfiguracion } from "../services/api.js";
 import { formatDate, formatMoney } from "../utils/format.js";
+import { pixelTrackUnaVez } from "../utils/pixel.js";
 import styles from "./CompraExitosa.module.css";
 
 const confettiColors = ["#1F8A5A", "#e63950", "#f5a623", "#16a34a", "#2f6df5"];
@@ -24,6 +25,19 @@ export default function CompraExitosa() {
       return;
     }
     reiniciarFlujo();
+    // Transferencia o QR: el pago aún no está verificado, por eso es "Lead" y no "Purchase".
+    pixelTrackUnaVez(
+      `lead_${ultimaCompra.codigo}`,
+      "Lead",
+      {
+        content_ids: [String(ultimaCompra.sorteo?.id ?? "")].filter(Boolean),
+        content_type: "product",
+        num_items: ultimaCompra.paquete.boletos,
+        value: Number(ultimaCompra.total) || 0,
+        currency: "USD",
+      },
+      { eventID: String(ultimaCompra.codigo) }
+    );
     getConfiguracion()
       .then((config) => {
         setInstruccionesPago(config.instrucciones_pago || "");

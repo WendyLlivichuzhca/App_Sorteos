@@ -4,6 +4,8 @@ import { AppProvider } from "./context/AppContext.jsx";
 import { AuthProvider } from "./context/AuthContext.jsx";
 import ProtectedRoute from "./components/ProtectedRoute.jsx";
 import WhatsAppFloat from "./components/WhatsAppFloat.jsx";
+import CookieBanner from "./components/CookieBanner.jsx";
+import { pixelPageView } from "./utils/pixel.js";
 
 // Cliente Pages
 import Landing from "./pages/Landing.jsx";
@@ -43,13 +45,25 @@ function ScrollToTop() {
   return null;
 }
 
+// En una app de una sola página el navegador no recarga al cambiar de sección,
+// así que cada cambio de ruta se avisa al píxel como una visita nueva.
+function PixelPageViews() {
+  const { pathname } = useLocation();
+  useEffect(() => {
+    if (!pathname.startsWith("/admin")) pixelPageView(pathname);
+  }, [pathname]);
+  return null;
+}
+
 export default function App() {
   return (
     <BrowserRouter>
       <AuthProvider>
         <AppProvider>
           <ScrollToTop />
+          <PixelPageViews />
           <WhatsAppFloat />
+          <CookieBanner />
           <Routes>
             {/* Rutas Cliente */}
             <Route path="/" element={<Landing />} />

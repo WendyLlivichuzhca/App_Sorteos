@@ -4,6 +4,7 @@ import Navbar from "../components/Navbar.jsx";
 import Icon from "../icons/Icon.jsx";
 import { confirmarPagoPayphone } from "../services/api.js";
 import { formatMoney } from "../utils/format.js";
+import { pixelTrackUnaVez } from "../utils/pixel.js";
 import styles from "./CompraExitosa.module.css";
 
 const confettiColors = ["#1F8A5A", "#e63950", "#f5a623", "#16a34a", "#2f6df5"];
@@ -31,8 +32,22 @@ export default function PayphoneConfirmacion() {
     confirmarPagoPayphone(id, clientTransactionId)
       .then((data) => {
         setResultado(data.compra);
-        if (data.aprobado) setEstado("aprobado");
-        else if (data.revisarManualmente) setEstado("revisar");
+        if (data.aprobado) {
+          setEstado("aprobado");
+          // eventID = código de orden: sirve para no duplicar si más adelante se suma el envío desde el servidor.
+          pixelTrackUnaVez(
+            `purchase_${data.compra?.codigo || clientTransactionId}`,
+            "Purchase",
+            {
+              content_name: data.compra?.sorteoNombre,
+              content_type: "product",
+              num_items: (data.compra?.boletos || []).length,
+              value: Number(data.compra?.total) || 0,
+              currency: "USD",
+            },
+            { eventID: String(data.compra?.codigo || clientTransactionId) }
+          );
+        } else if (data.revisarManualmente) setEstado("revisar");
         else setEstado("rechazado");
       })
       .catch((err) => {
